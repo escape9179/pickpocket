@@ -1,6 +1,6 @@
 main: logan.pickpocket.main.PickPocket
 name: PickPocket
-version: 0.7.8
+version: 0.9.0
 author: TTG_TRE
 commands:
   pickpocket:

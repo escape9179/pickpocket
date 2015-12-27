@@ -4,10 +4,9 @@
 ~ = Changed
 
 0.9.0
-+ Can pickpocket all items
-~ PickpocketItemInventory has pages
-
-0.7.9
++ A lot more pickpocket items.
++ Equation to determine chance of items.
+~ Pickpocket item inventory has pages.
 * Can't pickpocket when you close the inventory before a steal.
 
 0.7.8
