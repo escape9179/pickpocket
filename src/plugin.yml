@@ -1,0 +1,8 @@
+main: logan.pickpocket.main.PickPocket
+name: PickPocket
+version: 0.7.8
+author: TTG_TRE
+commands:
+  pickpocket:
+    description: Display help information for PickPocket.
+    permission: pickpocket.use

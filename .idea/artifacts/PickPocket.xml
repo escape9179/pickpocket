@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PickPocket">
+    <output-path>$PROJECT_DIR$/out/artifacts/PickPocket</output-path>
+    <root id="archive" name="PickPocket.jar">
+      <element id="module-output" name="PickPocket" />
+    </root>
+  </artifact>
+</component>

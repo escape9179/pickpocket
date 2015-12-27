@@ -1,0 +1,30 @@
++ = Addded
+- = Removed
+* = Fixed
+~ = Changed
+
+0.9.0
++ Can pickpocket all items
+~ PickpocketItemInventory has pages
+
+0.7.9
+* Can't pickpocket when you close the inventory before a steal.
+
+0.7.8
+* Cooldown throwing console errors.
+* Experience not saving correctly.
+* Can't steal items that aren't added to pickpocket.
++ Experience affects the chance of success.
++ More pickpocket items.
++ '/pickpocket givexp <xp>' to give yourself experience.
+~ Lowered chances of pickpocket items.
+~ Equation for determining xp worth of an item.
+~ '/pickpocket profiles' shows profiles with respective experience
+
+0.5.5
+- Added cooldown.
+- Added new pickpocket item 'Lapis Lazuli'.
+- Added experience and levels.
+
+0.5
+- First Bukkit Release.
