@@ -1,4 +1,4 @@
-package logan.pickpocket.main;
+package logan.pickpocket;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;

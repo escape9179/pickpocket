@@ -1,4 +1,4 @@
-package logan.pickpocket.main;
+package logan.pickpocket;
 
 import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
