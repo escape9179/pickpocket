@@ -18,9 +18,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -53,7 +53,7 @@ public class PickPocket extends JavaPlugin implements Listener {
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
         folder.mkdirs();
 
-        profiles = new ArrayList<>();
+        profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
         profilesCommand = new ProfilesCommand();

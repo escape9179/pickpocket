@@ -5,6 +5,7 @@
 
 0.9.6
 * NullPointerException when clicking empty slot in inventory.
+* Profile duplication bug.
 
 0.9.5
 + Flint
