@@ -6,17 +6,19 @@ import logan.pickpocket.main.ProfileHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 /**
  * Created by Tre on 12/28/2015.
  */
-public class PlayerInteract {
+public class PlayerInteract implements Listener {
 
     private PickPocket pickPocket;
 
     public PlayerInteract(PickPocket pickPocket) {
         this.pickPocket = pickPocket;
+        pickPocket.getServer().getPluginManager().registerEvents(this, pickPocket);
     }
 
     @EventHandler

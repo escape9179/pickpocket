@@ -4,6 +4,7 @@ import logan.pickpocket.main.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,12 +12,13 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Created by Tre on 12/28/2015.
  */
-public class InventoryClick {
+public class InventoryClick implements Listener {
 
     private PickPocket pickPocket;
 
     public InventoryClick(PickPocket pickPocket) {
         this.pickPocket = pickPocket;
+        pickPocket.getServer().getPluginManager().registerEvents(this, pickPocket);
     }
 
     @EventHandler

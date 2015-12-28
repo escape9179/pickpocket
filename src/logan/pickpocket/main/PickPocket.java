@@ -1,6 +1,10 @@
 package logan.pickpocket.main;
 
 import logan.pickpocket.command.*;
+import logan.pickpocket.events.InventoryClick;
+import logan.pickpocket.events.InventoryClose;
+import logan.pickpocket.events.PlayerInteract;
+import logan.pickpocket.events.PlayerJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -21,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * Created by Tre on 12/14/2015.
  */
-public class PickPocket extends JavaPlugin implements Listener {
+public class PickPocket extends JavaPlugin {
 
     public static final String NAME = "PickPocket";
     public static final String VERSION = "0.9.6";
@@ -39,6 +43,11 @@ public class PickPocket extends JavaPlugin implements Listener {
     private PickPocketCommand experienceCommand;
     private PickPocketCommand giveXpCommand;
 
+    private Listener inventoryClick;
+    private Listener inventoryClose;
+    private Listener playerInteract;
+    private Listener playerJoin;
+
     private Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
 
     private BukkitScheduler scheduler;
@@ -55,6 +64,11 @@ public class PickPocket extends JavaPlugin implements Listener {
         experienceCommand = new ExperienceCommand();
         giveXpCommand = new GiveXPCommand();
 
+        inventoryClick = new InventoryClick(this);
+        inventoryClose = new InventoryClose(this);
+        playerInteract = new PlayerInteract(this);
+        playerJoin = new PlayerJoin(this);
+
         scheduler = server.getScheduler();
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
@@ -70,8 +84,6 @@ public class PickPocket extends JavaPlugin implements Listener {
                 }
             }
         }, 20, 20);
-
-        server.getPluginManager().registerEvents(this, this);
 
         logger.info(NAME + " " + VERSION + " enabled.");
     }
