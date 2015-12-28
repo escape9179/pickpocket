@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public class PickPocket extends JavaPlugin implements Listener {
 
     public static final String NAME = "PickPocket";
-    public static final String VERSION = "0.9.0";
+    public static final String VERSION = "0.9.6";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
 
     private Server server = getServer();
@@ -144,7 +144,12 @@ public class PickPocket extends JavaPlugin implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
-        ItemStack currentItem = event.getCurrentItem();
+        ItemStack currentItem = null;
+        try {
+            currentItem = event.getCurrentItem();
+        } catch (NullPointerException e) {
+            event.setCancelled(true);
+        }
         if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
             if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getNextButtonName())) {
                 PickpocketItemInventory.nextPage();
