@@ -3,6 +3,9 @@
 * = Fixed
 ~ = Changed
 
+0.9.6
+* NullPointerException when clicking empty slot in inventory.
+
 0.9.5
 + Flint
 + Gunpowder
