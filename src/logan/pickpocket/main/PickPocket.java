@@ -145,7 +145,9 @@ public class PickPocket extends JavaPlugin implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null) {
+        if (currentItem == null
+                || currentItem.getItemMeta() == null
+                || currentItem.getItemMeta().getDisplayName() == null) {
             event.setCancelled(true);
             return;
         }
