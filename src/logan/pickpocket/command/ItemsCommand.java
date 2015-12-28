@@ -1,5 +1,8 @@
-package logan.pickpocket.main;
+package logan.pickpocket.command;
 
+import logan.pickpocket.main.PickpocketItemInventory;
+import logan.pickpocket.main.Profile;
+import logan.pickpocket.main.ProfileHelper;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 

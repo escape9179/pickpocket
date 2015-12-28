@@ -1,18 +1,12 @@
 package logan.pickpocket.main;
 
+import logan.pickpocket.command.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -114,88 +108,23 @@ public class PickPocket extends JavaPlugin implements Listener {
         return true;
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        for (Profile profile : profiles) {
-            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                return;
-            }
-        }
-
-        profiles.add(new Profile(player));
+    public void addProfile(Profile profile) {
+        profiles.add(profile);
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player)) return;
-        Player player = event.getPlayer();
-        if (cooldowns.containsKey(player)) {
-            player.sendMessage(ChatColor.RED + "You must wait " + cooldowns.get(player) + " more seconds before attempting another pickpocket.");
-            return;
-        } else cooldowns.put(player, cooldownDelay);
-        Player entity = (Player) event.getRightClicked();
-        player.openInventory(entity.getInventory());
-        Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        profile.setStealing(entity);
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null
-                || currentItem.getItemMeta() == null
-                || currentItem.getItemMeta().getDisplayName() == null) {
-            event.setCancelled(true);
-            return;
-        }
-        if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getNextButtonName())) {
-                PickpocketItemInventory.nextPage();
-            }
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getBackButtonName())) {
-                PickpocketItemInventory.previousPage();
-            }
-            event.setCancelled(true);
-        } else {
-            Player player = (Player) event.getWhoClicked();
-            Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-            if (!profile.isStealing()) return;
-
-            for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
-                    event.setCancelled(!testChance(profile, pickpocketItem));
-                    return;
-                }
-            }
-
-            event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "This item hasn't been added to the plugin yet!");
-        }
+    public List<Profile> getProfiles() {
+        return profiles;
     }
 
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-        Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        if (profile.isStealing()) profile.setStealing(null);
+    public void addCooldown(Player player) {
+        cooldowns.put(player, cooldownDelay);
     }
 
-    public boolean testChance(Profile profile, PickpocketItem pickpocketItem) {
-        if (Math.random() < pickpocketItem.calculateExperienceBasedChance(profile.getExperience())) {
-            profile.giveExperience(pickpocketItem.getExperienceValue());
-            if (profile.givePickpocketItem(pickpocketItem) == false) {
-                server.broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)!");
-            }
-        } else {
-            profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
-            profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
-            profile.setStealing(null);
-            return false;
-        }
-
-        return true;
+    public Map<Player, Integer> getCooldowns() {
+        return cooldowns;
     }
 }

@@ -1,4 +1,4 @@
-package logan.pickpocket.main;
+package logan.pickpocket.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;

@@ -107,7 +107,7 @@ public class Profile {
         if (!pickpocketItems.contains(pickpocketItem)) {
             pickpocketItems.add(pickpocketItem);
             savePickpocketItems();
-            player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + "(" + pickpocketItem.getExperienceValue() + "XP)" + ChatColor.RESET + "!");
+            player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)" + ChatColor.RESET + "!");
             return false;
         }
         return true;
