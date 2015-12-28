@@ -119,7 +119,7 @@ public class PickPocket extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
 
         for (Profile profile : profiles) {
-            if (profile.getPlayer().equals(player)) {
+            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 return;
             }
         }
