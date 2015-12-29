@@ -65,8 +65,6 @@ public class Profile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("He has " + pickpocketItems.size() + " items.");
     }
 
     private void saveExperience() {
@@ -92,7 +90,6 @@ public class Profile {
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
                 if (o.equals(pickpocketItem.getRawName())) {
                     pickpocketItems.add(pickpocketItem);
-                    System.out.println("Added item " + pickpocketItem.getName() + " to " + player.getName() + "'s pickpocket list");
                 }
             }
         }
