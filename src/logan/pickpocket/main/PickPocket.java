@@ -42,6 +42,7 @@ public class PickPocket extends JavaPlugin {
     private PickPocketCommand itemsCommand;
     private PickPocketCommand experienceCommand;
     private PickPocketCommand giveXpCommand;
+    private PickPocketCommand giveItemCommand;
 
     private Listener inventoryClick;
     private Listener inventoryClose;

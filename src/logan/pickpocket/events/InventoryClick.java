@@ -23,30 +23,28 @@ public class InventoryClick implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Profile profile = ProfileHelper.getLoadedProfile(player, pickPocket.getProfiles());
+        PickpocketItemInventory pickpocketItemInventory = profile.getPickpocketItemInventory();
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null
-                || currentItem.getItemMeta() == null
-                || currentItem.getItemMeta().getDisplayName() == null) {
-            event.setCancelled(true);
-            return;
-        }
         if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getNextButtonName())) {
-                PickpocketItemInventory.nextPage();
+            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getNextButtonName())) {
+                pickpocketItemInventory.nextPage();
             }
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getBackButtonName())) {
-                PickpocketItemInventory.previousPage();
+            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getBackButtonName())) {
+                pickpocketItemInventory.previousPage();
             }
             event.setCancelled(true);
         } else {
-            Player player = (Player) event.getWhoClicked();
-            Profile profile = ProfileHelper.getLoadedProfile(player, pickPocket.getProfiles());
             if (!profile.isStealing()) return;
 
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
                 if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
-                    event.setCancelled(!testChance(profile, pickpocketItem));
+                    boolean shouldCancel = !testChance(profile, pickpocketItem);
+                    event.setCancelled(shouldCancel);
+                    player.getInventory().addItem(currentItem);
+                    inventory.remove(currentItem);
                     return;
                 }
             }
