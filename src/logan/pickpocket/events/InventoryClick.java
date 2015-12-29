@@ -39,11 +39,13 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
-            if (profile.getVictim().hasPermission(pickPocket.pickpocketBypass)) {
+            if (profile.getVictim().hasPermission(pickPocket.pickpocketExemept)) {
                 event.setCancelled(true);
                 profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot  be stolen from.");
                 return;
             }
+
+
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
                 if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
                     boolean shouldCancel = !testChance(profile, pickpocketItem);
@@ -74,7 +76,7 @@ public class InventoryClick implements Listener {
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.isOp() || player.hasPermission(pickPocket.pickpocketAdmin)) {
-                    player.sendMessage(profile.getPlayer() + " attempted to steal from " + profile.getVictim() + ".");
+                    player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
                 }
             }
             profile.setStealing(null);

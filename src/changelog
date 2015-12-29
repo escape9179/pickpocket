@@ -4,8 +4,9 @@
 ~ = Changed
 
 0.9.7
-+ Pickpocket bypass permission (pickpocket.bypass)
++ Pickpocket exempt permission (pickpocket.exempt)
 + Pickpocket admin permission (pickpocket.admin) which logs extra info to admins.
++ Pickpocket bypass cooldown (pickpocket.bypass.cooldown) allows user to bypass cooldodwn.
 
 0.9.6
 * Severe inventory bug that rendered the plugin almost unplayable.

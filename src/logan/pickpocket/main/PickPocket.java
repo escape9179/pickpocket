@@ -43,7 +43,8 @@ public class PickPocket extends JavaPlugin {
     private PickPocketCommand giveXpCommand;
 
     public Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
-    public Permission pickpocketBypass = new Permission("pickpocket.bypass", "Bypass pickpocketing.");
+    public Permission pickpocketExemept = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
+    public Permission pickpocketBypassCooldown = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
     public Permission pickpocketAdmin = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
 
     private BukkitScheduler scheduler;
