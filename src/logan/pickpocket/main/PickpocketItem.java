@@ -122,6 +122,8 @@ public enum PickpocketItem {
     SPECKLED_MELON("Glistering Melon", "Steal glistering melon.", Material.SPECKLED_MELON, 40),
     IRON_SWORD("Iron Sword", "Steal an iron sword.", Material.IRON_SWORD, 40),
     MILK("Milk", "Steal a milk bucket.", Material.MILK_BUCKET, 45),
+    WATER_BUCKET("Water Bucket", "Steal a water bucket.", Material.WATER_BUCKET, 45),
+    LAVA_BUCKET("Lava Bucket", "Steal a lava bucket.", Material.LAVA_BUCKET, 45),
     BLAZE_ROD("Blaze Rod", "Steal a blaze rod.", Material.BLAZE_ROD, 50),
     MAGMA_CREAM("Magma Cream", "Steal magma cream.", Material.MAGMA_CREAM, 50),
     IRON_HOE("Iron Hoe", "Steal an iron hoe.", Material.IRON_HOE, 50),
