@@ -1,5 +1,6 @@
-package logan.pickpocket.main;
+package logan.pickpocket.command;
 
+import logan.pickpocket.main.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;

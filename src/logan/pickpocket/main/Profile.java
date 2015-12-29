@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -20,16 +20,16 @@ public class Profile {
     private File file;
     private YamlConfiguration configuration;
     private List<PickpocketItem> pickpocketItems;
+    private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
     private int experience = 0;
 
     public Profile(Player player) {
         this.player = player;
-
         pickpocketItems = new Vector<>();
-
         setup();
+        pickpocketItemInventory = new PickpocketItemInventory(this);
     }
 
     private void setup() {
@@ -65,6 +65,8 @@ public class Profile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("He has " + pickpocketItems.size() + " items.");
     }
 
     private void saveExperience() {
@@ -78,7 +80,7 @@ public class Profile {
     private void savePickpocketItems() {
         List<String> pickpocketNames = new ArrayList<>();
         for (PickpocketItem pickpocketItem : pickpocketItems) {
-            pickpocketNames.add(pickpocketItem.getName());
+            pickpocketNames.add(pickpocketItem.getRawName());
         }
         getConfiguration().set("pickpocket-items", pickpocketNames);
     }
@@ -88,11 +90,16 @@ public class Profile {
         if (pickpocketNames == null || pickpocketNames.isEmpty()) return;
         for (Object o : pickpocketNames) {
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (o.equals(pickpocketItem.getName())) {
+                if (o.equals(pickpocketItem.getRawName())) {
                     pickpocketItems.add(pickpocketItem);
+                    System.out.println("Added item " + pickpocketItem.getName() + " to " + player.getName() + "'s pickpocket list");
                 }
             }
         }
+    }
+
+    public void openPickpocketItemInventory() {
+        pickpocketItemInventory.open();
     }
 
     public void save() {
@@ -107,7 +114,7 @@ public class Profile {
         if (!pickpocketItems.contains(pickpocketItem)) {
             pickpocketItems.add(pickpocketItem);
             savePickpocketItems();
-            player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + "(" + pickpocketItem.getExperienceValue() + "XP)" + ChatColor.RESET + "!");
+            player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)" + ChatColor.RESET + "!");
             return false;
         }
         return true;
@@ -148,6 +155,10 @@ public class Profile {
 
     public List<PickpocketItem> getPickpocketItems() {
         return pickpocketItems;
+    }
+
+    public PickpocketItemInventory getPickpocketItemInventory() {
+        return pickpocketItemInventory;
     }
 
     public int getExperience() {

@@ -155,6 +155,7 @@ public enum PickpocketItem {
     DIAMOND_BLOCK("Diamond Block", "Steal a diamond block.", Material.DIAMOND_BLOCK, 1450);
 
     private String name;
+    private String rawName;
     private String description;
     private Material material;
     private ItemStack lockedItemStack;
@@ -168,7 +169,7 @@ public enum PickpocketItem {
         this.description = description;
         this.material = material;
         this.value = value;
-        this.name = name;
+        this.rawName = name;
 
         this.chance = ((2000 - value) * .05) / 1000;
 
@@ -194,6 +195,10 @@ public enum PickpocketItem {
 
     public String getName() {
         return name;
+    }
+
+    public String getRawName() {
+        return rawName;
     }
 
     public String getDescription() {

@@ -4,7 +4,10 @@
 ~ = Changed
 
 0.9.6
-* NullPointerException when clicking empty slot in inventory.
+* Severe inventory bug that rendered the plugin almost unplayable.
+* Item Duplication bug
+* Profile duplication bug.
+~ Refactoring
 
 0.9.5
 + Flint

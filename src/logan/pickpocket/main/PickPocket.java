@@ -1,35 +1,33 @@
 package logan.pickpocket.main;
 
+import logan.pickpocket.command.*;
+import logan.pickpocket.events.InventoryClick;
+import logan.pickpocket.events.InventoryClose;
+import logan.pickpocket.events.PlayerInteract;
+import logan.pickpocket.events.PlayerJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
  * Created by Tre on 12/14/2015.
  */
-public class PickPocket extends JavaPlugin implements Listener {
+public class PickPocket extends JavaPlugin {
 
-    public static final String NAME = "PickPocket";
+    public static final String NAME = "Pickpocket";
     public static final String VERSION = "0.9.6";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
 
@@ -44,6 +42,12 @@ public class PickPocket extends JavaPlugin implements Listener {
     private PickPocketCommand itemsCommand;
     private PickPocketCommand experienceCommand;
     private PickPocketCommand giveXpCommand;
+    private PickPocketCommand giveItemCommand;
+
+    private Listener inventoryClick;
+    private Listener inventoryClose;
+    private Listener playerInteract;
+    private Listener playerJoin;
 
     private Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
 
@@ -53,13 +57,18 @@ public class PickPocket extends JavaPlugin implements Listener {
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
         folder.mkdirs();
 
-        profiles = new ArrayList<>();
+        profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
         profilesCommand = new ProfilesCommand();
         itemsCommand = new ItemsCommand();
         experienceCommand = new ExperienceCommand();
         giveXpCommand = new GiveXPCommand();
+
+        inventoryClick = new InventoryClick(this);
+        inventoryClose = new InventoryClose(this);
+        playerInteract = new PlayerInteract(this);
+        playerJoin = new PlayerJoin(this);
 
         scheduler = server.getScheduler();
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
@@ -76,8 +85,6 @@ public class PickPocket extends JavaPlugin implements Listener {
                 }
             }
         }, 20, 20);
-
-        server.getPluginManager().registerEvents(this, this);
 
         logger.info(NAME + " " + VERSION + " enabled.");
     }
@@ -114,88 +121,23 @@ public class PickPocket extends JavaPlugin implements Listener {
         return true;
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        for (Profile profile : profiles) {
-            if (profile.getPlayer().equals(player)) {
-                return;
-            }
-        }
-
-        profiles.add(new Profile(player));
+    public void addProfile(Profile profile) {
+        profiles.add(profile);
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player)) return;
-        Player player = event.getPlayer();
-        if (cooldowns.containsKey(player)) {
-            player.sendMessage(ChatColor.RED + "You must wait " + cooldowns.get(player) + " more seconds before attempting another pickpocket.");
-            return;
-        } else cooldowns.put(player, cooldownDelay);
-        Player entity = (Player) event.getRightClicked();
-        player.openInventory(entity.getInventory());
-        Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        profile.setStealing(entity);
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null
-                || currentItem.getItemMeta() == null
-                || currentItem.getItemMeta().getDisplayName() == null) {
-            event.setCancelled(true);
-            return;
-        }
-        if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getNextButtonName())) {
-                PickpocketItemInventory.nextPage();
-            }
-            if (currentItem.getItemMeta().getDisplayName().equals(PickpocketItemInventory.getBackButtonName())) {
-                PickpocketItemInventory.previousPage();
-            }
-            event.setCancelled(true);
-        } else {
-            Player player = (Player) event.getWhoClicked();
-            Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-            if (!profile.isStealing()) return;
-
-            for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
-                    event.setCancelled(!testChance(profile, pickpocketItem));
-                    return;
-                }
-            }
-
-            event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "This item hasn't been added to the plugin yet!");
-        }
+    public List<Profile> getProfiles() {
+        return profiles;
     }
 
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-        Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        if (profile.isStealing()) profile.setStealing(null);
+    public void addCooldown(Player player) {
+        cooldowns.put(player, cooldownDelay);
     }
 
-    public boolean testChance(Profile profile, PickpocketItem pickpocketItem) {
-        if (Math.random() < pickpocketItem.calculateExperienceBasedChance(profile.getExperience())) {
-            profile.giveExperience(pickpocketItem.getExperienceValue());
-            if (profile.givePickpocketItem(pickpocketItem) == false) {
-                server.broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)!");
-            }
-        } else {
-            profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
-            profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
-            profile.setStealing(null);
-            return false;
-        }
-
-        return true;
+    public Map<Player, Integer> getCooldowns() {
+        return cooldowns;
     }
 }
