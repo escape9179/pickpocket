@@ -101,7 +101,7 @@ public class PickPocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + VERSION);
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exp' to check your experience.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket xp' to check your experience.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket givexp' to give yourself experience.");
             } else if (args[0].equalsIgnoreCase("profiles")) {
                 profilesCommand.execute(player, command, label, profiles);
