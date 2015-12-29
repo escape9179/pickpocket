@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class PickPocket extends JavaPlugin {
 
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "0.9.7";
+    public static final String VERSION = "0.9.9";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
 
     private Server server = getServer();
