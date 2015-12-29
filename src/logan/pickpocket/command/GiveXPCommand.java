@@ -13,7 +13,7 @@ public class GiveXPCommand extends PickPocketCommand {
     @Override
     public boolean execute(Player player,List<Profile> profiles, Object... args) {
         Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        profile.giveExperience(Integer.parseInt(String.valueOf(args[1])));
+        profile.giveExperience(Integer.parseInt(String.valueOf(args[0])));
         return true;
     }
 }
