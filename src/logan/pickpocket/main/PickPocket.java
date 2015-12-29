@@ -121,10 +121,6 @@ public class PickPocket extends JavaPlugin {
         profiles.add(profile);
     }
 
-    public void setProfiles(List<Profile> profiles) {
-        this.profiles = profiles;
-    }
-
     public List<Profile> getProfiles() {
         return profiles;
     }
