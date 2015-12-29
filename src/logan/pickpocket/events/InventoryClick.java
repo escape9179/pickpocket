@@ -43,8 +43,12 @@ public class InventoryClick implements Listener {
                 if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
                     boolean shouldCancel = !testChance(profile, pickpocketItem);
                     event.setCancelled(shouldCancel);
-                    player.getInventory().addItem(currentItem);
-                    inventory.remove(currentItem);
+                    if (!event.isCancelled()) {
+                        player.getInventory().addItem(currentItem);
+                        inventory.remove(currentItem);
+                    } else {
+                        event.setCancelled(true);
+                    }
                     return;
                 }
             }

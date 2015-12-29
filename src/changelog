@@ -6,6 +6,7 @@
 0.9.6
 * Fixed severe inventory bug that rendered the plugin almost unplayable.
 * Profile duplication bug.
+*
 ~ Refactoring
 
 0.9.5
