@@ -105,13 +105,13 @@ public class PickPocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket xp' to check your experience.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket givexp' to give yourself experience.");
             } else if (args[0].equalsIgnoreCase("profiles")) {
-                profilesCommand.execute(player, command, label, profiles);
+                profilesCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("items")) {
-                itemsCommand.execute(player, command, label, profiles);
+                itemsCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("xp")) {
-                experienceCommand.execute(player, command, label, profiles);
+                experienceCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("givexp") && player.hasPermission(giveXpPermission)) {
-                giveXpCommand.execute(player, command, label, profiles, args[1]);
+                giveXpCommand.execute(player, profiles, args[1]);
             }
         }
 
