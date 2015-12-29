@@ -1,6 +1,7 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,11 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
-
+            if (profile.getVictim().hasPermission(pickPocket.pickpocketBypass)) {
+                event.setCancelled(true);
+                profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot  be stolen from.");
+                return;
+            }
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
                 if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
                     boolean shouldCancel = !testChance(profile, pickpocketItem);
@@ -67,6 +72,11 @@ public class InventoryClick implements Listener {
         } else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.isOp() || player.hasPermission(pickPocket.pickpocketAdmin)) {
+                    player.sendMessage(profile.getPlayer() + " attempted to steal from " + profile.getVictim() + ".");
+                }
+            }
             profile.setStealing(null);
             return false;
         }

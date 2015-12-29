@@ -10,7 +10,6 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -42,16 +41,13 @@ public class PickPocket extends JavaPlugin {
     private PickPocketCommand itemsCommand;
     private PickPocketCommand experienceCommand;
     private PickPocketCommand giveXpCommand;
-    private PickPocketCommand giveItemCommand;
 
-    private Listener inventoryClick;
-    private Listener inventoryClose;
-    private Listener playerInteract;
-    private Listener playerJoin;
-
-    private Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
+    public Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
+    public Permission pickpocketBypass = new Permission("pickpocket.bypass", "Bypass pickpocketing.");
+    public Permission pickpocketAdmin = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
 
     private BukkitScheduler scheduler;
+
 
     public void onEnable() {
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
@@ -65,10 +61,10 @@ public class PickPocket extends JavaPlugin {
         experienceCommand = new ExperienceCommand();
         giveXpCommand = new GiveXPCommand();
 
-        inventoryClick = new InventoryClick(this);
-        inventoryClose = new InventoryClose(this);
-        playerInteract = new PlayerInteract(this);
-        playerJoin = new PlayerJoin(this);
+        new InventoryClick(this);
+        new InventoryClose(this);
+        new PlayerInteract(this);
+        new PlayerJoin(this);
 
         scheduler = server.getScheduler();
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
@@ -111,7 +107,7 @@ public class PickPocket extends JavaPlugin {
                 profilesCommand.execute(player, command, label, profiles);
             } else if (args[0].equalsIgnoreCase("items")) {
                 itemsCommand.execute(player, command, label, profiles);
-            } else if (args[0].equalsIgnoreCase("exp")) {
+            } else if (args[0].equalsIgnoreCase("xp")) {
                 experienceCommand.execute(player, command, label, profiles);
             } else if (args[0].equalsIgnoreCase("givexp") && player.hasPermission(giveXpPermission)) {
                 giveXpCommand.execute(player, command, label, profiles, args[1]);
