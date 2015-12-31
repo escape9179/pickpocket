@@ -29,13 +29,16 @@ public class InventoryClick implements Listener {
         PickpocketItemInventory pickpocketItemInventory = profile.getPickpocketItemInventory();
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
+        try {
+            if (inventory.getItem(event.getSlot()) == null) return;
+        } catch (NullPointerException e) {
+            return;
+        }
         if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
-            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getNextButtonName())) {
+            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getNextButtonName()))
                 pickpocketItemInventory.nextPage();
-            }
-            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getBackButtonName())) {
+            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getBackButtonName()))
                 pickpocketItemInventory.previousPage();
-            }
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
@@ -53,9 +56,7 @@ public class InventoryClick implements Listener {
                     if (!event.isCancelled()) {
                         player.getInventory().addItem(currentItem);
                         inventory.remove(currentItem);
-                    } else {
-                        event.setCancelled(true);
-                    }
+                    } else event.setCancelled(true);
                     return;
                 }
             }
