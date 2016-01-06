@@ -8,10 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Tre on 12/26/2015.
@@ -36,7 +33,7 @@ public class PickpocketItemInventory {
     public void open() {
         player = profile.getPlayer();
         inventoryList = new ArrayList<>();
-        List<PickpocketItem> profilePickpocketItems = profile.getPickpocketItems();
+        Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItems().keySet();
         List<PickpocketItem> pickpocketItems = Arrays.asList(PickpocketItem.values());
 
         configureButtons();

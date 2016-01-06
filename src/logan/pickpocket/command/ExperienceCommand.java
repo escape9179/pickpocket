@@ -5,6 +5,7 @@ import logan.pickpocket.main.ProfileHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class ExperienceCommand extends PickPocketCommand {
     @Override
     public boolean execute(Player player, List<Profile> profiles) {
         Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
-        profile.getPlayer().sendMessage(ChatColor.GRAY + "Experience: " + ChatColor.GREEN + profile.getExperience());
+        profile.getPlayer().sendMessage(ChatColor.GRAY + "Times Stolen: " + ChatColor.GREEN + NumberFormat.getInstance().format(profile.getTimesStolen()));
         return true;
     }
 }

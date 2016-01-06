@@ -20,7 +20,7 @@ public class ProfilesCommand extends PickPocketCommand {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < profiles.size(); i++) {
-            stringBuilder.append(ChatColor.GRAY + profiles.get(i).getPlayer().getName() + " (" + ChatColor.WHITE + NumberFormat.getInstance().format(profiles.get(i).getExperience()) + ChatColor.GRAY + "XP), ");
+            stringBuilder.append(ChatColor.GRAY + profiles.get(i).getPlayer().getName() + " (" + ChatColor.WHITE + NumberFormat.getInstance().format(profiles.get(i).getTimesStolen()) + ChatColor.GRAY + "), ");
         }
 
         player.sendMessage(stringBuilder.toString());

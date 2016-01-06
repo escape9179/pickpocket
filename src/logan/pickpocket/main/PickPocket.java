@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
 public class PickPocket extends JavaPlugin {
 
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "v0.9.9";
+    public static final String VERSION = "v1.0-pre";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
 
     private Server server = getServer();
@@ -40,12 +41,11 @@ public class PickPocket extends JavaPlugin {
     private PickPocketCommand profilesCommand;
     private PickPocketCommand itemsCommand;
     private PickPocketCommand experienceCommand;
-    private PickPocketCommand giveXpCommand;
 
-    public Permission giveXpPermission = new Permission("pickpocket.givexp", "Give player pickpocket experience.");
     public Permission pickpocketExemept = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public Permission pickpocketBypassCooldown = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
     public Permission pickpocketAdmin = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
+    public Permission pickpocketDeveloper = new Permission("pickpocket.developer", "Allows use of developer commands.");
 
     private BukkitScheduler scheduler;
 
@@ -60,7 +60,6 @@ public class PickPocket extends JavaPlugin {
         profilesCommand = new ProfilesCommand();
         itemsCommand = new ItemsCommand();
         experienceCommand = new ExperienceCommand();
-        giveXpCommand = new GiveXPCommand();
 
         new InventoryClick(this);
         new InventoryClose(this);
@@ -102,16 +101,20 @@ public class PickPocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + VERSION);
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket xp' to check your experience.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket givexp' to give yourself experience.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket steals' to check how many times you've stolen.");
+                sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
+                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
             } else if (args[0].equalsIgnoreCase("profiles")) {
                 profilesCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("items")) {
                 itemsCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("xp")) {
+            } else if (args[0].equalsIgnoreCase("steals")) {
                 experienceCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("givexp") && player.hasPermission(giveXpPermission)) {
-                giveXpCommand.execute(player, profiles, args[1]);
+            } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(pickpocketDeveloper)) {
+                PickpocketItem[] items = PickpocketItem.values();
+                for (int i = 0; i < Integer.valueOf(args[1]); i++) {
+                    ProfileHelper.getLoadedProfile(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
+                }
             }
         }
 

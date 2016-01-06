@@ -1,6 +1,5 @@
 package logan.pickpocket.main;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -9,7 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Tre on 12/14/2015.
@@ -19,15 +19,15 @@ public class Profile {
     private Player player;
     private File file;
     private YamlConfiguration configuration;
-    private List<PickpocketItem> pickpocketItems;
+    private Map<PickpocketItem, Integer> pickpocketItems;
     private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
-    private int experience = 0;
+    private int steals = 0;
 
     public Profile(Player player) {
         this.player = player;
-        pickpocketItems = new Vector<>();
+        pickpocketItems = new ConcurrentHashMap<>();
         setup();
         pickpocketItemInventory = new PickpocketItemInventory(this);
     }
@@ -41,13 +41,13 @@ public class Profile {
                 file.createNewFile();
                 configuration.createSection("times-stolen");
                 configuration.createSection("pickpocket-items");
-                configuration.createSection("experience");
+                configuration.createSection("steals");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
 
-            if (!configuration.isConfigurationSection("experience")) configuration.createSection("experience");
+            if (!configuration.isConfigurationSection("steals")) configuration.createSection("steals");
 
             try {
                 configuration.load(file);
@@ -68,30 +68,34 @@ public class Profile {
     }
 
     private void saveExperience() {
-        configuration.set("experience", experience);
+        configuration.set("steals", steals);
     }
 
     private void loadExperience() {
-        experience = configuration.getInt("experience");
+        steals = configuration.getInt("steals");
     }
 
     private void savePickpocketItems() {
-        List<String> pickpocketNames = new ArrayList<>();
-        for (PickpocketItem pickpocketItem : pickpocketItems) {
-            pickpocketNames.add(pickpocketItem.getRawName());
+        List<String> listSave = new ArrayList<>();
+        for (PickpocketItem pickpocketItem : pickpocketItems.keySet()) {
+            listSave.add(pickpocketItem.getRawName() + "," + pickpocketItems.get(pickpocketItem));
         }
-        getConfiguration().set("pickpocket-items", pickpocketNames);
+
+        getConfiguration().set("pickpocket-items", listSave);
     }
 
     private void loadPickpocketItems() {
-        List<?> pickpocketNames = configuration.getList("pickpocket-items");
-        if (pickpocketNames == null || pickpocketNames.isEmpty()) return;
-        for (Object o : pickpocketNames) {
-            for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (o.equals(pickpocketItem.getRawName())) {
-                    pickpocketItems.add(pickpocketItem);
-                }
-            }
+        List<?> pickpocketSaves = configuration.getList("pickpocket-items");
+        if (pickpocketSaves == null || pickpocketSaves.isEmpty()) return;
+
+        String[][] data = new String[pickpocketSaves.size()][2];
+        for (int i = 0; i < pickpocketSaves.size(); i++) {
+            data[i][0] = pickpocketSaves.get(i).toString().split(",")[0];
+            data[i][1] = pickpocketSaves.get(i).toString().split(",")[1];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            pickpocketItems.put(PickpocketItem.getPickpocketItemByName(data[i][0]), Integer.valueOf(data[i][1]));
         }
     }
 
@@ -107,14 +111,20 @@ public class Profile {
         }
     }
 
-    public boolean givePickpocketItem(PickpocketItem pickpocketItem) {
-        if (!pickpocketItems.contains(pickpocketItem)) {
-            pickpocketItems.add(pickpocketItem);
-            savePickpocketItems();
-            player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)" + ChatColor.RESET + "!");
-            return false;
+    public void givePickpocketItem(PickpocketItem pickpocketItem) {
+        if (hasPickpocketItem(pickpocketItem)) {
+            pickpocketItems.put(pickpocketItem, pickpocketItems.get(pickpocketItem) + 1);
+            return;
         }
-        return true;
+        pickpocketItems.put(pickpocketItem, 1);
+        savePickpocketItems();
+        player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + "!");
+
+    }
+
+    public boolean hasPickpocketItem(PickpocketItem pickpocketItem) {
+        if (pickpocketItems.containsKey(pickpocketItem)) return true;
+        else return false;
     }
 
     public void setStealing(Player victim) {
@@ -131,13 +141,6 @@ public class Profile {
         return stealing;
     }
 
-    public void giveExperience(int experience) {
-        this.experience += experience;
-        saveExperience();
-        player.sendMessage(ChatColor.GRAY + "You've been given " + ChatColor.WHITE + experience + ChatColor.GRAY + " experience!");
-    }
-
-
     public Player getVictim() {
         return victim;
     }
@@ -150,7 +153,7 @@ public class Profile {
         return configuration;
     }
 
-    public List<PickpocketItem> getPickpocketItems() {
+    public Map<PickpocketItem, Integer> getPickpocketItems() {
         return pickpocketItems;
     }
 
@@ -158,7 +161,24 @@ public class Profile {
         return pickpocketItemInventory;
     }
 
-    public int getExperience() {
-        return experience;
+    public int getSteals() {
+        return steals;
+    }
+
+    public int getTimesStolenOf(PickpocketItem pickpocketItem) {
+        for (PickpocketItem item : pickpocketItems.keySet()) {
+            if (item.equals(pickpocketItem)) {
+                return pickpocketItems.get(item);
+            }
+        }
+        return 0;
+    }
+
+    public int getTimesStolen() {
+        int ts = 0;
+        for (PickpocketItem pickpocketItem : pickpocketItems.keySet()) {
+            ts += pickpocketItems.get(pickpocketItem);
+        }
+        return ts;
     }
 }

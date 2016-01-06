@@ -67,10 +67,10 @@ public class InventoryClick implements Listener {
     }
 
     public boolean testChance(Profile profile, PickpocketItem pickpocketItem) {
-        if (Math.random() < pickpocketItem.calculateExperienceBasedChance(profile.getExperience())) {
-            profile.giveExperience(pickpocketItem.getExperienceValue());
-            if (profile.givePickpocketItem(pickpocketItem) == false) {
-                pickPocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + " (" + pickpocketItem.getExperienceValue() + "XP)!");
+        if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getTimesStolenOf(pickpocketItem))) {
+            if (!profile.hasPickpocketItem(pickpocketItem)) {
+                profile.givePickpocketItem(pickpocketItem);
+                pickPocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
             }
         } else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
