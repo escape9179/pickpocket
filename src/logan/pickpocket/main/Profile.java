@@ -23,7 +23,6 @@ public class Profile {
     private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
-    private int steals = 0;
 
     public Profile(Player player) {
         this.player = player;
@@ -47,11 +46,10 @@ public class Profile {
             }
         } else {
 
-            if (!configuration.isConfigurationSection("steals")) configuration.createSection("steals");
+//            if (!configuration.isConfigurationSection("steals")) configuration.createSection("steals");
 
             try {
                 configuration.load(file);
-                loadExperience();
                 loadPickpocketItems();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -65,14 +63,6 @@ public class Profile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void saveExperience() {
-        configuration.set("steals", steals);
-    }
-
-    private void loadExperience() {
-        steals = configuration.getInt("steals");
     }
 
     private void savePickpocketItems() {
@@ -159,10 +149,6 @@ public class Profile {
 
     public PickpocketItemInventory getPickpocketItemInventory() {
         return pickpocketItemInventory;
-    }
-
-    public int getSteals() {
-        return steals;
     }
 
     public int getTimesStolenOf(PickpocketItem pickpocketItem) {

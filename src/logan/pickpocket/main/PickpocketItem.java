@@ -165,7 +165,7 @@ public enum PickpocketItem {
     private ItemStack itemStack;
     private double chance;
     private int value;
-    private DecimalFormat decimalFormat = new DecimalFormat("#.##%");
+    private DecimalFormat decimalFormat = new DecimalFormat("#.###%");
 
     PickpocketItem(String name, String description, Material material, int value) {
         this.description = description;
@@ -191,10 +191,6 @@ public enum PickpocketItem {
         else if (value <= 1500) this.name = ChatColor.DARK_PURPLE + name;
         else if (value <= 2000) this.name = ChatColor.WHITE + name;
         else this.name = ChatColor.GRAY + name;
-
-        //TODO Come up with new equations for determining chance.
-
-//        this.experienceValue = (int) (((1 - chance) * 100) / (chance * 2));
     }
 
     public String getName() {
@@ -217,7 +213,7 @@ public enum PickpocketItem {
         lockedItemStackLoreList.add(ChatColor.DARK_GRAY + description);
         lockedItemStackLoreList.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + decimalFormat.format(chance));
         lockedItemStackLoreList.add(ChatColor.GRAY + "Your chance: " + ChatColor.WHITE + decimalFormat.format(calculateStolenBasedChance(profile.getTimesStolenOf(this))));
-        lockedItemStackLoreList.add(ChatColor.GRAY+"Times Stolen: "+ChatColor.WHITE+ NumberFormat.getInstance().format(profile.getTimesStolenOf(this)));
+        lockedItemStackLoreList.add(ChatColor.GRAY + "Times Stolen: " + ChatColor.WHITE + NumberFormat.getInstance().format(profile.getTimesStolenOf(this)));
         lockedItemStackItemMeta.setLore(lockedItemStackLoreList);
         lockedItemStack.setItemMeta(lockedItemStackItemMeta);
         return lockedItemStack;
@@ -236,8 +232,8 @@ public enum PickpocketItem {
         return material;
     }
 
-    public double calculateStolenBasedChance(int steals){
-        return ((steals / (500 / chance)) / 100) + chance;
+    public double calculateStolenBasedChance(double steals) {
+        return (steals / 1000) + chance;
     }
 
     public static PickpocketItem getPickpocketItemByName(String rawName) {
