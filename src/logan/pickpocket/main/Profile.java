@@ -38,9 +38,7 @@ public class Profile {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                configuration.createSection("times-stolen");
                 configuration.createSection("pickpocket-items");
-                configuration.createSection("steals");
             } catch (IOException e) {
                 e.printStackTrace();
             }
