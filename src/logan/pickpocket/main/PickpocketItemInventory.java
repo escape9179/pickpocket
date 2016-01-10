@@ -35,6 +35,7 @@ public class PickpocketItemInventory {
         inventoryList = new ArrayList<>();
         Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItems().keySet();
         List<PickpocketItem> pickpocketItems = Arrays.asList(PickpocketItem.values());
+        inventoryOpen = 0;
 
         configureButtons();
 

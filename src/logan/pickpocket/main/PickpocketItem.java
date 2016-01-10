@@ -57,7 +57,7 @@ public enum PickpocketItem {
     FLINT("Flint", "Steal flint.", Material.FLINT, 4),
     FEATHER("Feather", "Steal a feather.", Material.FEATHER, 4),
     STRING("String", "Steal string.", Material.STRING, 4),
-    NETHER_WARTS("Nether Wart", "Steal nether wart.", Material.NETHER_WARTS, 4),
+    NETHER_WARTS("Nether Wart", "Steal nether warts.", Material.NETHER_WARTS, 4),
     MOSSY_COBBLESTONE("Mossy Cobble", "Steal mossy cobblestone.", Material.MOSSY_COBBLESTONE, 5),
     BAKED_POTATO("Baked Potato", "Steal a baked potato.", Material.BAKED_POTATO, 5),
     BREAD("Bread", "Steal bread.", Material.BREAD, 5),

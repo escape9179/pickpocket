@@ -40,7 +40,7 @@ public class PickPocket extends JavaPlugin {
 
     private PickPocketCommand profilesCommand;
     private PickPocketCommand itemsCommand;
-    private PickPocketCommand experienceCommand;
+    private PickPocketCommand stealsCommand;
 
     public Permission pickpocketExemept = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public Permission pickpocketBypassCooldown = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
@@ -59,7 +59,7 @@ public class PickPocket extends JavaPlugin {
 
         profilesCommand = new ProfilesCommand();
         itemsCommand = new ItemsCommand();
-        experienceCommand = new ExperienceCommand();
+        stealsCommand = new StealsCommand();
 
         new InventoryClick(this);
         new InventoryClose(this);
@@ -71,7 +71,7 @@ public class PickPocket extends JavaPlugin {
             public void run() {
                 ProfileHelper.saveLoadedProfiles(profiles);
             }
-        }, 20 * (30), 20 * (30));
+        }, 20 * (5), 20 * (5));
 
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
@@ -109,7 +109,7 @@ public class PickPocket extends JavaPlugin {
             } else if (args[0].equalsIgnoreCase("items")) {
                 itemsCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("steals")) {
-                experienceCommand.execute(player, profiles);
+                stealsCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(pickpocketDeveloper)) {
                 PickpocketItem[] items = PickpocketItem.values();
                 for (int i = 0; i < Integer.valueOf(args[1]); i++) {

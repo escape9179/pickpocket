@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Tre on 12/25/2015.
  */
-public class ExperienceCommand extends PickPocketCommand {
+public class StealsCommand extends PickPocketCommand {
     @Override
     public boolean execute(Player player, List<Profile> profiles) {
         Profile profile = ProfileHelper.getLoadedProfile(player, profiles);

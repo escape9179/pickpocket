@@ -4,5 +4,6 @@ version: v1.0-pre
 author: TTG_TRE
 commands:
   pickpocket:
+    aliases: pp
     description: Display help information for PickPocket.
     permission: pickpocket.use
