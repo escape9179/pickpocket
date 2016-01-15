@@ -25,6 +25,8 @@ public enum PickpocketItem {
 
      */
 
+
+
     POISONOUS_POTATO("Poisonous Potato", "Steal a poisonous potato.", Material.POISONOUS_POTATO, 1),
     COOKIE("Cookie", "Steal a cookie.", Material.COOKIE, 1),
     DIRT("Dirt", "Steal dirt.", Material.DIRT, 1),
@@ -146,6 +148,7 @@ public enum PickpocketItem {
     CLOCK("Clock", "Steal a clock.", Material.WATCH, 165),
     DIAMOND_SPADE("Diamond Shovel", "Steal a diamond shovel.", Material.DIAMOND_SPADE, 180),
     GHAST_TEAR("Ghast Tear", "Steal a ghast tear.", Material.GHAST_TEAR, 200),
+    SEA_LANTER("Sea Lantern", "Steal a sea lantern.", Material.SEA_LANTERN, 200),
     DIAMOND_SWORD("Diamond Sword", "Steal a diamond sword.", Material.DIAMOND_SWORD, 330),
     DIAMOND_HOE("Diamond Hoe", "Steal a diamond hoe.", Material.DIAMOND_HOE, 340),
     GOLD_BLOCK("Gold Block", "Steal a gold block.", Material.GOLD_BLOCK, 360),
@@ -165,6 +168,7 @@ public enum PickpocketItem {
     private ItemStack itemStack;
     private double chance;
     private int value;
+    private final int maxValue = 2_000;
     private DecimalFormat decimalFormat = new DecimalFormat("#.###%");
 
     PickpocketItem(String name, String description, Material material, int value) {
@@ -173,7 +177,7 @@ public enum PickpocketItem {
         this.value = value;
         this.rawName = name;
 
-        this.chance = ((2000 - value) * .05) / 1000;
+        this.chance = ((maxValue - value) * .05) / 1000;
 
         if (value <= 20) this.name = ChatColor.DARK_GRAY + name;
         else if (value <= 40) this.name = ChatColor.GRAY + name;

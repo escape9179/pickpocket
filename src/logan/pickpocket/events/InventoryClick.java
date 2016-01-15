@@ -62,7 +62,7 @@ public class InventoryClick implements Listener {
             }
 
             event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "This item hasn't been added to the plugin yet!");
+            player.sendMessage(ChatColor.RED + "You cannot steal this item.");
         }
     }
 
