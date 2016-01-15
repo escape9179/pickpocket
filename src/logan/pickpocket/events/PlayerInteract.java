@@ -28,7 +28,7 @@ public class PlayerInteract implements Listener {
         if (pickPocket.getCooldowns().containsKey(player)) {
             player.sendMessage(ChatColor.RED + "You must wait " + pickPocket.getCooldowns().get(player) + " more seconds before attempting another pickpocket.");
             return;
-        } else if(!player.hasPermission(pickPocket.pickpocketBypassCooldown)) pickPocket.addCooldown(player);
+        } else if(ProfileHelper.getLoadedProfile(player,pickPocket.getProfiles()).canCooldownBypass()) pickPocket.addCooldown(player);
         Player entity = (Player) event.getRightClicked();
         player.openInventory(entity.getInventory());
         Profile profile = ProfileHelper.getLoadedProfile(player, pickPocket.getProfiles());

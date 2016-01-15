@@ -9,11 +9,10 @@ import java.util.List;
 /**
  * Created by Tre on 12/18/2015.
  */
-public class ItemsCommand extends PickPocketCommand {
+public class ItemsCommand implements PickpocketCommand {
     @Override
-    public boolean execute(Player player, List<Profile> profiles) {
+    public void execute(Player player, List<Profile> profiles, Object... objects) {
         Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
         profile.openPickpocketItemInventory();
-        return true;
     }
 }

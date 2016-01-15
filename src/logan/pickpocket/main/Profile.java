@@ -23,6 +23,9 @@ public class Profile {
     private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
+    private boolean stealExempt = false;
+    private boolean admin = false;
+    private boolean cooldownBypass = false;
 
     public Profile(Player player) {
         this.player = player;
@@ -38,16 +41,29 @@ public class Profile {
         if (!file.exists()) {
             try {
                 file.createNewFile();
+                configuration.createSection("steal-exempt");
+                configuration.createSection("admin");
+                configuration.createSection("cooldown-bypass");
                 configuration.createSection("pickpocket-items");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
 
-//            if (!configuration.isConfigurationSection("steals")) configuration.createSection("steals");
+            if (!configuration.isConfigurationSection("steal-exempt")) configuration.createSection("steal-exempt");
+            if (!configuration.isConfigurationSection("admin")) configuration.createSection("admin");
+            if (!configuration.isConfigurationSection("cooldown-bypass"))
+                configuration.createSection("cooldown-bypass");
+
+            configuration.set("steal-exempt", false);
+            configuration.set("admin", false);
+            configuration.set("cooldown-bypass", false);
 
             try {
                 configuration.load(file);
+                stealExempt = configuration.getBoolean("steal-exempt");
+                admin = configuration.getBoolean("admin");
+                cooldownBypass = configuration.getBoolean("cooldown-bypass");
                 loadPickpocketItems();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,6 +129,33 @@ public class Profile {
     public boolean hasPickpocketItem(PickpocketItem pickpocketItem) {
         if (pickpocketItems.containsKey(pickpocketItem)) return true;
         else return false;
+    }
+
+    public void setStealExempt(boolean bool) {
+        stealExempt = bool;
+        configuration.set("steal-exempt", bool);
+    }
+
+    public void setAdmin(boolean bool) {
+        admin = bool;
+        configuration.set("admin", bool);
+    }
+
+    public void setCooldownBypass(boolean bool) {
+        cooldownBypass = bool;
+        configuration.set("cooldown-bypass", bool);
+    }
+
+    public boolean isStealExempt() {
+        return stealExempt;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public boolean canCooldownBypass() {
+        return cooldownBypass;
     }
 
     public void setStealing(Player victim) {

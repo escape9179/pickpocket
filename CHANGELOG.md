@@ -1,6 +1,6 @@
-#V1.1
-//TODO Add steal log for each player.
-//TODO Add reputation factor (Suggested by 0ct0ber)
+#v1.1
+//TODO Add steal log for each player (Suggested by zainmz).
+//TODO Add reputation factor (Suggested by 0ct0ber).
 
 #v1.0
 * Chance for an item depends on how many times you stole it instead of every items chance being affected.
@@ -13,6 +13,12 @@
 * Pickpocket item inventory always opens at the first page.
 * Changed command '/pickpocket xp' to '/pickpocket steals'.
 * Removed command '/pickpocket givexp'.
+* Added command '/pickpocket bypasscooldown <true/false> <optional name>' to toggle cooldown bypassing.
+    * Permission: pickpocket.bypass.cooldown
+* Added command '/pickpocket exempt <true/false> <optional name>' to toggle exemption from being stolen from.
+    * Permission: pickpocket.exempt
+* Added command '/pickpocket admin <true/false>' to toggle admin notifications.
+    * Permission: pickpocket.admin
 
 ####Bugs
 * Some pickpocket items aren't visible in '/pickpocket items' once you've received it.

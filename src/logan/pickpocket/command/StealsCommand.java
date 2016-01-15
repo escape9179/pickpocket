@@ -11,11 +11,10 @@ import java.util.List;
 /**
  * Created by Tre on 12/25/2015.
  */
-public class StealsCommand extends PickPocketCommand {
+public class StealsCommand implements PickpocketCommand {
     @Override
-    public boolean execute(Player player, List<Profile> profiles) {
+    public void execute(Player player, List<Profile> profiles, Object... objects) {
         Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
         profile.getPlayer().sendMessage(ChatColor.GRAY + "Times Stolen: " + ChatColor.GREEN + NumberFormat.getInstance().format(profile.getTimesStolen()));
-        return true;
     }
 }

@@ -10,13 +10,13 @@ import java.util.List;
 /**
  * Created by Tre on 12/15/2015.
  */
-public class ProfilesCommand extends PickPocketCommand {
+public class ProfilesCommand implements PickpocketCommand {
 
     @Override
-    public boolean execute(Player player, List<Profile> profiles) {
+    public void execute(Player player, List<Profile> profiles, Object... objects) {
         player.sendMessage(ChatColor.GRAY + "Profiles: ");
 
-        if (profiles.isEmpty()) return true;
+        if (profiles.isEmpty()) return;
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < profiles.size(); i++) {
@@ -24,7 +24,5 @@ public class ProfilesCommand extends PickPocketCommand {
         }
 
         player.sendMessage(stringBuilder.toString());
-
-        return true;
     }
 }

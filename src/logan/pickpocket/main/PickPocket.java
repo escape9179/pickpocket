@@ -38,14 +38,17 @@ public class PickPocket extends JavaPlugin {
     private Map<Player, Integer> cooldowns;
     private int cooldownDelay = 8;
 
-    private PickPocketCommand profilesCommand;
-    private PickPocketCommand itemsCommand;
-    private PickPocketCommand stealsCommand;
+    private PickpocketCommand profilesCommand;
+    private PickpocketCommand itemsCommand;
+    private PickpocketCommand stealsCommand;
+    private PickpocketCommand adminCommand;
+    private PickpocketCommand bypassCommand;
+    private PickpocketCommand exemptCommand;
 
-    public Permission pickpocketExemept = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
-    public Permission pickpocketBypassCooldown = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
-    public Permission pickpocketAdmin = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
-    public Permission pickpocketDeveloper = new Permission("pickpocket.developer", "Allows use of developer commands.");
+    public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
+    public static final Permission PICKPOCKET_BYPASS_COOLDOWN = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
+    public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
+    public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
 
     private BukkitScheduler scheduler;
 
@@ -60,6 +63,9 @@ public class PickPocket extends JavaPlugin {
         profilesCommand = new ProfilesCommand();
         itemsCommand = new ItemsCommand();
         stealsCommand = new StealsCommand();
+        adminCommand = new AdminCommand();
+        bypassCommand = new BypassCommand();
+        exemptCommand = new ExemptCommand();
 
         new InventoryClick(this);
         new InventoryClose(this);
@@ -102,6 +108,9 @@ public class PickPocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket steals' to check how many times you've stolen.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt <optional name>' to exempt yourself from being stolen from.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass <optional name>' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
             } else if (args[0].equalsIgnoreCase("profiles")) {
@@ -110,11 +119,20 @@ public class PickPocket extends JavaPlugin {
                 itemsCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("steals")) {
                 stealsCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(pickpocketDeveloper)) {
+
+            } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 PickpocketItem[] items = PickpocketItem.values();
                 for (int i = 0; i < Integer.valueOf(args[1]); i++) {
                     ProfileHelper.getLoadedProfile(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
                 }
+            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
+                adminCommand.execute(player, profiles, args[1]);
+            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
+                if (args.length > 2) exemptCommand.execute(player, profiles, args[1], args[2]);
+                else exemptCommand.execute(player, profiles, args[1], null);
+            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS_COOLDOWN)) {
+                if (args.length > 2) bypassCommand.execute(player, profiles, args[1], args[2]);
+                else bypassCommand.execute(player, profiles, args[1], null);
             }
         }
 

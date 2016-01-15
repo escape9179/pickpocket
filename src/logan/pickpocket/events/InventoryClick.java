@@ -42,7 +42,7 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
-            if (profile.getVictim().hasPermission(pickPocket.pickpocketExemept)) {
+            if (ProfileHelper.getLoadedProfile(profile.getVictim(),pickPocket.getProfiles()).isStealExempt()) {
                 event.setCancelled(true);
                 profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
                 return;
@@ -76,7 +76,7 @@ public class InventoryClick implements Listener {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.isOp() || player.hasPermission(pickPocket.pickpocketAdmin)) {
+                if (profile.isAdmin()) {
                     player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
                 }
             }
