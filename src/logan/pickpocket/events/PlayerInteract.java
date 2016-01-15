@@ -1,8 +1,8 @@
 package logan.pickpocket.events;
 
-import logan.pickpocket.main.PickPocket;
+import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.Profile;
-import logan.pickpocket.main.ProfileHelper;
+import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,24 +14,23 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
  */
 public class PlayerInteract implements Listener {
 
-    private PickPocket pickPocket;
+    private Pickpocket pickpocket;
 
-    public PlayerInteract(PickPocket pickPocket) {
-        this.pickPocket = pickPocket;
-        pickPocket.getServer().getPluginManager().registerEvents(this, pickPocket);
+    public PlayerInteract(Pickpocket pickpocket) {
+        this.pickpocket = pickpocket;
+        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Player)) return;
         Player player = event.getPlayer();
-        if (pickPocket.getCooldowns().containsKey(player)) {
-            player.sendMessage(ChatColor.RED + "You must wait " + pickPocket.getCooldowns().get(player) + " more seconds before attempting another pickpocket.");
-            return;
-        } else if(ProfileHelper.getLoadedProfile(player,pickPocket.getProfiles()).canCooldownBypass()) pickPocket.addCooldown(player);
+        Profile profile = Profiles.get(player, pickpocket.getProfiles());
+        if (profile.canCooldownBypass()) return;
+        else if (!pickpocket.getCooldowns().containsKey(player)) pickpocket.addCooldown(player);
+        else player.sendMessage(ChatColor.RED + "You must wait " + pickpocket.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         Player entity = (Player) event.getRightClicked();
         player.openInventory(entity.getInventory());
-        Profile profile = ProfileHelper.getLoadedProfile(player, pickPocket.getProfiles());
         profile.setStealing(entity);
     }
 }

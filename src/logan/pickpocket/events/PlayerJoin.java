@@ -1,6 +1,6 @@
 package logan.pickpocket.events;
 
-import logan.pickpocket.main.PickPocket;
+import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,23 +12,23 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerJoin implements Listener {
 
-    private PickPocket pickPocket;
+    private Pickpocket pickpocket;
 
-    public PlayerJoin(PickPocket pickPocket) {
-        this.pickPocket = pickPocket;
-        pickPocket.getServer().getPluginManager().registerEvents(this, pickPocket);
+    public PlayerJoin(Pickpocket pickpocket) {
+        this.pickpocket = pickpocket;
+        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        for (Profile profile : pickPocket.getProfiles()) {
+        for (Profile profile : pickpocket.getProfiles()) {
             if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 return;
             }
         }
 
-        pickPocket.addProfile(new Profile(player));
+        pickpocket.addProfile(new Profile(player));
     }
 }

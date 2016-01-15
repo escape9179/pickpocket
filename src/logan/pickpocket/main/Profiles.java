@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * Created by Tre on 12/17/2015.
  */
-public abstract class ProfileHelper {
-    public static Profile getLoadedProfile(Player player, List<Profile> profiles) {
+public abstract class Profiles {
+    public static Profile get(Player player, List<Profile> profiles) {
         for (Profile profile : profiles) {
             if (profile.getPlayer().equals(player)) {
                 return profile;
@@ -17,7 +17,7 @@ public abstract class ProfileHelper {
         return null;
     }
 
-    public static void saveLoadedProfiles(List<Profile> profiles) {
+    public static void save(List<Profile> profiles) {
         for (Profile profile : profiles) profile.save();
     }
 }

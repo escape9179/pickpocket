@@ -15,17 +15,17 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryClick implements Listener {
 
-    private PickPocket pickPocket;
+    private Pickpocket pickpocket;
 
-    public InventoryClick(PickPocket pickPocket) {
-        this.pickPocket = pickPocket;
-        pickPocket.getServer().getPluginManager().registerEvents(this, pickPocket);
+    public InventoryClick(Pickpocket pickpocket) {
+        this.pickpocket = pickpocket;
+        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        Profile profile = ProfileHelper.getLoadedProfile(player, pickPocket.getProfiles());
+        Profile profile = Profiles.get(player, pickpocket.getProfiles());
         PickpocketItemInventory pickpocketItemInventory = profile.getPickpocketItemInventory();
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
@@ -42,7 +42,7 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
-            if (ProfileHelper.getLoadedProfile(profile.getVictim(),pickPocket.getProfiles()).isStealExempt()) {
+            if (Profiles.get(profile.getVictim(), pickpocket.getProfiles()).isStealExempt()) {
                 event.setCancelled(true);
                 profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
                 return;
@@ -70,7 +70,7 @@ public class InventoryClick implements Listener {
         if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getTimesStolenOf(pickpocketItem))) {
             if (!profile.hasPickpocketItem(pickpocketItem)) {
                 profile.givePickpocketItem(pickpocketItem);
-                pickPocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
+                pickpocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
             }
         } else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");

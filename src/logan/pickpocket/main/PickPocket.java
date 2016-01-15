@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * Created by Tre on 12/14/2015.
  */
-public class PickPocket extends JavaPlugin {
+public class Pickpocket extends JavaPlugin {
 
     public static final String NAME = "Pickpocket";
     public static final String VERSION = "v1.0-pre";
@@ -75,7 +75,7 @@ public class PickPocket extends JavaPlugin {
         scheduler = server.getScheduler();
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
-                ProfileHelper.saveLoadedProfiles(profiles);
+                Profiles.save(profiles);
             }
         }, 20 * (5), 20 * (5));
 
@@ -123,7 +123,7 @@ public class PickPocket extends JavaPlugin {
             } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 PickpocketItem[] items = PickpocketItem.values();
                 for (int i = 0; i < Integer.valueOf(args[1]); i++) {
-                    ProfileHelper.getLoadedProfile(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
+                    Profiles.get(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
                 }
             } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
                 adminCommand.execute(player, profiles, args[1]);

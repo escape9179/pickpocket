@@ -35,7 +35,7 @@ public class Profile {
     }
 
     private void setup() {
-        file = new File(PickPocket.PLUGIN_FOLDER_DIRECTORY + player.getUniqueId() + ".yml");
+        file = new File(Pickpocket.PLUGIN_FOLDER_DIRECTORY + player.getUniqueId() + ".yml");
         configuration = new YamlConfiguration();
 
         if (!file.exists()) {

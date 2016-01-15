@@ -1,7 +1,7 @@
 package logan.pickpocket.command;
 
 import logan.pickpocket.main.Profile;
-import logan.pickpocket.main.ProfileHelper;
+import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class StealsCommand implements PickpocketCommand {
     @Override
     public void execute(Player player, List<Profile> profiles, Object... objects) {
-        Profile profile = ProfileHelper.getLoadedProfile(player, profiles);
+        Profile profile = Profiles.get(player, profiles);
         profile.getPlayer().sendMessage(ChatColor.GRAY + "Times Stolen: " + ChatColor.GREEN + NumberFormat.getInstance().format(profile.getTimesStolen()));
     }
 }
