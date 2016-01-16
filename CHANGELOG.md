@@ -15,7 +15,7 @@
 * Changed command '/pickpocket xp' to '/pickpocket steals'.
 * Removed command '/pickpocket givexp'.
 * Added command '/pickpocket bypasscooldown <true/false> <optional name>' to toggle cooldown bypassing.
-    * Permission: pickpocket.bypass
+    * Permission: pickpocket.bypass.cooldown
 * Added command '/pickpocket exempt <true/false> <optional name>' to toggle exemption from being stolen from.
     * Permission: pickpocket.exempt
 * Added command '/pickpocket admin <true/false>' to toggle admin notifications.

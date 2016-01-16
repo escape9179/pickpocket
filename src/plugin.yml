@@ -1,4 +1,4 @@
-main: logan.pickpocket.main.PickPocket
+main: logan.pickpocket.main.Pickpocket
 name: PickPocket
 version: v1.0
 author: TTG_TRE
