@@ -1,6 +1,5 @@
 package logan.pickpocket.main;
 
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -38,46 +37,46 @@ public class Profile {
         file = new File(Pickpocket.PLUGIN_FOLDER_DIRECTORY + player.getUniqueId() + ".yml");
         configuration = new YamlConfiguration();
 
-        if (!file.exists()) {
-            try {
+        try {
+            if (!file.exists()) {
                 file.createNewFile();
                 configuration.createSection("steal-exempt");
                 configuration.createSection("admin");
                 configuration.createSection("cooldown-bypass");
                 configuration.createSection("pickpocket-items");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
+                configuration.set("steal-exempt", false);
+                configuration.set("admin", false);
+                configuration.set("cooldown-bypass", false);
+                configuration.save(file);
+            } else {
 
-            if (!configuration.isConfigurationSection("steal-exempt")) configuration.createSection("steal-exempt");
-            if (!configuration.isConfigurationSection("admin")) configuration.createSection("admin");
-            if (!configuration.isConfigurationSection("cooldown-bypass"))
-                configuration.createSection("cooldown-bypass");
+                if (!configuration.isConfigurationSection("steal-exempt")) {
+                    configuration.createSection("steal-exempt");
+                    configuration.set("steal-exempt", false);
+                }
+                if (!configuration.isConfigurationSection("admin")) {
+                    configuration.createSection("admin");
+                    configuration.set("admin", false);
+                }
+                if (!configuration.isConfigurationSection("cooldown-bypass")) {
+                    configuration.createSection("cooldown-bypass");
+                    configuration.set("cooldown-bypass", false);
+                }
 
-            configuration.set("steal-exempt", false);
-            configuration.set("admin", false);
-            configuration.set("cooldown-bypass", false);
-
-            try {
-                configuration.load(file);
                 stealExempt = configuration.getBoolean("steal-exempt");
                 admin = configuration.getBoolean("admin");
                 cooldownBypass = configuration.getBoolean("cooldown-bypass");
-                loadPickpocketItems();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-        }
 
-        try {
-            configuration.save(file);
-        } catch (IOException e) {
+                loadPickpocketItems();
+
+                configuration.save(file);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void savePickpocketItems() {
         List<String> listSave = new ArrayList<>();

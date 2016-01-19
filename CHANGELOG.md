@@ -1,7 +1,6 @@
-#v1.1
-//TODO Add steal log for each player (Suggested by zainmz).
-//TODO Add reputation factor (Suggested by 0ct0ber).
-//TODO Overhaul pickpocket items chances, values, etc.
+#v1.0.1
+* Fixed commands with optional player arguments not working.
+* Fixed error when interacting with another player (stealing).
 
 #v1.0
 * Chance for an item depends on how many times you stole it instead of every items chance being affected.

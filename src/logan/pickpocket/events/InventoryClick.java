@@ -1,5 +1,6 @@
 package logan.pickpocket.events;
 
+import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
