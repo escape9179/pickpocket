@@ -1,7 +1,7 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,7 +26,7 @@ public class PlayerInteract implements Listener {
         if (!(event.getRightClicked() instanceof Player)) return;
         Player player = event.getPlayer();
         Profile profile = Profiles.get(player, pickpocket.getProfiles());
-        if (profile.canCooldownBypass()) return;
+        if (profile.getPermissionModule().canBypass()) return;
         else if (!pickpocket.getCooldowns().containsKey(player)) pickpocket.addCooldown(player);
         else player.sendMessage(ChatColor.RED + "You must wait " + pickpocket.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         Player entity = (Player) event.getRightClicked();

@@ -1,6 +1,8 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.*;
+import logan.pickpocket.profile.PickpocketItemInventory;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -42,7 +44,7 @@ public class InventoryClick implements Listener {
             event.setCancelled(true);
         } else {
             if (!profile.isStealing()) return;
-            if (Profiles.get(profile.getVictim(), pickpocket.getProfiles()).isStealExempt()) {
+            if (Profiles.get(profile.getVictim(), pickpocket.getProfiles()).getPermissionModule().isStealExempt()) {
                 event.setCancelled(true);
                 profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
                 return;
@@ -50,7 +52,7 @@ public class InventoryClick implements Listener {
 
 
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
+                if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItem.getRawItemStack().getItemMeta().getDisplayName())) {
                     boolean shouldCancel = !testChance(profile, pickpocketItem);
                     event.setCancelled(shouldCancel);
                     if (!event.isCancelled()) {
@@ -67,8 +69,8 @@ public class InventoryClick implements Listener {
     }
 
     public boolean testChance(Profile profile, PickpocketItem pickpocketItem) {
-        if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getTimesStolenOf(pickpocketItem))) {
-            if (!profile.hasPickpocketItem(pickpocketItem)) {
+        if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getPickpocketItemModule().getStealsOf(pickpocketItem))) {
+            if (!profile.getPickpocketItemModule().hasPickpocketItem(pickpocketItem)) {
                 profile.givePickpocketItem(pickpocketItem);
                 pickpocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
             }
@@ -76,7 +78,7 @@ public class InventoryClick implements Listener {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (profile.isAdmin()) {
+                if (profile.getPermissionModule().isAdmin()) {
                     player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
                 }
             }

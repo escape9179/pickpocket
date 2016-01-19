@@ -1,7 +1,7 @@
-package logan.pickpocket.command;
+package logan.pickpocket.commands;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class AdminCommand implements PickpocketCommand {
     public void execute(Player player, List<Profile> profiles, Object... args) {
         if (player.isOp() || player.hasPermission(Pickpocket.PICKPOCKET_ADMIN)) {
             boolean bool = Boolean.parseBoolean(args[0].toString());
-            Profiles.get(player, profiles).setAdmin(bool);
+            Profiles.get(player, profiles).getPermissionModule().setAdmin(bool);
             player.sendMessage(ChatColor.GRAY + "Pickpocket Admin status set to " + bool + ".");
         }
     }

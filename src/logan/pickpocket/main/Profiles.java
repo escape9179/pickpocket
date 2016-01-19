@@ -1,5 +1,6 @@
 package logan.pickpocket.main;
 
+import logan.pickpocket.profile.Profile;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -15,9 +16,5 @@ public abstract class Profiles {
             }
         }
         return null;
-    }
-
-    public static void save(List<Profile> profiles) {
-        for (Profile profile : profiles) profile.save();
     }
 }

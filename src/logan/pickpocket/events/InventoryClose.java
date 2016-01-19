@@ -1,7 +1,7 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,10 +1,11 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.command.*;
+import logan.pickpocket.commands.*;
 import logan.pickpocket.events.InventoryClick;
 import logan.pickpocket.events.InventoryClose;
 import logan.pickpocket.events.PlayerInteract;
 import logan.pickpocket.events.PlayerJoin;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -28,8 +29,9 @@ import java.util.logging.Logger;
 public class Pickpocket extends JavaPlugin {
 
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "v1.0";
+    public static final String VERSION = "v1.1";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
+    public static final String PLAYER_DIRECTORY = PLUGIN_FOLDER_DIRECTORY + "players/";
 
     private Server server = getServer();
     private Logger logger = getLogger();
@@ -46,16 +48,19 @@ public class Pickpocket extends JavaPlugin {
     private PickpocketCommand exemptCommand;
 
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
-    public static final Permission PICKPOCKET_BYPASS_COOLDOWN = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
+    public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
 
-    private BukkitScheduler scheduler;
+    private PickpocketConfiguration configuration;
 
+    private BukkitScheduler scheduler;
 
     public void onEnable() {
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
+        File playerFolder=new File(PLAYER_DIRECTORY);
         folder.mkdirs();
+        playerFolder.mkdirs();
 
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
@@ -72,12 +77,10 @@ public class Pickpocket extends JavaPlugin {
         new PlayerInteract(this);
         new PlayerJoin(this);
 
+        configuration = new PickpocketConfiguration(PLUGIN_FOLDER_DIRECTORY, "config.yml");
+        configuration.setup();
+
         scheduler = server.getScheduler();
-        scheduler.runTaskTimerAsynchronously(this, new Runnable() {
-            public void run() {
-                Profiles.save(profiles);
-            }
-        }, 20 * (5), 20 * (5));
 
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
@@ -113,6 +116,7 @@ public class Pickpocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass <optional name>' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
+                sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
             } else if (args[0].equalsIgnoreCase("profiles")) {
                 profilesCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("items")) {
@@ -130,9 +134,11 @@ public class Pickpocket extends JavaPlugin {
             } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
                 if (args.length > 2) exemptCommand.execute(player, profiles, args[1], args[2]);
                 else exemptCommand.execute(player, profiles, args[1], null);
-            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS_COOLDOWN)) {
+            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
                 if (args.length > 2) bypassCommand.execute(player, profiles, args[1], args[2]);
                 else bypassCommand.execute(player, profiles, args[1], null);
+            } else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
+                configuration.printKeys(player);
             }
         }
 

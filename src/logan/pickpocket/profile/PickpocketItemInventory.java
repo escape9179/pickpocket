@@ -1,5 +1,6 @@
-package logan.pickpocket.main;
+package logan.pickpocket.profile;
 
+import logan.pickpocket.main.PickpocketItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -33,7 +34,7 @@ public class PickpocketItemInventory {
     public void open() {
         player = profile.getPlayer();
         inventoryList = new ArrayList<>();
-        Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItems().keySet();
+        Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItemModule().getPickpocketItemIntegerMap().keySet();
         List<PickpocketItem> pickpocketItems = Arrays.asList(PickpocketItem.values());
         inventoryOpen = 0;
 

@@ -1,6 +1,6 @@
-package logan.pickpocket.command;
+package logan.pickpocket.commands;
 
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ public class ProfilesCommand implements PickpocketCommand {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < profiles.size(); i++) {
-            stringBuilder.append(ChatColor.GRAY + profiles.get(i).getPlayer().getName() + " (" + ChatColor.WHITE + NumberFormat.getInstance().format(profiles.get(i).getTimesStolen()) + ChatColor.GRAY + "), ");
+            stringBuilder.append(ChatColor.GRAY + profiles.get(i).getPlayer().getName() + " (" + ChatColor.WHITE + NumberFormat.getInstance().format(profiles.get(i).getPickpocketItemModule().getSteals()) + ChatColor.GRAY + "), ");
         }
 
         player.sendMessage(stringBuilder.toString());
