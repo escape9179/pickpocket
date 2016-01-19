@@ -99,7 +99,8 @@ public enum PickpocketItem {
     BRICK_SLAB("Brick Slab", new ItemStack(44, 1, (short) 4), 52),
     STONE_BRICK_SLAB("Stone Brick Slab", new ItemStack(44, 1, (short) 5), 1),
     NETHER_BRICK_SLAB("Nether Brick Slab", new ItemStack(44, 1, (short) 6), 32.80),
-    QUARTZ_SLAB("Quartz Slab", new ItemStack(44, 1, (short) 7), 140);
+    QUARTZ_SLAB("Quartz Slab", new ItemStack(44, 1, (short) 7), 140),
+    BRICK("Brick", new ItemStack(45), 104);
 
     private String name;
     private String rawName;
@@ -194,6 +195,6 @@ public enum PickpocketItem {
     }
 
     public double convertToChance(double value) {
-        return (((maxValue - value) * 50) / maxValue) / 100;
+        return (((maxValue - value) * 20) / maxValue) / 100;
     }
 }
