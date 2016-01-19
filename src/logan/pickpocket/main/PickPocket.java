@@ -58,7 +58,7 @@ public class Pickpocket extends JavaPlugin {
 
     public void onEnable() {
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
-        File playerFolder=new File(PLAYER_DIRECTORY);
+        File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
         playerFolder.mkdirs();
 

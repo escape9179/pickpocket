@@ -35,6 +35,6 @@ public class PickpocketItemLoader {
             listSave.add(pickpocketItem.getRawName() + "," + pickpocketItemIntegerMap.get(pickpocketItem));
         }
 
-        profileConfiguration.getYamlConfiguration().set(profileConfiguration.getItemSection(), listSave);
+        profileConfiguration.setItemSection(listSave);
     }
 }

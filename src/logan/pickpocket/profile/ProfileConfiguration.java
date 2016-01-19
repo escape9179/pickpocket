@@ -3,6 +3,8 @@ package logan.pickpocket.profile;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Tre on 1/18/2016.
@@ -36,17 +38,47 @@ public class ProfileConfiguration {
         try {
             if (!file.exists()) {
                 file.createNewFile();
-                yamlConfiguration.createSection(itemSection);
-                yamlConfiguration.createSection(adminSection);
-                yamlConfiguration.createSection(bypassSection);
-                yamlConfiguration.createSection(exemptSection);
+                if (!yamlConfiguration.isConfigurationSection(itemSection)) yamlConfiguration.createSection(itemSection);
+                if (!yamlConfiguration.isConfigurationSection(adminSection)) yamlConfiguration.createSection(adminSection);
+                if (!yamlConfiguration.isConfigurationSection(bypassSection)) yamlConfiguration.createSection(bypassSection);
+                if (!yamlConfiguration.isConfigurationSection(exemptSection)) yamlConfiguration.createSection(exemptSection);
                 yamlConfiguration.save(file);
+            } else {
+                yamlConfiguration.load(file);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         System.out.println("Created profile sections in path " + path + ".");
+    }
+
+    private void saveConfiguration() {
+        try {
+            yamlConfiguration.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setItemSection(List<String> values) {
+        yamlConfiguration.set(itemSection, values);
+        saveConfiguration();
+    }
+
+    public void setAdminSection(boolean bool) {
+        yamlConfiguration.set(adminSection, bool);
+        saveConfiguration();
+    }
+
+    public void setBypassSection(boolean bool) {
+        yamlConfiguration.set(bypassSection, bool);
+        saveConfiguration();
+    }
+
+    public void setExemptSection(boolean bool) {
+        yamlConfiguration.set(exemptSection, bool);
+        saveConfiguration();
     }
 
     public String getItemSection() {

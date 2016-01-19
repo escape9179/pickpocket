@@ -12,7 +12,7 @@ public class StatisticModule {
     private int steals = 0;
     private int level = 0;
 
-    int getLevel() {
+    public int getLevel() {
         for (int i = 0; i < maxLevel * 10; i++) {
             if (steals >= lastStealAmount + 5) {
                 level++;
@@ -23,15 +23,23 @@ public class StatisticModule {
         return level;
     }
 
-    int getMaxLevel() {
+    public void setSteals(int steals) {
+        this.steals = steals;
+    }
+
+    public void addSteal() {
+        this.steals += 1;
+    }
+
+    public int getMaxLevel() {
         return maxLevel;
     }
 
-    int getSteals() {
+    public int getSteals() {
         return steals;
     }
 
-    int getStealsForMaxLevel() {
+    public int getStealsForMaxLevel() {
         return stealsForMaxLevel;
     }
 }

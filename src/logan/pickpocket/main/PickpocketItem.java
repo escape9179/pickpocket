@@ -14,6 +14,7 @@ import java.util.ArrayList;
 /**
  * Created by Tre on 12/24/2015.
  */
+@SuppressWarnings("deprecation")
 public enum PickpocketItem {
 
     /*
@@ -26,139 +27,79 @@ public enum PickpocketItem {
 
      */
 
-    //TODO Finish overhauling items.
-    POISONOUS_POTATO("Poisonous Potato", Material.POISONOUS_POTATO, 1),
-    COOKIE("Cookie", Material.COOKIE, 1),
-    DIRT("Dirt", Material.DIRT, 1),
-    SAND("Sand", Material.SAND, 1),
-    COBBLESTONE("Cobblestone", Material.COBBLESTONE, 1),
-    NETHERRACK("Netherrack", Material.NETHERRACK, 1),
-    ROTTEN_FLESH("Rotten Flesh", Material.ROTTEN_FLESH, 1),
-    SNOW_BALL("Snowball", Material.SNOW_BALL, 2),
-    STONE("Stone", Material.STONE, 2),
-    MELON("Melon Slice", Material.MELON, 2),
-    SEEDS("Seeds", Material.SEEDS, 2),
-    MELON_SEEDS("Melon Seeds", Material.MELON_SEEDS, 2),
-    COCOA("Cocoa Beans", Material.COCOA, 2),
-    WHEAT("Wheat", Material.WHEAT, 2),
-    SUGAR_CANE("Sugar Cane", Material.SUGAR_CANE, 2),
-    SUGAR("Sugar", Material.SUGAR, 2),
-    EGG("Egg", Material.EGG, 2),
-    CLAY_BALL("Clay", Material.CLAY_BALL, 3),
-    GRAVEL("Gravel", Material.GRAVEL, 3),
-    PUMPKIN_SEEDS("Pumpkin Seeds", Material.PUMPKIN_SEEDS, 3),
-    GLASS_BOTTLE("Glass Bottle", Material.GLASS_BOTTLE, 3),
-    ARROW("Arrow", Material.ARROW, 3),
-    GRASS("Grass", Material.GRASS, 4),
-    REDSTONE("Redstone Dust", Material.REDSTONE, 4),
-    SNOW_BLOCK("Snow Block", Material.SNOW_BLOCK, 4),
-    GLOWSTONE_DUST("Glowstone Dust", Material.GLOWSTONE_DUST, 4),
-    POTATO_ITEM("Raw Potato", Material.POTATO_ITEM, 4),
-    SOUL_SAND("Sould sand", Material.SOUL_SAND, 4),
-    CARROT_ITEM("Carrot", Material.CARROT_ITEM, 4),
-    FLINT("Flint", Material.FLINT, 4),
-    FEATHER("Feather", Material.FEATHER, 4),
-    STRING("String", Material.STRING, 4),
-    NETHER_WARTS("Nether Wart", Material.NETHER_WARTS, 4),
-    MOSSY_COBBLESTONE("Mossy Cobble", Material.MOSSY_COBBLESTONE, 5),
-    BAKED_POTATO("Baked Potato", Material.BAKED_POTATO, 5),
-    BREAD("Bread", Material.BREAD, 5),
-    GOLD_NUGGET("Gold Nugget", Material.GOLD_NUGGET, 5),
-    ICE("Ice", Material.ICE, 6),
-    WOOL("Wool", Material.WOOL, 6),
-    RED_MUSHROOM("Red Mushroom", Material.RED_MUSHROOM, 6),
-    BONE("Bone", Material.BONE, 6),
-    COAL("Coal", Material.COAL, 8),
-    BROWN_MUSHROOM("Brown Mushroom", Material.BROWN_MUSHROOM, 6),
-    RAW_CHICKEN("Raw Chicken", Material.RAW_CHICKEN, 8),
-    SPIDER_EYE("Spider Eye", Material.SPIDER_EYE, 8),
-    COOKED_CHICKEN("Cooked Chicken", Material.COOKED_CHICKEN, 9),
-    QUARTZ("Nether Quartz", Material.QUARTZ, 10),
-    MYCEL("Mycelium", Material.MYCEL, 10),
-    RAW_BEEF("Raw Beef", Material.RAW_BEEF, 10),
-    PUMPKIN("Pumpkin", Material.PUMPKIN, 10),
-    SULPHUR("Gunpowder", Material.SULPHUR, 10),
-    ENDER_PEARL("Ender Pearl", Material.ENDER_PEARL, 10),
-    FISHING_ROD("Fishing Rod", Material.FISHING_ROD, 10),
-    COOKED_BEEF("Cooked Beef", Material.COOKED_BEEF, 11),
-    IRON_ORE("Iron Ore", Material.IRON_ORE, 12),
-    CLAY("Clay Block", Material.CLAY, 12),
-    OBSIDIAN("Obsidian", Material.OBSIDIAN, 12),
-    PORK("Raw Porkchop", Material.PORK, 12),
-    GRILLED_PORK("Grilled Porkchop", Material.GRILLED_PORK, 13),
-    GLOWSTONE("Glowstone Block", Material.GLOWSTONE, 15),
-    IRON_INGOT("Iron Ingot", Material.IRON_INGOT, 15),
-    MUSHROOM_SOUP("Mushroom Stew", Material.MUSHROOM_SOUP, 15),
-    PUMPKIN_PIE("Pumpkin Pie", Material.PUMPKIN_PIE, 15),
-    WOOD_SWORD("Wooden Sword", Material.WOOD_SWORD, 15),
-    WOOD_SPADE("Wooden Shovel", Material.WOOD_SPADE, 15),
-    STONE_SWORD("Stone Sword", Material.STONE_SWORD, 15),
-    STONE_SPADE("Stone Shovel", Material.STONE_SPADE, 15),
-    FERMENTED_SPIDER_EYE("Fermented Spider Eye", Material.FERMENTED_SPIDER_EYE, 18),
-    ENDSTONE("Endstone", Material.ENDER_STONE, 20),
-    RAW_FISH("Raw Fish", Material.RAW_FISH, 20),
-    HAY_BLOCK("Hay Bale", Material.HAY_BLOCK, 20),
-    LEATHER("Leather", Material.LEATHER, 20),
-    BOW("Bow", Material.BOW, 20),
-    FLINT_AND_STEEL("Flint and Steel", Material.FLINT_AND_STEEL, 20),
-    COOKED_FISH("Cooked Fish", Material.COOKED_FISH, 21),
-    MELON_BLOCK("Melon Block", Material.MELON_BLOCK, 25),
-    SLIME_BALL("Slimeball", Material.SLIME_BALL, 25),
-    BLAZE_POWDER("Blaze Poweder", Material.BLAZE_POWDER, 25),
-    IRON_SPADE("Iron Shovel", Material.IRON_SPADE, 25),
-    WOOD_HOE("Wood Hoe", Material.WOOD_HOE, 25),
-    STONE_HOE("Stone Hoe", Material.STONE_HOE, 25),
-    COAL_ORE("Coal Ore", Material.COAL_ORE, 30),
-    GOLD_ORE("Gold Ore", Material.GOLD_ORE, 30),
-    CAKE("Cake", Material.CAKE, 30),
-    SHEARS("Shears", Material.SHEARS, 30),
-    WOOD_PICKAXE("Wooden Pickaxe", Material.WOOD_PICKAXE, 30),
-    WOOD_AXE("Wooden Axe", Material.WOOD_AXE, 30),
-    STONE_PICKAXE("Stone Pickaxe", Material.STONE_PICKAXE, 30),
-    STONE_AXE("Stone Axe", Material.STONE_AXE, 30),
-    EYE_OF_ENDER("Eye of Ender", Material.EYE_OF_ENDER, 35),
-    REDSTONE_BLOCK("Redstone Block", Material.REDSTONE_BLOCK, 36),
-    GOLD_INGOT("Gold Ingot", Material.GOLD_INGOT, 40),
-    QUARTZ_ORE("Nether Quartz Ore", Material.QUARTZ_ORE, 40),
-    QUARTZ_BLOCK("Nether Quartz Block", Material.QUARTZ_BLOCK, 40),
-    BUCKET("Bucket", Material.BUCKET, 40),
-    SPECKLED_MELON("Glistering Melon", Material.SPECKLED_MELON, 40),
-    IRON_SWORD("Iron Sword", Material.IRON_SWORD, 40),
-    MILK("Milk", Material.MILK_BUCKET, 45),
-    WATER_BUCKET("Water Bucket", Material.WATER_BUCKET, 45),
-    LAVA_BUCKET("Lava Bucket", Material.LAVA_BUCKET, 45),
-    BLAZE_ROD("Blaze Rod", Material.BLAZE_ROD, 50),
-    MAGMA_CREAM("Magma Cream", Material.MAGMA_CREAM, 50),
-    IRON_HOE("Iron Hoe", Material.IRON_HOE, 50),
-    BREWING_STAND_ITEM("Brewing Stand", Material.BREWING_STAND_ITEM, 55),
-    REDSTONE_ORE("Redstone Ore", Material.REDSTONE_ORE, 60),
-    APPLE("Apple", Material.APPLE, 60),
-    GOLD_SPADE("Golden Shovel", Material.GOLD_SPADE, 60),
-    COMPASS("Compass", Material.COMPASS, 65),
-    IRON_PICKAXE("Iron Pickaxe", Material.IRON_PICKAXE, 65),
-    IRON_AXE("Iron Axe", Material.IRON_AXE, 65),
-    LAPIS_BLOCK("Lapis Lazuli Block", Material.LAPIS_BLOCK, 70),
-    COAL_BLOCK("Coal Block", Material.COAL_BLOCK, 72),
-    GOLD_SWORD("Gold Sword", Material.GOLD_SWORD, 90),
-    EMERALD("Emerald", Material.EMERALD, 100),
-    GOLD_HOE("Golden Hoe", Material.GOLD_HOE, 100),
-    LAPIS_ORE("Lapis Lazuli Ore", Material.LAPIS_ORE, 120),
-    IRON_BLOCK("Iron Block", Material.IRON_BLOCK, 135),
-    DIAMOND("Diamond", Material.DIAMOND, 160),
-    CLOCK("Clock", Material.WATCH, 165),
-    DIAMOND_SPADE("Diamond Shovel", Material.DIAMOND_SPADE, 180),
-    GHAST_TEAR("Ghast Tear", Material.GHAST_TEAR, 200),
-    SEA_LANTERN("Sea Lantern", Material.SEA_LANTERN, 200),
-    DIAMOND_SWORD("Diamond Sword", Material.DIAMOND_SWORD, 330),
-    DIAMOND_HOE("Diamond Hoe", Material.DIAMOND_HOE, 340),
-    GOLD_BLOCK("Gold Block", Material.GOLD_BLOCK, 360),
-    GOLDEN_APPLE("Golden Apple", Material.GOLDEN_APPLE, 400),
-    DIAMOND_PICKAXE("Diamond Pickaxe", Material.DIAMOND_PICKAXE, 500),
-    DIAMOND_AXE("Diamond Axe", Material.DIAMOND_AXE, 500),
-    DIAMOND_ORE("Diamond Ore", Material.DIAMOND_ORE, 640),
-    EMERALD_ORE("Emerald Ore", Material.EMERALD_ORE, 800),
-    EMERALD_BLOCK("Emerald Block", Material.EMERALD_BLOCK, 900),
-    DIAMOND_BLOCK("Diamond Block", Material.DIAMOND_BLOCK, 1450);
+    STONE("Stone", new ItemStack(1), 2),
+    GRASS("Grass", new ItemStack(2), 2),
+    DIRT("Dirt", new ItemStack(3), 1),
+    COBBLESTONE("Cobblestone", new ItemStack(4), 1),
+    OAK_PLANK("Oak Plank", new ItemStack(5), 2),
+    BIRCH_PLANK("Birch Plank", new ItemStack(5, 1, (short) 2), 2),
+    JUNGLE_PLANK("Jungle Plank", new ItemStack(5, 1, (short) 3), 2),
+    OAK_SAPLING("Oak Sapling", new ItemStack(6), 1),
+    SPRUCE_SAPLING("Spruce Sapling", new ItemStack(6, 1, (short) 1), 1),
+    BIRCH_SAPLING("Birch Sapling", new ItemStack(6, 1, (short) 2), 1),
+    JUNGLE_SAPLING("Jungle Sapling", new ItemStack(6, 1, (short) 3), 1),
+    BEDROCK("Bedrock", new ItemStack(7), 0),
+    SAND("Sand", new ItemStack(12), 1),
+    GRAVEL("Gravel", new ItemStack(13), 1),
+    GOLD_ORE("Gold Ore", new ItemStack(14), 1000),
+    IRON_ORE("Iron Ore", new ItemStack(15), 300),
+    COAL_ORE("Coal Ore", new ItemStack(16), 140),
+    OAK_WOOD("Oak Wood", new ItemStack(17), 8),
+    SPRUCE_WOOD("Spruce Wood", new ItemStack(17, 1, (short) 1), 8),
+    BIRCH_WOOD("Birch Wood", new ItemStack(17, 1, (short) 2), 8),
+    JUNGLE_WOOD("Jungle Wood", new ItemStack(17, 1, (short) 3), 8),
+    OAK_LEAVES("Oak Leaves", new ItemStack(18), 0.4),
+    SPRUCE_LEAVES("Spruce Leaves", new ItemStack(18, 1, (short) 1), 0.40),
+    BIRCH_LEAVES("Birch Leaves", new ItemStack(18, 1, (short) 2), 0.40),
+    JUNGLE_LEAVES("Jungle Leaves", new ItemStack(18, 1, (short) 3), 0.40),
+    SPONGE("Sponge", new ItemStack(19), 100_000),
+    GLASS("Glass", new ItemStack(20), 17),
+    LAPIS_LAZULI_ORE("Lapis Lazuli Ore", new ItemStack(21), 300),
+    LAPIS_LAZULI_BLOCK("Lapis Lazuli Block", new ItemStack(22), 385.71),
+    DISPENSER("Dispenser", new ItemStack(23), 70),
+    SANDSTONE("Sandstone", new ItemStack(24), 4),
+    CHISELED_SANDSTONE("Chiseled Sandstone", new ItemStack(24, 1, (short) 1), 4),
+    SMOOTH_SANDSTONE("Smooth Sandstone", new ItemStack(24, 1, (short) 2), 4),
+    NOTE_BLOCK("Note Block", new ItemStack(25), 46),
+    POWERED_RAIL("Powered Rail", new ItemStack(27), 905.17),
+    DEETECTOR_RAIL("Detector Rail", new ItemStack(28), 275.67),
+    STICKY_PISTON("Sticky Piston", new ItemStack(29), 314),
+    WEB("Web", new ItemStack(30), 100),
+    DEAD_SHRUB("Dead Shrub", new ItemStack(31), 4),
+    TALL_GRASS("Tall Grass", new ItemStack(31, 1, (short) 1), 4),
+    FERN("Fern", new ItemStack(31, 1, (short) 2), 4),
+    //Another dead shrub?
+    PISTON("Piston", new ItemStack(33), 310),
+    WOOL("Wool", new ItemStack(35), 40),
+    ORANGE_WOOL("Orange Wool", new ItemStack(35, 1, (short) 1), 49),
+    MAGENTA_WOOL("Magenta Wool", new ItemStack(35, 1, (short) 2), 56.38),
+    LIGHT_BLUE_WOOL("Light Blue Wool", new ItemStack(35, 1, (short) 3), 62.76),
+    YELLOW_WOOL("Yellow Wool", new ItemStack(35, 1, (short) 4), 48),
+    LIME_WOOL("Lime Wool", new ItemStack(35, 1, (short) 5), 59.33),
+    PINK_WOOL("Pink Wool", new ItemStack(35, 1, (short) 6), 46.33),
+    GRAY_WOOL("Gray Wool", new ItemStack(35, 1, (short) 7), 51.33),
+    LIGHT_GRAY_WOOL("Light Gray Wool", new ItemStack(35, 1, (short) 8), 48.44),
+    CYAN_WOOL("Cyan Wool", new ItemStack(35, 1, (short) 9), 79.43),
+    PURPLE_WOOL("Purple Wool", new ItemStack(35, 1, (short) 10), 66.43),
+    BLUE_WOOL("Blue Wool", new ItemStack(35, 1, (short) 11), 82.86),
+    BROWN_WOOL("Brown Wool", new ItemStack(35, 1, (short) 12), 44),
+    GREEN_WOOL("Green Wool", new ItemStack(35, 1, (short) 13), 76),
+    RED_WOOL("Red Wool", new ItemStack(35, 1, (short) 14), 50),
+    BLACK_WOOL("Black Wool", new ItemStack(35, 1, (short) 15), 60),
+    DANDELION("Dandelion", new ItemStack(37), 16),
+    ROSE("Rose", new ItemStack(38), 20),
+    BROWN_MUSHROOM("Brown Mushroom", new ItemStack(39), 16),
+    RED_MUSHROOM("Red Mushroom", new ItemStack(40), 20),
+    GOLD_BLOCK("Gold Block", new ItemStack(41), 8100),
+    IRON_BLOCK("Iron Block", new ItemStack(42), 2430),
+    STONE_SLAB("Stone Slab", new ItemStack(44), 1),
+    SANDSTONE_SLAB("Sandstone Slab", new ItemStack(44, 1, (short) 1), 2),
+    WOODEN_SLAB("Wooden Slab", new ItemStack(44, 1, (short) 2), 1),
+    COBBLESTONE_SLAB("Cobblestone Slab", new ItemStack(44, 1, (short) 3), 0.50),
+    BRICK_SLAB("Brick Slab", new ItemStack(44, 1, (short) 4), 52),
+    STONE_BRICK_SLAB("Stone Brick Slab", new ItemStack(44, 1, (short) 5), 1),
+    NETHER_BRICK_SLAB("Nether Brick Slab", new ItemStack(44, 1, (short) 6), 32.80),
+    QUARTZ_SLAB("Quartz Slab", new ItemStack(44, 1, (short) 7), 140);
 
     private String name;
     private String rawName;
@@ -167,17 +108,18 @@ public enum PickpocketItem {
     private ItemStack itemStack;
     private ItemStack rawItemStack;
     private double chance;
-    private int value;
-    private int maxValue = 2000;
+    private double value;
+    private double maxValue = 4_000_000;
     private DecimalFormat decimalFormat = new DecimalFormat("#.###%");
 
-    PickpocketItem(String name, Material material, int value) {
-        this.material = material;
+    PickpocketItem(String name, ItemStack itemStack, double value) {
+        this.itemStack = itemStack;
+        this.material = itemStack.getType();
         this.value = value;
         this.rawName = name;
         this.rawItemStack = new ItemStack(material);
 
-        this.chance = ((maxValue - value) * .05) / 1000;
+        this.chance = convertToChance(value);
 
         if (value <= 20) this.name = ChatColor.DARK_GRAY + name;
         else if (value <= 40) this.name = ChatColor.GRAY + name;
@@ -207,11 +149,11 @@ public enum PickpocketItem {
 
 
     public ItemStack getLockedItemStack(Profile profile) {
-        lockedItemStack = new ItemStack(Material.STAINED_GLASS_PANE);
+        lockedItemStack = new ItemStack(Material.IRON_FENCE);
         ItemMeta lockedItemStackItemMeta = lockedItemStack.getItemMeta();
-        lockedItemStackItemMeta.setDisplayName(name);
+        lockedItemStackItemMeta.setDisplayName(name + ChatColor.DARK_RED + " [LOCKED]");
         ArrayList lockedItemStackLoreList = Lists.<String>newArrayList();
-        lockedItemStackLoreList.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + decimalFormat.format(chance));
+        lockedItemStackLoreList.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + decimalFormat.format(convertToChance(value)));
 
         lockedItemStackItemMeta.setLore(lockedItemStackLoreList);
         lockedItemStack.setItemMeta(lockedItemStackItemMeta);
@@ -219,13 +161,13 @@ public enum PickpocketItem {
     }
 
     public ItemStack getItemStack(Profile profile) {
-        itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(name);
         ArrayList<String> itemStackLore = new ArrayList<>();
-        itemMeta.setLore(getLockedItemStack(profile).getItemMeta().getLore());
+        itemStackLore.add(ChatColor.GRAY + "Chance: " + ChatColor.WHITE + decimalFormat.format(convertToChance(value)));
         itemStackLore.add(ChatColor.GRAY + "Your chance: " + ChatColor.WHITE + decimalFormat.format(calculateStolenBasedChance(profile.getPickpocketItemModule().getStealsOf(this))));
         itemStackLore.add(ChatColor.GRAY + "Times Stolen: " + ChatColor.WHITE + NumberFormat.getInstance().format(profile.getPickpocketItemModule().getStealsOf(this)));
+        itemMeta.setLore(itemStackLore);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -249,5 +191,9 @@ public enum PickpocketItem {
             }
         }
         return null;
+    }
+
+    public double convertToChance(double value) {
+        return (((maxValue - value) * 50) / maxValue) / 100;
     }
 }

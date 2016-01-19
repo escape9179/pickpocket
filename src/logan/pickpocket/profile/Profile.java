@@ -1,6 +1,7 @@
 package logan.pickpocket.profile;
 
 import logan.pickpocket.main.PickpocketItem;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -40,8 +41,9 @@ public class Profile {
     }
 
     public void givePickpocketItem(PickpocketItem pickpocketItem) {
-        if (pickpocketItemModule.addPickpocketItem(pickpocketItem) == false) player.sendMessage("You've been awarded the pickpocket item " + pickpocketItem.getName() + "!");
+        pickpocketItemModule.addPickpocketItem(pickpocketItem);
         pickpocketItemLoader.writePickpocketItemsToYamlConfiguration(profileConfiguration, pickpocketItemModule.getPickpocketItemIntegerMap());
+        player.sendMessage("Theft of " + pickpocketItem.getName() + ChatColor.RESET + " successful.");
     }
 
     public void setStealing(Player victim) {
