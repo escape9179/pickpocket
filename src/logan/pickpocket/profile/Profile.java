@@ -28,7 +28,11 @@ public class Profile {
 
         pickpocketItemLoader = new PickpocketItemLoader();
         statisticModule = new StatisticModule();
+
         permissionModule = new PermissionModule();
+        permissionModule.setAdmin(profileConfiguration.getAdminSectionValue());
+        permissionModule.setCanBypass(profileConfiguration.getBypassSectionValue());
+        permissionModule.setStealExempt(profileConfiguration.getExemptSectionValue());
 
         pickpocketItemModule = new PickpocketItemModule();
         pickpocketItemModule.setPickpocketItemIntegerMap(pickpocketItemLoader.loadPickpocketItemsFromYamlConfiguration(profileConfiguration));

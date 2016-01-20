@@ -97,6 +97,22 @@ public class ProfileConfiguration {
         return exemptSection;
     }
 
+    public List<?> getItemSectionValue() {
+        return yamlConfiguration.getList(itemSection);
+    }
+
+    public boolean getAdminSectionValue() {
+        return yamlConfiguration.getBoolean(adminSection);
+    }
+
+    public boolean getBypassSectionValue() {
+        return yamlConfiguration.getBoolean(bypassSection);
+    }
+
+    public boolean getExemptSectionValue() {
+        return yamlConfiguration.getBoolean(exemptSection);
+    }
+
     public YamlConfiguration getYamlConfiguration() {
         return yamlConfiguration;
     }
