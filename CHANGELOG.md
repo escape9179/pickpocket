@@ -1,3 +1,6 @@
+#v1.0.5-fix
+* Fixed error when interacting with another player (stealing).
+
 #v1.0.5
 * Fixed commands with optional player arguments not working.
 * Fixed error when interacting with another player (stealing).

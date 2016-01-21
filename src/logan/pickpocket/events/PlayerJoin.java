@@ -23,11 +23,11 @@ public class PlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        for (Profile profile : pickpocket.getProfiles()) {
-            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                return;
-            }
-        }
+//        for (Profile profile : pickpocket.getProfiles()) {
+//            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+//                return;
+//            }
+//        }
 
         pickpocket.addProfile(new Profile(player));
     }

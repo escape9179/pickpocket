@@ -1,6 +1,5 @@
 package logan.pickpocket.events;
 
-import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,10 +52,20 @@ public class InventoryClick implements Listener {
             for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
                 if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
                     boolean shouldCancel = !testChance(profile, pickpocketItem);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (Profiles.get(p, pickpocket.getProfiles()).isAdmin()) {
+                            p.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
+                        }
+                    }
                     event.setCancelled(shouldCancel);
                     if (!event.isCancelled()) {
                         player.getInventory().addItem(currentItem);
                         inventory.remove(currentItem);
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (Profiles.get(p, pickpocket.getProfiles()).isAdmin()) {
+                                p.sendMessage(profile.getPlayer().getName() + " stole from " + profile.getVictim().getName() + ".");
+                            }
+                        }
                     } else event.setCancelled(true);
                     return;
                 }
@@ -76,11 +85,6 @@ public class InventoryClick implements Listener {
         } else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (profile.isAdmin()) {
-                    player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
-                }
-            }
             profile.setStealing(null);
             return false;
         }

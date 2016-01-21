@@ -22,9 +22,6 @@ public class Profile {
     private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
-    private boolean stealExempt = false;
-    private boolean admin = false;
-    private boolean cooldownBypass = false;
 
     public Profile(Player player) {
         this.player = player;
@@ -63,18 +60,15 @@ public class Profile {
                     configuration.set("cooldown-bypass", false);
                 }
 
-                stealExempt = configuration.getBoolean("steal-exempt");
-                admin = configuration.getBoolean("admin");
-                cooldownBypass = configuration.getBoolean("cooldown-bypass");
-
-                loadPickpocketItems();
-
                 configuration.save(file);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        loadPickpocketItems();
+
     }
 
 
@@ -131,30 +125,27 @@ public class Profile {
     }
 
     public void setStealExempt(boolean bool) {
-        stealExempt = bool;
         configuration.set("steal-exempt", bool);
     }
 
     public void setAdmin(boolean bool) {
-        admin = bool;
         configuration.set("admin", bool);
     }
 
     public void setCooldownBypass(boolean bool) {
-        cooldownBypass = bool;
         configuration.set("cooldown-bypass", bool);
     }
 
     public boolean isStealExempt() {
-        return stealExempt;
+        return configuration.getBoolean("steal-exempt");
     }
 
     public boolean isAdmin() {
-        return admin;
+        return configuration.getBoolean("admin");
     }
 
     public boolean canCooldownBypass() {
-        return cooldownBypass;
+        return configuration.getBoolean("cooldown-bypass");
     }
 
     public void setStealing(Player victim) {
