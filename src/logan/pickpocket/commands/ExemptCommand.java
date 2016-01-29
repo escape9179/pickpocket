@@ -1,7 +1,9 @@
 package logan.pickpocket.commands;
 
-import logan.pickpocket.profile.Profile;
+import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.Profiles;
+import logan.pickpocket.profile.Profile;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -11,18 +13,26 @@ import java.util.List;
  * Created by Tre on 1/10/2016.
  */
 public class ExemptCommand implements PickpocketCommand {
+
+    private Pickpocket pickpocket;
+
+    public ExemptCommand(Pickpocket pickpocket) {
+        this.pickpocket = pickpocket;
+    }
+
     @Override
     public void execute(Player player, List<Profile> profiles, Object... args) {
         if (args[1] == null) {
-            Profile profile = Profiles.get(player, profiles);
+            Profile profile = Profiles.get(player, profiles,pickpocket);
             boolean bool = Boolean.parseBoolean(args[0].toString());
-            profile.getPermissionModule().setStealExempt(bool);
+            profile.getProfileConfiguration().setExemptSection(bool);
             player.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + bool + ".");
-        } else {
-            Player otherPlayer = (Player) args[0];
-            boolean bool = Boolean.parseBoolean(args[1].toString());
-            Profile otherPlayerProfile = Profiles.get(otherPlayer, profiles);
-            otherPlayerProfile.getPermissionModule().setStealExempt(bool);
+        }
+        else {
+            Player otherPlayer = Bukkit.getPlayer(args[1].toString());
+            boolean bool = Boolean.parseBoolean(args[0].toString());
+            Profile otherPlayerProfile = Profiles.get(otherPlayer, profiles,pickpocket);
+            otherPlayerProfile.getProfileConfiguration().setExemptSection(bool);
             player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s exempt status to " + bool + ".");
             otherPlayer.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + bool + ".");
         }

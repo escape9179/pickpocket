@@ -49,8 +49,6 @@ public class ProfileConfiguration {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("Created profile sections in path " + path + ".");
     }
 
     private void saveConfiguration() {

@@ -1,5 +1,6 @@
 package logan.pickpocket.profile;
 
+import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.PickpocketItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -10,17 +11,16 @@ import org.bukkit.entity.Player;
 public class Profile {
 
     private Player player;
-    private PickpocketItemInventory pickpocketItemInventory;
     private Player victim;
     private boolean stealing;
 
+    private PickpocketItemInventory pickpocketItemInventory;
     private ProfileConfiguration profileConfiguration;
     private PickpocketItemModule pickpocketItemModule;
     private PickpocketItemLoader pickpocketItemLoader;
     private StatisticModule statisticModule;
-    private PermissionModule permissionModule;
 
-    public Profile(Player player) {
+    public Profile(Player player, Pickpocket pickpocket) {
         this.player = player;
 
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
@@ -29,15 +29,10 @@ public class Profile {
         pickpocketItemLoader = new PickpocketItemLoader();
         statisticModule = new StatisticModule();
 
-        permissionModule = new PermissionModule();
-        permissionModule.setAdmin(profileConfiguration.getAdminSectionValue());
-        permissionModule.setCanBypass(profileConfiguration.getBypassSectionValue());
-        permissionModule.setStealExempt(profileConfiguration.getExemptSectionValue());
-
         pickpocketItemModule = new PickpocketItemModule();
         pickpocketItemModule.setPickpocketItemIntegerMap(pickpocketItemLoader.loadPickpocketItemsFromYamlConfiguration(profileConfiguration));
 
-        pickpocketItemInventory = new PickpocketItemInventory(this);
+        pickpocketItemInventory = new PickpocketItemInventory(this, pickpocket);
     }
 
     public void openPickpocketItemInventory() {
@@ -54,7 +49,8 @@ public class Profile {
         if (victim != null) {
             stealing = true;
             this.victim = victim;
-        } else {
+        }
+        else {
             stealing = false;
             player.closeInventory();
         }
@@ -68,12 +64,12 @@ public class Profile {
         return victim;
     }
 
-    public Player getPlayer() {
-        return player;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public PickpocketItemInventory getPickpocketItemInventory() {
-        return pickpocketItemInventory;
+    public Player getPlayer() {
+        return player;
     }
 
     public PickpocketItemModule getPickpocketItemModule() {
@@ -84,7 +80,7 @@ public class Profile {
         return statisticModule;
     }
 
-    public PermissionModule getPermissionModule() {
-        return permissionModule;
+    public ProfileConfiguration getProfileConfiguration() {
+        return profileConfiguration;
     }
 }

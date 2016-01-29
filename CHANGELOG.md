@@ -1,12 +1,16 @@
 #v1.1
 * Major refactoring.
 * Added leveling system.
-* Can't steal items with custom names.
 //TODO Add steal log for each player (Suggested by zainmz).
 //TODO Add reputation factor (Suggested by 0ct0ber).
 //TODO Add optional punishments for stealing.
 //TODO Finish adding leveling system.
 
+#v1.1-pre
+* Fixed most bugs
+* Started overhauling pickpocket items
+* Can't steal items with custom names
+* Started leveling system
 
 #v1.0
 * Chance for an item depends on how many times you stole it instead of every items chance being affected.

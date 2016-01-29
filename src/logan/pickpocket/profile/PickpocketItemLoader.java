@@ -14,7 +14,8 @@ public class PickpocketItemLoader {
     public Map<PickpocketItem, Integer> loadPickpocketItemsFromYamlConfiguration(ProfileConfiguration profileConfiguration) {
         List<?> pickpocketSaves = profileConfiguration.getYamlConfiguration().getList(profileConfiguration.getItemSection());
         Map<PickpocketItem, Integer> pickpocketItems = new HashMap<>();
-        if (pickpocketSaves == null || pickpocketSaves.isEmpty()) return pickpocketItems;
+        if (pickpocketSaves == null || pickpocketSaves.isEmpty())
+            return pickpocketItems;
 
         String[][] data = new String[pickpocketSaves.size()][2];
         for (int i = 0; i < pickpocketSaves.size(); i++) {

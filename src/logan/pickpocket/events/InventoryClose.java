@@ -23,7 +23,7 @@ public class InventoryClose implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles());
+        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
         if (profile.isStealing()) profile.setStealing(null);
     }
 }

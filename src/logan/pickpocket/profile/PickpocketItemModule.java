@@ -2,8 +2,8 @@ package logan.pickpocket.profile;
 
 import logan.pickpocket.main.PickpocketItem;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Tre on 1/17/2016.
@@ -12,7 +12,7 @@ public class PickpocketItemModule {
     private Map<PickpocketItem, Integer> pickpocketItemIntegerMap;
 
     public PickpocketItemModule() {
-        pickpocketItemIntegerMap = new HashMap<>();
+        pickpocketItemIntegerMap = new ConcurrentHashMap<>();
     }
 
     public int getStealsOf(PickpocketItem pickpocketItem) {

@@ -16,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
@@ -29,14 +28,14 @@ import java.util.logging.Logger;
 public class Pickpocket extends JavaPlugin {
 
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "v1.1";
+    public static final String VERSION = "v1.1-pre";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
     public static final String PLAYER_DIRECTORY = PLUGIN_FOLDER_DIRECTORY + "players/";
 
     private Server server = getServer();
     private Logger logger = getLogger();
 
-    private List<Profile> profiles;
+    private static Vector<Profile> profiles;
     private Map<Player, Integer> cooldowns;
     private int cooldownDelay = 8;
 
@@ -66,11 +65,11 @@ public class Pickpocket extends JavaPlugin {
         cooldowns = new ConcurrentHashMap<>();
 
         profilesCommand = new ProfilesCommand();
-        itemsCommand = new ItemsCommand();
-        stealsCommand = new StealsCommand();
-        adminCommand = new AdminCommand();
-        bypassCommand = new BypassCommand();
-        exemptCommand = new ExemptCommand();
+        itemsCommand = new ItemsCommand(this);
+        stealsCommand = new StealsCommand(this);
+        adminCommand = new AdminCommand(this);
+        bypassCommand = new BypassCommand(this);
+        exemptCommand = new ExemptCommand(this);
 
         new InventoryClick(this);
         new InventoryClose(this);
@@ -117,27 +116,37 @@ public class Pickpocket extends JavaPlugin {
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
-            } else if (args[0].equalsIgnoreCase("profiles")) {
+            }
+            else if (args[0].equalsIgnoreCase("profiles")) {
                 profilesCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("items")) {
+            }
+            else if (args[0].equalsIgnoreCase("items")) {
                 itemsCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("steals")) {
+            }
+            else if (args[0].equalsIgnoreCase("steals")) {
                 stealsCommand.execute(player, profiles);
-
-            } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
+            }
+            else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 PickpocketItem[] items = PickpocketItem.values();
                 for (int i = 0; i < Integer.valueOf(args[1]); i++) {
-                    Profiles.get(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
+                    Profile profile = Profiles.get(player, profiles, this);
+                    profile.givePickpocketItem(items[new Random().nextInt(items.length)]);
                 }
-            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
+            }
+            else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
                 adminCommand.execute(player, profiles, args[1]);
-            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
-                if (args.length > 2) exemptCommand.execute(player, profiles, args[1], args[2]);
+            }
+            else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
+                if (args.length > 2)
+                    exemptCommand.execute(player, profiles, args[1], args[2]);
                 else exemptCommand.execute(player, profiles, args[1], null);
-            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
-                if (args.length > 2) bypassCommand.execute(player, profiles, args[1], args[2]);
+            }
+            else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
+                if (args.length > 2)
+                    bypassCommand.execute(player, profiles, args[1], args[2]);
                 else bypassCommand.execute(player, profiles, args[1], null);
-            } else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
+            }
+            else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 configuration.printKeys(player);
             }
         }
@@ -145,11 +154,11 @@ public class Pickpocket extends JavaPlugin {
         return true;
     }
 
-    public void addProfile(Profile profile) {
+    public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
 
-    public List<Profile> getProfiles() {
+    public static Vector<Profile> getProfiles() {
         return profiles;
     }
 
@@ -160,4 +169,6 @@ public class Pickpocket extends JavaPlugin {
     public Map<Player, Integer> getCooldowns() {
         return cooldowns;
     }
+
+
 }

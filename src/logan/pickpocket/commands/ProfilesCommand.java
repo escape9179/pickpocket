@@ -20,7 +20,13 @@ public class ProfilesCommand implements PickpocketCommand {
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < profiles.size(); i++) {
-            stringBuilder.append(ChatColor.GRAY + profiles.get(i).getPlayer().getName() + " (" + ChatColor.WHITE + NumberFormat.getInstance().format(profiles.get(i).getPickpocketItemModule().getSteals()) + ChatColor.GRAY + "), ");
+            stringBuilder.append(ChatColor.GRAY);
+            stringBuilder.append(profiles.get(i).getPlayer().getName());
+            stringBuilder.append(" (");
+            stringBuilder.append(ChatColor.WHITE);
+            stringBuilder.append(NumberFormat.getInstance().format(profiles.get(i).getPickpocketItemModule().getSteals()));
+            stringBuilder.append(ChatColor.GRAY);
+            stringBuilder.append("), ");
         }
 
         player.sendMessage(stringBuilder.toString());
