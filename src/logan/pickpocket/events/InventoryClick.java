@@ -31,6 +31,11 @@ public class InventoryClick implements Listener {
         Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
+        
+        if(currentItem == null) {
+            return;
+        }
+        
         try {
             if (inventory.getItem(event.getSlot()) == null) return;
         } catch (NullPointerException e) {
@@ -45,7 +50,8 @@ public class InventoryClick implements Listener {
 
 
         for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItem.getRawItemStack().getItemMeta().getDisplayName())) {
+            ItemStack pickpocketStack = pickpocketItem.getRawItemStack();
+            if(currentItem.getType() == pickpocketStack.getType() && currentItem.getDurability() == pickpocketStack.getDurability()) {
                 boolean shouldCancel = !testChance(profile, pickpocketItem);
                 event.setCancelled(shouldCancel);
                 if (!event.isCancelled()) {

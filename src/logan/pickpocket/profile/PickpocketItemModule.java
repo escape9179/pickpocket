@@ -16,7 +16,7 @@ public class PickpocketItemModule {
     }
 
     public int getStealsOf(PickpocketItem pickpocketItem) {
-        return pickpocketItemIntegerMap.get(pickpocketItem);
+        return pickpocketItemIntegerMap.getOrDefault(pickpocketItem, 0);
     }
 
     public int getSteals() {

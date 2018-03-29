@@ -122,8 +122,12 @@ public class PickpocketItemInventory implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         try {
-            if (e.getInventory().getItem(e.getSlot()) == null) return;
-            if (e.getClickedInventory() == null) return;
+            if (e.getCurrentItem() == null) {
+                return;
+            }
+            if (!e.getClickedInventory().getName().equals(NAME)) {
+                return;
+            }
         } catch (Exception e1) {
             return;
         }
