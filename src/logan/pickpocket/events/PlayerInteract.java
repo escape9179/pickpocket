@@ -38,6 +38,5 @@ public class PlayerInteract implements Listener {
         else {
             player.sendMessage(ChatColor.RED + "You must wait " + pickpocket.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
-
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class ProfilesCommand implements PickpocketCommand {
 
     @Override
-    public void execute(Player player, List<Profile> profiles, Object... objects) {
+    public <T> void execute(Player player, List<Profile> profiles, T... objects) {
         player.sendMessage(ChatColor.GRAY + "Profiles: ");
 
         if (profiles.isEmpty()) return;

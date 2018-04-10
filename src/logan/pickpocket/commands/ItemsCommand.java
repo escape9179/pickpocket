@@ -19,7 +19,7 @@ public class ItemsCommand implements PickpocketCommand {
     }
 
     @Override
-    public void execute(Player player, List<Profile> profiles, Object... objects) {
+    public <T> void execute(Player player, List<Profile> profiles, T... objects) {
         Profile profile = Profiles.get(player, profiles,pickpocket);
         profile.openPickpocketItemInventory();
     }

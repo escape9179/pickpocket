@@ -48,8 +48,9 @@ public class PickpocketItemInventory implements Listener {
 
         configureButtons();
 
-        if (!pickpocketItems.isEmpty())
-            inventoryList.add(Bukkit.createInventory(null, 54, "Pickpocket Items Page: 1"));
+        if (!pickpocketItems.isEmpty()) {
+            inventoryList.add(Bukkit.createInventory(null, 54, NAME));
+        }
 
         int slotNum = 0;
         int maxSize = 44;
@@ -57,7 +58,7 @@ public class PickpocketItemInventory implements Listener {
         Iterator<PickpocketItem> iterator = pickpocketItems.iterator();
         while (iterator.hasNext()) {
             if (slotNum > maxSize) {
-                Inventory inventory = Bukkit.createInventory(null, 54, "Pickpocket Items Page: " + inventoryNum);
+                Inventory inventory = Bukkit.createInventory(null, 54, NAME);
                 inventoryList.add(inventory);
                 inventoryNum++;
                 slotNum = 0;
@@ -91,12 +92,16 @@ public class PickpocketItemInventory implements Listener {
     }
 
     public void nextPage() {
-        if (inventoryOpen == inventoryList.size() - 1) return;
+        if (inventoryOpen == inventoryList.size() - 1) {
+            return;
+        }
         player.openInventory(addButtons(inventoryList.get(++inventoryOpen)));
     }
 
     public void previousPage() {
-        if (inventoryOpen == 0) return;
+        if (inventoryOpen == 0) {
+            return;
+        }
         player.openInventory(addButtons(inventoryList.get(--inventoryOpen)));
     }
 
@@ -121,19 +126,20 @@ public class PickpocketItemInventory implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        try {
-            if (e.getCurrentItem() == null) {
-                return;
-            }
-            if (!e.getClickedInventory().getName().equals(NAME)) {
-                return;
-            }
-        } catch (Exception e1) {
+
+        System.out.println("Clicking item inventory.");
+
+        if (e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) {
             return;
         }
+        if (!e.getClickedInventory().getName().equals(NAME)) {
+            return;
+        }
+        
+        e.setCancelled(true);
+        
         if (e.getCurrentItem().getItemMeta().getDisplayName().equals(nextButtonName)) {
             nextPage();
-            e.setCancelled(true);
         }
         if (e.getCurrentItem().getItemMeta().getDisplayName().equals(backButtonName)) {
             previousPage();

@@ -21,7 +21,7 @@ public class StealsCommand implements PickpocketCommand {
     }
 
     @Override
-    public void execute(Player player, List<Profile> profiles, Object... objects) {
+    public <T> void execute(Player player, List<Profile> profiles, T... objects) {
         Profile profile = Profiles.get(player, profiles,pickpocket);
         profile.getPlayer().sendMessage(ChatColor.GRAY + "You've stole " + ChatColor.GREEN + NumberFormat.getInstance().format(profile.getPickpocketItemModule().getSteals()) + " times.");
         profile.getPlayer().sendMessage(ChatColor.GRAY + "Level " + ChatColor.YELLOW + profile.getStatisticModule().getLevel());

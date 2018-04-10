@@ -27,8 +27,9 @@ import java.util.logging.Logger;
  */
 public class Pickpocket extends JavaPlugin {
 
+    private static Pickpocket instance;
+    
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "v1.1-pre";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
     public static final String PLAYER_DIRECTORY = PLUGIN_FOLDER_DIRECTORY + "players/";
 
@@ -56,6 +57,8 @@ public class Pickpocket extends JavaPlugin {
     private BukkitScheduler scheduler;
 
     public void onEnable() {
+        instance = this;
+        
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
         File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
@@ -90,11 +93,11 @@ public class Pickpocket extends JavaPlugin {
             }
         }, 20, 20);
 
-        logger.info(NAME + " " + VERSION + " enabled.");
+        logger.info(getName() + " enabled.");
     }
 
     public void onDisable() {
-        logger.info(NAME + " " + VERSION + " disabled.");
+        logger.info(getName() + " disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -106,15 +109,15 @@ public class Pickpocket extends JavaPlugin {
 
         if (label.equalsIgnoreCase("pickpocket")) {
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + VERSION);
+                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket steals' to check how many times you've stolen.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt <optional name>' to exempt yourself from being stolen from.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass <optional name>' to toggle cooldown bypass.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt [name]' to exempt yourself from being stolen from.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass [name]' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
-                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
+                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom <amount>");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
             }
             else if (args[0].equalsIgnoreCase("profiles")) {
@@ -134,17 +137,17 @@ public class Pickpocket extends JavaPlugin {
                 }
             }
             else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
-                adminCommand.execute(player, profiles, args[1]);
+                adminCommand.execute(player, profiles, args);
             }
             else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
-                if (args.length > 2)
-                    exemptCommand.execute(player, profiles, args[1], args[2]);
-                else exemptCommand.execute(player, profiles, args[1], null);
+                if (args.length > 1)
+                    exemptCommand.execute(player, profiles, args[1]);
+                else exemptCommand.execute(player, profiles);
             }
             else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
-                if (args.length > 2)
-                    bypassCommand.execute(player, profiles, args[1], args[2]);
-                else bypassCommand.execute(player, profiles, args[1], null);
+                if (args.length > 1)
+                    bypassCommand.execute(player, profiles, args[1]);
+                else bypassCommand.execute(player, profiles);
             }
             else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 configuration.printKeys(player);
@@ -169,6 +172,8 @@ public class Pickpocket extends JavaPlugin {
     public Map<Player, Integer> getCooldowns() {
         return cooldowns;
     }
-
-
+    
+    public static Pickpocket getInstance() {
+        return instance;
+    }
 }

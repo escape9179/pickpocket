@@ -20,11 +20,12 @@ public class AdminCommand implements PickpocketCommand {
     }
 
     @Override
-    public void execute(Player player, List<Profile> profiles, Object... args) {
+    public <T> void execute(Player player, List<Profile> profiles, T... objects) {
         if (player.isOp() || player.hasPermission(Pickpocket.PICKPOCKET_ADMIN)) {
-            boolean bool = Boolean.parseBoolean(args[0].toString());
-            Profiles.get(player, profiles,pickpocket).getProfileConfiguration().setAdminSection(bool);
-            player.sendMessage(ChatColor.GRAY + "Pickpocket Admin status set to " + bool + ".");
+            Profile profile = Profiles.get(player, profiles, pickpocket);
+            boolean value = profile.getProfileConfiguration().getAdminSectionValue();
+            Profiles.get(player, profiles, pickpocket).getProfileConfiguration().setAdminSection(value = !value);
+            player.sendMessage(ChatColor.GRAY + "Pickpocket Admin status set to " + value + ".");
         }
     }
 }

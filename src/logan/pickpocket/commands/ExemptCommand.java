@@ -21,16 +21,16 @@ public class ExemptCommand implements PickpocketCommand {
     }
 
     @Override
-    public void execute(Player player, List<Profile> profiles, Object... args) {
-        if (args[1] == null) {
+    public <T> void execute(Player player, List<Profile> profiles, T... objects) {
+        if (objects.length == 0) {
             Profile profile = Profiles.get(player, profiles,pickpocket);
-            boolean bool = Boolean.parseBoolean(args[0].toString());
-            profile.getProfileConfiguration().setExemptSection(bool);
+            boolean bool = profile.getProfileConfiguration().getExemptSectionValue();
+            profile.getProfileConfiguration().setExemptSection(bool = !bool);
             player.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + bool + ".");
         }
         else {
-            Player otherPlayer = Bukkit.getPlayer(args[1].toString());
-            boolean bool = Boolean.parseBoolean(args[0].toString());
+            Player otherPlayer = Bukkit.getPlayer(objects[1].toString());
+            boolean bool = Boolean.parseBoolean(objects[0].toString());
             Profile otherPlayerProfile = Profiles.get(otherPlayer, profiles,pickpocket);
             otherPlayerProfile.getProfileConfiguration().setExemptSection(bool);
             player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s exempt status to " + bool + ".");
