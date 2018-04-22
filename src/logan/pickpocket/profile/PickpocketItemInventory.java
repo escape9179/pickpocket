@@ -36,11 +36,11 @@ public class PickpocketItemInventory implements Listener {
 
     public PickpocketItemInventory(Profile profile, Pickpocket pickpocket) {
         this.profile = profile;
-        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
+        player = profile.getPlayer();
+        Pickpocket.registerInventory(player.getUniqueId(), this);
     }
 
     public void open() {
-        player = profile.getPlayer();
         inventoryList = new ArrayList<>();
         Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItemModule().getPickpocketItemIntegerMap().keySet();
         List<PickpocketItem> pickpocketItems = Arrays.asList(PickpocketItem.values());

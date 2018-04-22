@@ -16,11 +16,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import logan.pickpocket.profile.PickpocketItemInventory;
 
 /**
  * Created by Tre on 12/14/2015.
@@ -51,6 +54,8 @@ public class Pickpocket extends JavaPlugin {
     public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
+    
+    private static Map<UUID, PickpocketItemInventory> registeredInventories = new HashMap<>();
 
     private PickpocketConfiguration configuration;
 
@@ -157,6 +162,13 @@ public class Pickpocket extends JavaPlugin {
         return true;
     }
 
+    public static void registerInventory(UUID uuid, PickpocketItemInventory inventory) {
+        if (!registeredInventories.containsKey(uuid)) {
+            getInstance().getServer().getPluginManager().registerEvents(inventory, instance);
+            registeredInventories.put(uuid, inventory);
+        }
+    }
+    
     public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
