@@ -1,9 +1,14 @@
-package logan.pickpocket.main;
+package logan.pickpocket.profile;
 
+import logan.pickpocket.main.Pickpocket;
+import logan.pickpocket.main.PickpocketItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,9 +18,12 @@ import java.util.*;
 /**
  * Created by Tre on 12/26/2015.
  */
-public class PickpocketItemInventory {
+public class PickpocketItemInventory implements Listener {
 
     public static final String NAME = "Pickpocket Items";
+
+    private final String nextButtonName = ChatColor.GRAY + "Next";
+    private final String backButtonName = ChatColor.GRAY + "Back";
 
     private ItemStack nextButton;
     private ItemStack backButton;
@@ -26,20 +34,23 @@ public class PickpocketItemInventory {
     private Profile profile;
     private Player player;
 
-    public PickpocketItemInventory(Profile profile) {
+    public PickpocketItemInventory(Profile profile, Pickpocket pickpocket) {
         this.profile = profile;
+        player = profile.getPlayer();
+        Pickpocket.registerInventory(player.getUniqueId(), this);
     }
 
     public void open() {
-        player = profile.getPlayer();
         inventoryList = new ArrayList<>();
-        Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItems().keySet();
+        Set<PickpocketItem> profilePickpocketItems = profile.getPickpocketItemModule().getPickpocketItemIntegerMap().keySet();
         List<PickpocketItem> pickpocketItems = Arrays.asList(PickpocketItem.values());
         inventoryOpen = 0;
 
         configureButtons();
 
-        if (!pickpocketItems.isEmpty()) inventoryList.add(Bukkit.createInventory(null, 54, "Pickpocket Items Page: 1"));
+        if (!pickpocketItems.isEmpty()) {
+            inventoryList.add(Bukkit.createInventory(null, 54, NAME));
+        }
 
         int slotNum = 0;
         int maxSize = 44;
@@ -47,7 +58,7 @@ public class PickpocketItemInventory {
         Iterator<PickpocketItem> iterator = pickpocketItems.iterator();
         while (iterator.hasNext()) {
             if (slotNum > maxSize) {
-                Inventory inventory = Bukkit.createInventory(null, 54, "Pickpocket Items Page: " + inventoryNum);
+                Inventory inventory = Bukkit.createInventory(null, 54, NAME);
                 inventoryList.add(inventory);
                 inventoryNum++;
                 slotNum = 0;
@@ -80,21 +91,17 @@ public class PickpocketItemInventory {
         player.openInventory(addButtons(inventoryList.get(inventoryOpen)));
     }
 
-    public String getNextButtonName() {
-        return nextButton.getItemMeta().getDisplayName();
-    }
-
-    public String getBackButtonName() {
-        return backButton.getItemMeta().getDisplayName();
-    }
-
     public void nextPage() {
-        if (inventoryOpen == inventoryList.size() - 1) return;
+        if (inventoryOpen == inventoryList.size() - 1) {
+            return;
+        }
         player.openInventory(addButtons(inventoryList.get(++inventoryOpen)));
     }
 
     public void previousPage() {
-        if (inventoryOpen == 0) return;
+        if (inventoryOpen == 0) {
+            return;
+        }
         player.openInventory(addButtons(inventoryList.get(--inventoryOpen)));
     }
 
@@ -103,11 +110,11 @@ public class PickpocketItemInventory {
         backButton = new ItemStack(Material.PAPER);
 
         ItemMeta nextButtonMeta = nextButton.getItemMeta();
-        nextButtonMeta.setDisplayName(ChatColor.GRAY + "Next");
+        nextButtonMeta.setDisplayName(nextButtonName);
         nextButton.setItemMeta(nextButtonMeta);
 
         ItemMeta backButtonMeta = backButton.getItemMeta();
-        backButtonMeta.setDisplayName(ChatColor.GRAY + "Back");
+        backButtonMeta.setDisplayName(backButtonName);
         backButton.setItemMeta(backButtonMeta);
     }
 
@@ -115,6 +122,29 @@ public class PickpocketItemInventory {
         inventory.setItem(45, backButton);
         inventory.setItem(53, nextButton);
         return inventory;
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+
+        System.out.println("Clicking item inventory.");
+
+        if (e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) {
+            return;
+        }
+        if (!e.getClickedInventory().getName().equals(NAME)) {
+            return;
+        }
+        
+        e.setCancelled(true);
+        
+        if (e.getCurrentItem().getItemMeta().getDisplayName().equals(nextButtonName)) {
+            nextPage();
+        }
+        if (e.getCurrentItem().getItemMeta().getDisplayName().equals(backButtonName)) {
+            previousPage();
+            e.setCancelled(true);
+        }
     }
 
 }

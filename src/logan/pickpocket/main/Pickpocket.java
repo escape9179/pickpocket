@@ -1,10 +1,11 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.command.*;
+import logan.pickpocket.commands.*;
 import logan.pickpocket.events.InventoryClick;
 import logan.pickpocket.events.InventoryClose;
 import logan.pickpocket.events.PlayerInteract;
 import logan.pickpocket.events.PlayerJoin;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -15,26 +16,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import logan.pickpocket.profile.PickpocketItemInventory;
 
 /**
  * Created by Tre on 12/14/2015.
  */
 public class Pickpocket extends JavaPlugin {
 
+    private static Pickpocket instance;
+    
     public static final String NAME = "Pickpocket";
-    public static final String VERSION = "v1.0.5-fix";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
+    public static final String PLAYER_DIRECTORY = PLUGIN_FOLDER_DIRECTORY + "players/";
 
     private Server server = getServer();
     private Logger logger = getLogger();
 
-    private List<Profile> profiles;
+    private static Vector<Profile> profiles;
     private Map<Player, Integer> cooldowns;
     private int cooldownDelay = 8;
 
@@ -46,38 +51,43 @@ public class Pickpocket extends JavaPlugin {
     private PickpocketCommand exemptCommand;
 
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
-    public static final Permission PICKPOCKET_BYPASS_COOLDOWN = new Permission("pickpocket.bypass.cooldown", "Allows user to bypass cooldown.");
+    public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
+    
+    private static Map<UUID, PickpocketItemInventory> registeredInventories = new HashMap<>();
+
+    private PickpocketConfiguration configuration;
 
     private BukkitScheduler scheduler;
 
-
     public void onEnable() {
+        instance = this;
+        
         File folder = new File(PLUGIN_FOLDER_DIRECTORY);
+        File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
+        playerFolder.mkdirs();
 
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
         profilesCommand = new ProfilesCommand();
-        itemsCommand = new ItemsCommand();
-        stealsCommand = new StealsCommand();
-        adminCommand = new AdminCommand();
-        bypassCommand = new BypassCommand();
-        exemptCommand = new ExemptCommand();
+        itemsCommand = new ItemsCommand(this);
+        stealsCommand = new StealsCommand(this);
+        adminCommand = new AdminCommand(this);
+        bypassCommand = new BypassCommand(this);
+        exemptCommand = new ExemptCommand(this);
 
         new InventoryClick(this);
         new InventoryClose(this);
         new PlayerInteract(this);
         new PlayerJoin(this);
 
+        configuration = new PickpocketConfiguration(PLUGIN_FOLDER_DIRECTORY, "config.yml");
+        configuration.setup();
+
         scheduler = server.getScheduler();
-        scheduler.runTaskTimerAsynchronously(this, new Runnable() {
-            public void run() {
-                Profiles.save(profiles);
-            }
-        }, 20 * (5), 20 * (5));
 
         scheduler.runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
@@ -88,11 +98,11 @@ public class Pickpocket extends JavaPlugin {
             }
         }, 20, 20);
 
-        logger.info(NAME + " " + VERSION + " enabled.");
+        logger.info(getName() + " enabled.");
     }
 
     public void onDisable() {
-        logger.info(NAME + " " + VERSION + " disabled.");
+        logger.info(getName() + " disabled.");
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -104,46 +114,66 @@ public class Pickpocket extends JavaPlugin {
 
         if (label.equalsIgnoreCase("pickpocket")) {
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + VERSION);
+                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket steals' to check how many times you've stolen.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt <optional name>' to exempt yourself from being stolen from.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass <optional name>' to toggle cooldown bypass.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt [name]' to exempt yourself from being stolen from.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass [name]' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
-                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom");
-            } else if (args[0].equalsIgnoreCase("profiles")) {
+                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom <amount>");
+                sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
+            }
+            else if (args[0].equalsIgnoreCase("profiles")) {
                 profilesCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("items")) {
+            }
+            else if (args[0].equalsIgnoreCase("items")) {
                 itemsCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("steals")) {
+            }
+            else if (args[0].equalsIgnoreCase("steals")) {
                 stealsCommand.execute(player, profiles);
-
-            } else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
+            }
+            else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 PickpocketItem[] items = PickpocketItem.values();
                 for (int i = 0; i < Integer.valueOf(args[1]); i++) {
-                    Profiles.get(player, profiles).givePickpocketItem(items[new Random().nextInt(items.length)]);
+                    Profile profile = Profiles.get(player, profiles, this);
+                    profile.givePickpocketItem(items[new Random().nextInt(items.length)]);
                 }
-            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
-                adminCommand.execute(player, profiles, args[1]);
-            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
-                if (args.length > 2) exemptCommand.execute(player, profiles, args[1], args[2]);
-                else exemptCommand.execute(player, profiles, args[1], null);
-            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS_COOLDOWN)) {
-                if (args.length > 2) bypassCommand.execute(player, profiles, args[1], args[2]);
-                else bypassCommand.execute(player, profiles, args[1], null);
+            }
+            else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
+                adminCommand.execute(player, profiles, args);
+            }
+            else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
+                if (args.length > 1)
+                    exemptCommand.execute(player, profiles, args[1]);
+                else exemptCommand.execute(player, profiles);
+            }
+            else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
+                if (args.length > 1)
+                    bypassCommand.execute(player, profiles, args[1]);
+                else bypassCommand.execute(player, profiles);
+            }
+            else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
+                configuration.printKeys(player);
             }
         }
 
         return true;
     }
 
-    public void addProfile(Profile profile) {
+    public static void registerInventory(UUID uuid, PickpocketItemInventory inventory) {
+        if (!registeredInventories.containsKey(uuid)) {
+            getInstance().getServer().getPluginManager().registerEvents(inventory, instance);
+            registeredInventories.put(uuid, inventory);
+        }
+    }
+    
+    public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
 
-    public List<Profile> getProfiles() {
+    public static Vector<Profile> getProfiles() {
         return profiles;
     }
 
@@ -153,5 +183,9 @@ public class Pickpocket extends JavaPlugin {
 
     public Map<Player, Integer> getCooldowns() {
         return cooldowns;
+    }
+    
+    public static Pickpocket getInstance() {
+        return instance;
     }
 }

@@ -1,7 +1,7 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +23,7 @@ public class InventoryClose implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles());
+        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
         if (profile.isStealing()) profile.setStealing(null);
     }
 }

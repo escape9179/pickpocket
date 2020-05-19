@@ -1,7 +1,8 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.main.Profiles;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,12 +24,9 @@ public class PlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-//        for (Profile profile : pickpocket.getProfiles()) {
-//            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-//                return;
-//            }
-//        }
+        if (Profiles.get(player, Pickpocket.getProfiles(),pickpocket) != null) return;
 
-        pickpocket.addProfile(new Profile(player));
+        System.out.println("Had to create a new profile.");
+        Pickpocket.addProfile(new Profile(player, pickpocket));
     }
 }

@@ -1,7 +1,7 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.main.Profile;
+import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,24 +25,18 @@ public class PlayerInteract implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Player)) return;
         Player player = event.getPlayer();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles());
-
-
-        if (!pickpocket.getCooldowns().containsKey(player) && !profile.canCooldownBypass()) {
+        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
+        if (profile.getProfileConfiguration().getBypassSectionValue()) {
+            return;
+        }
+        else if (!pickpocket.getCooldowns().containsKey(player)) {
             Player entity = (Player) event.getRightClicked();
             player.openInventory(entity.getInventory());
             profile.setStealing(entity);
             pickpocket.addCooldown(player);
-            return;
         }
-
-        if (pickpocket.getCooldowns().containsKey(player) && !profile.canCooldownBypass()) {
+        else {
             player.sendMessage(ChatColor.RED + "You must wait " + pickpocket.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
-            return;
         }
-
-        Player entity = (Player) event.getRightClicked();
-        player.openInventory(entity.getInventory());
-        profile.setStealing(entity);
     }
 }

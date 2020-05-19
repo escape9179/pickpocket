@@ -1,6 +1,9 @@
 package logan.pickpocket.events;
 
-import logan.pickpocket.main.*;
+import logan.pickpocket.main.Pickpocket;
+import logan.pickpocket.main.PickpocketItem;
+import logan.pickpocket.main.Profiles;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,66 +28,62 @@ public class InventoryClick implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles());
-        PickpocketItemInventory pickpocketItemInventory = profile.getPickpocketItemInventory();
+        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
+        
+        if(currentItem == null) {
+            return;
+        }
+        
         try {
             if (inventory.getItem(event.getSlot()) == null) return;
         } catch (NullPointerException e) {
             return;
         }
-        if (inventory.getName().contains(PickpocketItemInventory.NAME)) {
-            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getNextButtonName()))
-                pickpocketItemInventory.nextPage();
-            if (currentItem.getItemMeta().getDisplayName().equals(pickpocketItemInventory.getBackButtonName()))
-                pickpocketItemInventory.previousPage();
+        if (!profile.isStealing()) return;
+        if (Profiles.get(profile.getVictim(), pickpocket.getProfiles(), pickpocket).getProfileConfiguration().getExemptSectionValue()) {
             event.setCancelled(true);
-        } else {
-            if (!profile.isStealing()) return;
-            if (Profiles.get(profile.getVictim(), pickpocket.getProfiles()).isStealExempt()) {
-                event.setCancelled(true);
-                profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
+            profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
+            return;
+        }
+
+
+        for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
+            ItemStack pickpocketStack = pickpocketItem.getRawItemStack();
+            if(currentItem.getType() == pickpocketStack.getType() && currentItem.getDurability() == pickpocketStack.getDurability()) {
+                boolean shouldCancel = !testChance(profile, pickpocketItem);
+                event.setCancelled(shouldCancel);
+                if (!event.isCancelled()) {
+                    player.getInventory().addItem(currentItem);
+                    inventory.remove(currentItem);
+                }
+                else event.setCancelled(true);
                 return;
             }
-
-
-            for (PickpocketItem pickpocketItem : PickpocketItem.values()) {
-                if (currentItem.getType().equals(pickpocketItem.getMaterial())) {
-                    boolean shouldCancel = !testChance(profile, pickpocketItem);
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (Profiles.get(p, pickpocket.getProfiles()).isAdmin()) {
-                            p.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
-                        }
-                    }
-                    event.setCancelled(shouldCancel);
-                    if (!event.isCancelled()) {
-                        player.getInventory().addItem(currentItem);
-                        inventory.remove(currentItem);
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            if (Profiles.get(p, pickpocket.getProfiles()).isAdmin()) {
-                                p.sendMessage(profile.getPlayer().getName() + " stole from " + profile.getVictim().getName() + ".");
-                            }
-                        }
-                    } else event.setCancelled(true);
-                    return;
-                }
-            }
-
-            event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "You cannot steal this item.");
         }
+
+        event.setCancelled(true);
+        player.sendMessage(ChatColor.RED + "You cannot steal this item.");
     }
 
+
     public boolean testChance(Profile profile, PickpocketItem pickpocketItem) {
-        if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getTimesStolenOf(pickpocketItem))) {
-            if (!profile.hasPickpocketItem(pickpocketItem)) {
-                profile.givePickpocketItem(pickpocketItem);
+        if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getPickpocketItemModule().getStealsOf(pickpocketItem))) {
+            profile.givePickpocketItem(pickpocketItem);
+            if (!profile.getPickpocketItemModule().hasPickpocketItem(pickpocketItem)) {
                 pickpocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
+
             }
-        } else {
+        }
+        else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
             profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (profile.getProfileConfiguration().getAdminSectionValue()) {
+                    player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
+                }
+            }
             profile.setStealing(null);
             return false;
         }
