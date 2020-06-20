@@ -15,6 +15,9 @@ public class AdminCommand implements PickpocketCommand {
     @Override
     public void execute(Player player, List<Profile> profiles, Object... args) {
         if (player.isOp() || player.hasPermission(Pickpocket.PICKPOCKET_ADMIN)) {
+            if(args.length==0){
+                player.sendMessage("Usage: /pickpocket admin [true/false]");
+            }
             boolean bool = Boolean.parseBoolean(args[0].toString());
             Profiles.get(player, profiles).setAdmin(bool);
             player.sendMessage(ChatColor.GRAY + "Pickpocket Admin status set to " + bool + ".");
