@@ -27,7 +27,7 @@ public class InventoryClick implements Listener {
         Player player = (Player) event.getWhoClicked();
         Profile profile = Profiles.get(player, pickpocket.getProfiles());
         PickpocketItemInventory pickpocketItemInventory = profile.getPickpocketItemInventory();
-        Inventory inventory = event.getClickedInventory();
+        Inventory inventory = event.getInventory();
         ItemStack currentItem = event.getCurrentItem();
         try {
             if (inventory.getItem(event.getSlot()) == null) return;

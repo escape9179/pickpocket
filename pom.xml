@@ -1,12 +1,12 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.blalp</groupId>
-	<artifactId>eventrewards</artifactId>
+	<groupId>logan</groupId>
+	<artifactId>pickpokcet</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>EventRewards</name>
+	<name>PickPocket</name>
 
 	<build>
 		<plugins>
@@ -33,11 +33,10 @@
 	</repositories>
 	<dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8.6-R0.1-SNAPSHOT</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
 	</dependencies>
 </project>
