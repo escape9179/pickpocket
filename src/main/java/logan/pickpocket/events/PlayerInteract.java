@@ -25,6 +25,7 @@ public class PlayerInteract implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Player)) return;
         Player player = event.getPlayer();
+        if (!player.isSneaking()) return;
         Profile profile = Profiles.get(player, pickpocket.getProfiles());
 
 
