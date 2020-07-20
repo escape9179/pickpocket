@@ -132,7 +132,7 @@ public class PickpocketItemInventory implements Listener {
         if (e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) {
             return;
         }
-        if (!e.getClickedInventory().getName().equals(NAME)) {
+        if (!e.getView().getTitle().equals(NAME)) {
             return;
         }
         

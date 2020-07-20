@@ -2,6 +2,7 @@ main: logan.pickpocket.main.Pickpocket
 name: PickPocket
 version: 1.1
 author: TTG_TRE
+api-version: 1.16
 commands:
   pickpocket:
     aliases: pp
