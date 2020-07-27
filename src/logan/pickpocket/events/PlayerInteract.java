@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -20,7 +21,9 @@ public class PlayerInteract implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player)) return;
+        Pickpocket pickpocket = Pickpocket.getInstance();
+
+        if (!(event.getRightClicked() instanceof Player) || !event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
         Player player = event.getPlayer();
         Profile profile = Profiles.get(player);
         if (profile.getProfileConfiguration().getBypassSectionValue());
