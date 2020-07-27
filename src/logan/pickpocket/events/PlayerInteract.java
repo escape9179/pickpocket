@@ -1,8 +1,8 @@
 package logan.pickpocket.events;
 
 import logan.pickpocket.main.Pickpocket;
-import logan.pickpocket.profile.Profile;
 import logan.pickpocket.main.Profiles;
+import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,21 +14,16 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
  */
 public class PlayerInteract implements Listener {
 
-    private Pickpocket pickpocket;
-
-    public PlayerInteract(Pickpocket pickpocket) {
-        this.pickpocket = pickpocket;
-        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
+    public PlayerInteract() {
+        Pickpocket.registerListener(this);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Player)) return;
         Player player = event.getPlayer();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
-        if (profile.getProfileConfiguration().getBypassSectionValue()) {
-            return;
-        }
+        Profile profile = Profiles.get(player);
+        if (profile.getProfileConfiguration().getBypassSectionValue());
         else if (!pickpocket.getCooldowns().containsKey(player)) {
             Player entity = (Player) event.getRightClicked();
             player.openInventory(entity.getInventory());
