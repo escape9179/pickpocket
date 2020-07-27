@@ -18,17 +18,14 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryClick implements Listener {
 
-    private Pickpocket pickpocket;
-
-    public InventoryClick(Pickpocket pickpocket) {
-        this.pickpocket = pickpocket;
-        pickpocket.getServer().getPluginManager().registerEvents(this, pickpocket);
+    public InventoryClick() {
+        Pickpocket.registerListener(this);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        Profile profile = Profiles.get(player, pickpocket.getProfiles(), pickpocket);
+        Profile profile = Profiles.get(player);
         Inventory inventory = event.getClickedInventory();
         ItemStack currentItem = event.getCurrentItem();
         
@@ -42,7 +39,7 @@ public class InventoryClick implements Listener {
             return;
         }
         if (!profile.isStealing()) return;
-        if (Profiles.get(profile.getVictim(), pickpocket.getProfiles(), pickpocket).getProfileConfiguration().getExemptSectionValue()) {
+        if (Profiles.get(profile.getVictim()).getProfileConfiguration().getExemptSectionValue()) {
             event.setCancelled(true);
             profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
             return;
@@ -72,7 +69,7 @@ public class InventoryClick implements Listener {
         if (Math.random() < pickpocketItem.calculateStolenBasedChance(profile.getPickpocketItemModule().getStealsOf(pickpocketItem))) {
             profile.givePickpocketItem(pickpocketItem);
             if (!profile.getPickpocketItemModule().hasPickpocketItem(pickpocketItem)) {
-                pickpocket.getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
+                Pickpocket.getInstance().getServer().broadcastMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.WHITE + " recieved the pickpocket item " + pickpocketItem.getName() + "!");
 
             }
         }

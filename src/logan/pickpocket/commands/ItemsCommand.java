@@ -1,6 +1,5 @@
 package logan.pickpocket.commands;
 
-import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.entity.Player;
@@ -12,15 +11,9 @@ import java.util.List;
  */
 public class ItemsCommand implements PickpocketCommand {
 
-    private Pickpocket pickpocket;
-
-    public ItemsCommand(Pickpocket pickpocket) {
-        this.pickpocket = pickpocket;
-    }
-
     @Override
     public <T> void execute(Player player, List<Profile> profiles, T... objects) {
-        Profile profile = Profiles.get(player, profiles, pickpocket);
+        Profile profile = Profiles.get(player);
         profile.openPickpocketItemInventory();
     }
 }

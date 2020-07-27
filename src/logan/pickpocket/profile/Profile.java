@@ -1,6 +1,5 @@
 package logan.pickpocket.profile;
 
-import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.PickpocketItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ public class Profile {
     private PickpocketItemLoader pickpocketItemLoader;
     private StatisticModule statisticModule;
 
-    public Profile(Player player, Pickpocket pickpocket) {
+    public Profile(Player player) {
         this.player = player;
 
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
@@ -32,7 +31,7 @@ public class Profile {
         pickpocketItemModule = new PickpocketItemModule();
         pickpocketItemModule.setPickpocketItemIntegerMap(pickpocketItemLoader.loadPickpocketItemsFromYamlConfiguration(profileConfiguration));
 
-        pickpocketItemInventory = new PickpocketItemInventory(this, pickpocket);
+        pickpocketItemInventory = new PickpocketItemInventory(this);
     }
 
     public void openPickpocketItemInventory() {

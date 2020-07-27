@@ -34,7 +34,7 @@ public class PickpocketItemInventory implements Listener {
     private Profile profile;
     private Player player;
 
-    public PickpocketItemInventory(Profile profile, Pickpocket pickpocket) {
+    public PickpocketItemInventory(Profile profile) {
         this.profile = profile;
         player = profile.getPlayer();
         Pickpocket.registerInventory(player.getUniqueId(), this);

@@ -5,25 +5,22 @@ import logan.pickpocket.events.InventoryClick;
 import logan.pickpocket.events.InventoryClose;
 import logan.pickpocket.events.PlayerInteract;
 import logan.pickpocket.events.PlayerJoin;
+import logan.pickpocket.profile.PickpocketItemInventory;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-import logan.pickpocket.profile.PickpocketItemInventory;
 
 /**
  * Created by Tre on 12/14/2015.
@@ -73,16 +70,16 @@ public class Pickpocket extends JavaPlugin {
         cooldowns = new ConcurrentHashMap<>();
 
         profilesCommand = new ProfilesCommand();
-        itemsCommand = new ItemsCommand(this);
-        stealsCommand = new StealsCommand(this);
-        adminCommand = new AdminCommand(this);
-        bypassCommand = new BypassCommand(this);
-        exemptCommand = new ExemptCommand(this);
+        itemsCommand = new ItemsCommand();
+        stealsCommand = new StealsCommand();
+        adminCommand = new AdminCommand();
+        bypassCommand = new BypassCommand();
+        exemptCommand = new ExemptCommand();
 
-        new InventoryClick(this);
-        new InventoryClose(this);
-        new PlayerInteract(this);
-        new PlayerJoin(this);
+        new InventoryClick();
+        new InventoryClose();
+        new PlayerInteract();
+        new PlayerJoin();
 
         configuration = new PickpocketConfiguration(PLUGIN_FOLDER_DIRECTORY, "config.yml");
         configuration.setup();
@@ -136,8 +133,8 @@ public class Pickpocket extends JavaPlugin {
             }
             else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER)) {
                 PickpocketItem[] items = PickpocketItem.values();
-                for (int i = 0; i < Integer.valueOf(args[1]); i++) {
-                    Profile profile = Profiles.get(player, profiles, this);
+                for (int i = 0; i < Integer.parseInt(args[1]); i++) {
+                    Profile profile = Profiles.get(player);
                     profile.givePickpocketItem(items[new Random().nextInt(items.length)]);
                 }
             }
@@ -164,7 +161,7 @@ public class Pickpocket extends JavaPlugin {
 
     public static void registerInventory(UUID uuid, PickpocketItemInventory inventory) {
         if (!registeredInventories.containsKey(uuid)) {
-            getInstance().getServer().getPluginManager().registerEvents(inventory, instance);
+            registerListener(inventory);
             registeredInventories.put(uuid, inventory);
         }
     }
@@ -187,5 +184,9 @@ public class Pickpocket extends JavaPlugin {
     
     public static Pickpocket getInstance() {
         return instance;
+    }
+
+    public static void registerListener(Listener listener) {
+        instance.getServer().getPluginManager().registerEvents(listener, instance);
     }
 }
