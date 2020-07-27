@@ -127,8 +127,6 @@ public class PickpocketItemInventory implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
 
-        System.out.println("Clicking item inventory.");
-
         if (e.getCurrentItem() == null || e.getCurrentItem().getItemMeta() == null) {
             return;
         }
