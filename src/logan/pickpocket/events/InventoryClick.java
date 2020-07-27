@@ -75,7 +75,6 @@ public class InventoryClick implements Listener {
         }
         else {
             profile.getPlayer().sendMessage(ChatColor.RED + "Theft unsuccessful.");
-            profile.getVictim().sendMessage(ChatColor.GRAY + profile.getPlayer().getName() + ChatColor.RED + " has attempted to steal from you.");
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (profile.getProfileConfiguration().getAdminSectionValue()) {
                     player.sendMessage(profile.getPlayer().getName() + " attempted to steal from " + profile.getVictim().getName() + ".");
