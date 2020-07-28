@@ -53,9 +53,10 @@ public class InventoryClick implements Listener {
                 event.setCancelled(shouldCancel);
                 if (!event.isCancelled()) {
                     player.getInventory().addItem(currentItem);
-                    inventory.remove(currentItem);
+                    inventory.setItem(inventory.first(currentItem), null);
+                    player.closeInventory();
                 }
-                else event.setCancelled(true);
+                event.setCancelled(true);
                 return;
             }
         }
