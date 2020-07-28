@@ -7,49 +7,71 @@ import org.bukkit.entity.Player;
 /**
  * Created by Tre on 12/14/2015.
  */
-public class Profile {
+public class Profile
+{
 
-    private Player player;
-    private Player victim;
+    private Player  player;
+    private Player  victim;
     private boolean stealing;
+    private boolean isPlayingMinigame;
 
     private PickpocketItemInventory pickpocketItemInventory;
-    private ProfileConfiguration profileConfiguration;
-    private PickpocketItemModule pickpocketItemModule;
-    private PickpocketItemLoader pickpocketItemLoader;
-    private StatisticModule statisticModule;
+    private ProfileConfiguration    profileConfiguration;
+    private PickpocketItemModule    pickpocketItemModule;
+    private PickpocketItemLoader    pickpocketItemLoader;
+    private StatisticModule         statisticModule;
+    private MinigameModule          minigameModule;
 
-    public Profile(Player player) {
+    public Profile(Player player)
+    {
         this.player = player;
 
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
 
         pickpocketItemLoader = new PickpocketItemLoader();
-        statisticModule = new StatisticModule();
+        statisticModule      = new StatisticModule();
 
         pickpocketItemModule = new PickpocketItemModule();
         pickpocketItemModule.setPickpocketItemIntegerMap(pickpocketItemLoader.loadPickpocketItemsFromYamlConfiguration(profileConfiguration));
 
+        minigameModule = new MinigameModule(this);
+
         pickpocketItemInventory = new PickpocketItemInventory(this);
     }
 
-    public void openPickpocketItemInventory() {
+    public void openPickpocketItemInventory()
+    {
         pickpocketItemInventory.open();
     }
 
-    public void givePickpocketItem(PickpocketItem pickpocketItem) {
+    public void givePickpocketItem(PickpocketItem pickpocketItem)
+    {
         pickpocketItemModule.addPickpocketItem(pickpocketItem);
         pickpocketItemLoader.writePickpocketItemsToYamlConfiguration(profileConfiguration, pickpocketItemModule.getPickpocketItemIntegerMap());
         player.sendMessage("Theft of " + pickpocketItem.getName() + ChatColor.RESET + " successful.");
     }
 
-    public void setStealing(Player victim) {
-        if (victim != null) {
-            stealing = true;
+    public boolean isPlayingMinigame()
+    {
+        return isPlayingMinigame;
+    }
+
+    public void setIsPlayingMinigame(boolean value)
+    {
+        isPlayingMinigame = value;
+    }
+
+    public void setStealing(Player victim)
+    {
+        if (victim != null)
+        {
+            stealing    = true;
             this.victim = victim;
+            minigameModule.getMinigameMenu().setTitle("Pickpocketing " + victim.getName());
         }
-        else {
+        else
+        {
             stealing = false;
             player.closeInventory();
         }
@@ -81,5 +103,9 @@ public class Profile {
 
     public ProfileConfiguration getProfileConfiguration() {
         return profileConfiguration;
+    }
+
+    public MinigameModule getMinigameModule() {
+        return minigameModule;
     }
 }

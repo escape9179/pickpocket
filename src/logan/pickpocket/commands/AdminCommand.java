@@ -1,6 +1,6 @@
 package logan.pickpocket.commands;
 
-import logan.pickpocket.main.Pickpocket;
+import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
@@ -14,7 +14,7 @@ import java.util.List;
 public class AdminCommand implements PickpocketCommand {
     @Override
     public <T> void execute(Player player, List<Profile> profiles, T... objects) {
-        if (player.isOp() || player.hasPermission(Pickpocket.PICKPOCKET_ADMIN)) {
+        if (player.isOp() || player.hasPermission(PickpocketPlugin.PICKPOCKET_ADMIN)) {
             Profile profile = Profiles.get(player);
             boolean value = profile.getProfileConfiguration().getAdminSectionValue();
             Profiles.get(player).getProfileConfiguration().setAdminSection(value = !value);

@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 /**
  * Created by Tre on 12/14/2015.
  */
-public class Pickpocket extends JavaPlugin {
+public class PickpocketPlugin extends JavaPlugin implements Listener {
 
-    private static Pickpocket instance;
+    private static PickpocketPlugin instance;
     
     public static final String NAME = "Pickpocket";
     public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
@@ -80,6 +80,8 @@ public class Pickpocket extends JavaPlugin {
         new InventoryClose();
         new PlayerInteract();
         new PlayerJoin();
+
+        server.getPluginManager().registerEvents(this, this);
 
         configuration = new PickpocketConfiguration(PLUGIN_FOLDER_DIRECTORY, "config.yml");
         configuration.setup();
@@ -182,7 +184,7 @@ public class Pickpocket extends JavaPlugin {
         return cooldowns;
     }
     
-    public static Pickpocket getInstance() {
+    public static PickpocketPlugin getInstance() {
         return instance;
     }
 

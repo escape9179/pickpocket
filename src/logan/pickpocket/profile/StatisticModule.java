@@ -5,12 +5,12 @@ package logan.pickpocket.profile;
  */
 public class StatisticModule {
 
-    private final int maxLevel = 100;
-    private final int stealAdder = 5;
+    private final int maxLevel          = 100;
+    private final int stealAdder        = 5;
     private final int stealsForMaxLevel = maxLevel * stealAdder * 10;
-    private int lastStealAmount = 0;
-    private int steals = 0;
-    private int level = 0;
+    private       int lastStealAmount   = 0;
+    private       int steals            = 0;
+    private       int level             = 0;
 
     public int getLevel() {
         for (int i = 0; i < maxLevel * 10; i++) {

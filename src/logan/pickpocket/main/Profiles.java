@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
  */
 public abstract class Profiles {
     public static Profile get(Player player) {
-        for (Profile profile : Pickpocket.getProfiles()) {
+        for (Profile profile : PickpocketPlugin.getProfiles()) {
             if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 profile.setPlayer(player);
                 return profile;
@@ -16,7 +16,7 @@ public abstract class Profiles {
         }
 
         Profile profile=new Profile(player);
-        Pickpocket.addProfile(profile);
+        PickpocketPlugin.addProfile(profile);
         return profile;
     }
 }

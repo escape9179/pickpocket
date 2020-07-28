@@ -1,7 +1,7 @@
 package logan.pickpocket.profile;
 
-import logan.pickpocket.main.Pickpocket;
 import logan.pickpocket.main.PickpocketItem;
+import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,7 +37,7 @@ public class PickpocketItemInventory implements Listener {
     public PickpocketItemInventory(Profile profile) {
         this.profile = profile;
         player = profile.getPlayer();
-        Pickpocket.registerInventory(player.getUniqueId(), this);
+        PickpocketPlugin.registerInventory(player.getUniqueId(), this);
     }
 
     public void open() {

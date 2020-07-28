@@ -1,6 +1,6 @@
 package logan.pickpocket.events;
 
-import logan.pickpocket.main.Pickpocket;
+import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
@@ -16,27 +16,27 @@ import org.bukkit.inventory.EquipmentSlot;
 public class PlayerInteract implements Listener {
 
     public PlayerInteract() {
-        Pickpocket.registerListener(this);
+        PickpocketPlugin.registerListener(this);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        Pickpocket pickpocket = Pickpocket.getInstance();
+        PickpocketPlugin pickpocketPlugin = PickpocketPlugin.getInstance();
 
         if (!(event.getRightClicked() instanceof Player) || !event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
         Player player = event.getPlayer();
         Profile profile = Profiles.get(player);
 
-        if (!pickpocket.getCooldowns().containsKey(player)) {
+        if (!pickpocketPlugin.getCooldowns().containsKey(player)) {
             Player entity = (Player) event.getRightClicked();
             player.openInventory(entity.getInventory());
             profile.setStealing(entity);
 
             if (!profile.getProfileConfiguration().getBypassSectionValue())
-                pickpocket.addCooldown(player);
+                pickpocketPlugin.addCooldown(player);
         }
         else {
-            player.sendMessage(ChatColor.RED + "You must wait " + pickpocket.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
+            player.sendMessage(ChatColor.RED + "You must wait " + pickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
     }
 }
