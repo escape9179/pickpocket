@@ -54,6 +54,14 @@ public class MinigameModule
         resetGameTimerRunnable();
     }
 
+    public void stopMinigame()
+    {
+        gameTimerTask.cancel();
+        reset();
+        profile.setIsPlayingMinigame(false);
+        minigameMenu.close();
+    }
+
     private Map<Integer, MenuItem> createMinigameMenuItems(Inventory inventory)
     {
         Map<Integer, MenuItem> menuItemMap = new HashMap<>();

@@ -4,6 +4,7 @@ import logan.guiapi.GUIAPI;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +26,12 @@ public class InventoryClose implements Listener {
 
         Player  player  = (Player) event.getPlayer();
         Profile profile = Profiles.get(player);
+
         if (profile.isStealing()) profile.setStealing(null);
+        if (profile.isPlayingMinigame())
+        {
+            profile.getMinigameModule().stopMinigame();
+            player.sendMessage(ChatColor.RED + "Mini-game stopped. Pickpocket attempt unsuccessful.");
+        }
     }
 }
