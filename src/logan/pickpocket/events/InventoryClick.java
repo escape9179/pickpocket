@@ -33,14 +33,9 @@ public class InventoryClick implements Listener
         Inventory inventory   = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if (profile.isPlayingMinigame())
+        if (clickedItem == null || profile.isPlayingMinigame())
         {
             event.setCancelled(true);
-            return;
-        }
-
-        if (clickedItem == null)
-        {
             return;
         }
 
