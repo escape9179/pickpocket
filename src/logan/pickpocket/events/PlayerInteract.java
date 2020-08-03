@@ -31,9 +31,6 @@ public class PlayerInteract implements Listener {
             Player entity = (Player) event.getRightClicked();
             player.openInventory(entity.getInventory());
             profile.setStealing(entity);
-
-            if (!profile.getProfileConfiguration().getBypassSectionValue())
-                pickpocketPlugin.addCooldown(player);
         }
         else {
             player.sendMessage(ChatColor.RED + "You must wait " + pickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
