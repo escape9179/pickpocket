@@ -8,6 +8,7 @@ import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -88,6 +89,12 @@ public class PlayerInteract implements Listener
         }
 
         rummageMenu.show(player);
+
+        // 1/5 chance that the player will get caught while rummaging.
+        if (Math.random() < 0.2) victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
+
+        // Play a sound when rummaging
+        player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
 
         System.out.println("Finished repopulating rummage menu.");
     }
