@@ -27,7 +27,14 @@ public class InventoryClose implements Listener {
         Player  player  = (Player) event.getPlayer();
         Profile profile = Profiles.get(player);
 
+        if (profile.isRummaging())
+        {
+            profile.setRummaging(false);
+            return;
+        }
+
         if (profile.isStealing()) profile.setStealing(null);
+
         if (profile.isPlayingMinigame())
         {
             profile.getMinigameModule().stopMinigame();

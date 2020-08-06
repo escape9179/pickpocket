@@ -33,22 +33,31 @@ public class InventoryClick implements Listener
         Inventory inventory   = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if (clickedItem == null || profile.isPlayingMinigame())
+        if (clickedItem == null || profile.isRummaging() || profile.isPlayingMinigame())
         {
+            System.out.println("Clicked item is null, player is rummaging, or player is playing mini-game.");
             event.setCancelled(true);
             return;
         }
 
         try
         {
-            if (inventory.getItem(event.getSlot()) == null) return;
+            if (inventory.getItem(event.getSlot()) == null)
+            {
+                System.out.println("Slot was null");
+                return;
+            }
         }
         catch (NullPointerException e)
         {
-            return;
+            e.printStackTrace();
         }
 
-        if (!profile.isStealing()) return;
+        if (!profile.isStealing())
+        {
+            System.out.println("Player isn't stealing.");
+            return;
+        }
         if (Profiles.get(profile.getVictim()).getProfileConfiguration().getExemptSectionValue())
         {
             event.setCancelled(true);

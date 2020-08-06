@@ -2,16 +2,22 @@ package logan.pickpocket.events;
 
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
+import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -35,33 +41,77 @@ public class PlayerInteract implements Listener
 
         if (!pickpocketPlugin.getCooldowns().containsKey(player))
         {
-            Player entity = (Player) event.getRightClicked();
-            Menu   menu   = new Menu("Rummaging", 4);
+            Player    victim              = (Player) event.getRightClicked();
+            final int numberOfRandomItems = 4;
 
-            // Pick 4 random items from the victims inventory
-            // and place them into the pickpocketing inventory
-            for (int i = 0; i < 4; i++)
-            {
-                final int inventorySize = entity.getInventory().getStorageContents().length;
-                int       randomSlot    = 0;
-                ItemStack randomItem    = null;
+            showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, numberOfRandomItems));
 
-                while (randomItem == null)
-                {
-                    randomSlot = (int) (Math.random() * inventorySize);
-                    randomItem = entity.getInventory().getStorageContents()[randomSlot];
-                }
-
-                menu.addItem(randomSlot, new MenuItem(randomItem));
-            }
-
-            menu.show(player);
-
-            profile.setStealing(entity);
+            profile.setRummaging(true);
         }
         else
         {
             player.sendMessage(ChatColor.RED + "You must wait " + pickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
+    }
+
+    private void showNewRummageMenu(Player player, Player victim, List<ItemStack> randomItems)
+    {
+        Menu     rummageMenu   = new Menu("Rummage", 4);
+        MenuItem rummageButton = new MenuItem("Keep rummaging...", new ItemStack(Material.CHEST));
+
+        rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
+
+        rummageButton.addListener(clickEvent ->
+        {
+            rummageMenu.close();
+            showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, 4));
+        });
+        rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
+
+        for (int i = 0; i < randomItems.size(); i++)
+        {
+            MenuItem menuItem = new MenuItem(randomItems.get(i));
+            menuItem.addListener(clickEvent ->
+            {
+                final ItemStack fillerItem      = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+                final Inventory inventory       = rummageMenu.getInventory();
+                final Profile   profile         = Profiles.get(player);
+                final int       bottomRightSlot = rummageMenu.getBottomRight();
+
+                inventory.setItem(bottomRightSlot, fillerItem);
+                rummageMenu.close();
+
+                profile.setStealing(victim);
+            });
+
+            rummageMenu.addItem((int) (Math.random() * (rummageMenu.getSlots() - 9)), menuItem);
+        }
+
+        rummageMenu.show(player);
+
+        System.out.println("Finished repopulating rummage menu.");
+    }
+
+    private List<ItemStack> getRandomItemsFromPlayer(Player player, int numberOfItems)
+    {
+        final int       inventorySize  = player.getInventory().getStorageContents().length;
+        List<ItemStack> randomItemList = new ArrayList<>();
+        int             randomSlot;
+        ItemStack       randomItem;
+
+        for (int i = 0; i < numberOfItems; i++)
+        {
+            randomItem = null;
+
+            while (randomItem == null)
+            {
+                randomSlot = (int) (Math.random() * inventorySize);
+                randomItem = player.getInventory().getStorageContents()[randomSlot];
+            }
+
+            randomItemList.add(randomItem);
+        }
+
+        return randomItemList;
     }
 }

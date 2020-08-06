@@ -146,10 +146,10 @@ public class MinigameModule
             }
 
             gameTimerTask.cancel();
+            profile.setIsPlayingMinigame(false);
             minigameMenu.close();
             reset();
             profile.getPlayer().sendMessage("Mini-game over.");
-            profile.setIsPlayingMinigame(false);
 
             if (!profile.getProfileConfiguration().getBypassSectionValue())
                 PickpocketPlugin.addCooldown(profile.getPlayer());

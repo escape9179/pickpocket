@@ -14,6 +14,7 @@ public class Profile
     private Player  victim;
     private boolean stealing;
     private boolean isPlayingMinigame;
+    private boolean isRummaging;
 
     private PickpocketItemInventory pickpocketItemInventory;
     private ProfileConfiguration    profileConfiguration;
@@ -57,6 +58,16 @@ public class Profile
         return isPlayingMinigame;
     }
 
+    public boolean isRummaging()
+    {
+        return isRummaging;
+    }
+
+    public void setRummaging(boolean value)
+    {
+        isRummaging = value;
+    }
+
     public void setIsPlayingMinigame(boolean value)
     {
         isPlayingMinigame = value;
@@ -77,35 +88,43 @@ public class Profile
         }
     }
 
-    public boolean isStealing() {
+    public boolean isStealing()
+    {
         return stealing;
     }
 
-    public Player getVictim() {
+    public Player getVictim()
+    {
         return victim;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(Player player)
+    {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public Player getPlayer()
+    {
         return player;
     }
 
-    public PickpocketItemModule getPickpocketItemModule() {
+    public PickpocketItemModule getPickpocketItemModule()
+    {
         return pickpocketItemModule;
     }
 
-    public StatisticModule getStatisticModule() {
+    public StatisticModule getStatisticModule()
+    {
         return statisticModule;
     }
 
-    public ProfileConfiguration getProfileConfiguration() {
+    public ProfileConfiguration getProfileConfiguration()
+    {
         return profileConfiguration;
     }
 
-    public MinigameModule getMinigameModule() {
+    public MinigameModule getMinigameModule()
+    {
         return minigameModule;
     }
 }
