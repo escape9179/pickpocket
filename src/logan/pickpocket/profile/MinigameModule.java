@@ -101,7 +101,9 @@ public class MinigameModule
             player.sendMessage(ChatColor.RED + "Miss.");
         }
 
-        doGameLoop();
+        // Add the item to the players inventory upon winning mini-game.
+        boolean success = doGameLoop();
+        if (success) player.getInventory().addItem(clickedItem);
     }
 
     private void reset()
@@ -129,8 +131,10 @@ public class MinigameModule
         };
     }
 
-    public void doGameLoop()
+    public boolean doGameLoop()
     {
+        boolean success = false;
+
         shuffleInventoryItems();
 
         if (totalTries.incrementAndGet() >= MAX_TRIES)
@@ -139,6 +143,7 @@ public class MinigameModule
             if (hitCount.get() > MAX_TRIES / 2)
             {
                 profile.getPlayer().sendMessage(ChatColor.GREEN + "Pickpocket success.");
+                success = true;
             }
             else
             {
@@ -159,7 +164,10 @@ public class MinigameModule
             resetGameTimerRunnable();
             hitInTime.set(false);
             System.out.println("Total tries: " + profile.getMinigameModule().getTotalTries() + ".");
+            success = false;
         }
+
+        return success;
     }
 
     public void shuffleInventoryItems()
