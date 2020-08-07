@@ -101,20 +101,18 @@ public class PlayerInteract implements Listener
 
     private List<ItemStack> getRandomItemsFromPlayer(Player player, int numberOfItems)
     {
-        final int       inventorySize  = player.getInventory().getStorageContents().length;
-        List<ItemStack> randomItemList = new ArrayList<>();
-        int             randomSlot;
-        ItemStack       randomItem;
+        final List<ItemStack> randomItemList  = new ArrayList<>();
+        final ItemStack[]     storageContents = player.getInventory().getStorageContents();
+        final int             inventorySize   = player.getInventory().getStorageContents().length;
+        ItemStack             randomItem;
+        int                   randomSlot;
 
         for (int i = 0; i < numberOfItems; i++)
         {
-            randomItem = null;
+            randomSlot = (int) (Math.random() * inventorySize);
+            randomItem = storageContents[randomSlot];
 
-            while (randomItem == null)
-            {
-                randomSlot = (int) (Math.random() * inventorySize);
-                randomItem = player.getInventory().getStorageContents()[randomSlot];
-            }
+            if (randomItem == null) continue;
 
             randomItemList.add(randomItem);
         }
