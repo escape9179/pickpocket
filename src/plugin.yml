@@ -1,7 +1,7 @@
 main: logan.pickpocket.main.PickpocketPlugin
 name: PickPocket
 version: 2.0-SNAPSHOT
-author: TTG_TRE
+author: escape9179
 api-version: 1.14
 commands:
   pickpocket:
