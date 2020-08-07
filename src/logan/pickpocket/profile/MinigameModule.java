@@ -113,11 +113,8 @@ public class MinigameModule
         boolean success = doGameLoop();
         if (success)
         {
-            Player    victim;
-            Inventory victimInventory;
-
-            victim          = Profiles.get(player).getVictim();
-            victimInventory = victim.getInventory();
+            Player    victim          = Profiles.get(player).getVictim();
+            Inventory victimInventory = victim.getInventory();
 
             // Remove the item from victims inventory.
             victimInventory.setItem(victimInventory.first(clickedItem), null);
