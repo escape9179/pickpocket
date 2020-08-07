@@ -1,7 +1,5 @@
 package logan.pickpocket.profile;
 
-import logan.pickpocket.main.PickpocketItem;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -16,12 +14,8 @@ public class Profile
     private boolean isPlayingMinigame;
     private boolean isRummaging;
 
-    private PickpocketItemInventory pickpocketItemInventory;
-    private ProfileConfiguration    profileConfiguration;
-    private PickpocketItemModule    pickpocketItemModule;
-    private PickpocketItemLoader    pickpocketItemLoader;
-    private StatisticModule         statisticModule;
-    private MinigameModule          minigameModule;
+    private ProfileConfiguration profileConfiguration;
+    private MinigameModule       minigameModule;
 
     public Profile(Player player)
     {
@@ -30,27 +24,7 @@ public class Profile
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
 
-        pickpocketItemLoader = new PickpocketItemLoader();
-        statisticModule      = new StatisticModule();
-
-        pickpocketItemModule = new PickpocketItemModule();
-        pickpocketItemModule.setPickpocketItemIntegerMap(pickpocketItemLoader.loadPickpocketItemsFromYamlConfiguration(profileConfiguration));
-
         minigameModule = new MinigameModule(this);
-
-        pickpocketItemInventory = new PickpocketItemInventory(this);
-    }
-
-    public void openPickpocketItemInventory()
-    {
-        pickpocketItemInventory.open();
-    }
-
-    public void givePickpocketItem(PickpocketItem pickpocketItem)
-    {
-        pickpocketItemModule.addPickpocketItem(pickpocketItem);
-        pickpocketItemLoader.writePickpocketItemsToYamlConfiguration(profileConfiguration, pickpocketItemModule.getPickpocketItemIntegerMap());
-        player.sendMessage("Theft of " + pickpocketItem.getName() + ChatColor.RESET + " successful.");
     }
 
     public boolean isPlayingMinigame()
@@ -106,16 +80,6 @@ public class Profile
     public Player getPlayer()
     {
         return player;
-    }
-
-    public PickpocketItemModule getPickpocketItemModule()
-    {
-        return pickpocketItemModule;
-    }
-
-    public StatisticModule getStatisticModule()
-    {
-        return statisticModule;
     }
 
     public ProfileConfiguration getProfileConfiguration()

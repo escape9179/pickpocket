@@ -1,7 +1,6 @@
 package logan.pickpocket.events;
 
 import logan.guiapi.GUIAPI;
-import logan.pickpocket.main.PickpocketItem;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
@@ -58,6 +57,7 @@ public class InventoryClick implements Listener
             System.out.println("Player isn't stealing.");
             return;
         }
+
         if (Profiles.get(profile.getVictim()).getProfileConfiguration().getExemptSectionValue())
         {
             event.setCancelled(true);
@@ -65,23 +65,9 @@ public class InventoryClick implements Listener
             return;
         }
 
-        for (PickpocketItem pickpocketItem : PickpocketItem.values())
-        {
-            ItemStack pickpocketStack = pickpocketItem.getRawItemStack();
-
-            if (clickedItem.getType() == pickpocketStack.getType() && clickedItem.getDurability() == pickpocketStack.getDurability())
-            {
-                // Cancel original click event
-                event.setCancelled(true);
-
-                profile.getMinigameModule().startMinigame(inventory, clickedItem);
-                profile.setIsPlayingMinigame(true);
-
-                return;
-            }
-        }
-
         event.setCancelled(true);
-        player.sendMessage(ChatColor.RED + "You cannot steal this item.");
+
+        profile.getMinigameModule().startMinigame(inventory, clickedItem);
+        profile.setIsPlayingMinigame(true);
     }
 }

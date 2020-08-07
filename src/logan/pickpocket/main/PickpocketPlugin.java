@@ -1,11 +1,13 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.commands.*;
+import logan.pickpocket.commands.AdminCommand;
+import logan.pickpocket.commands.BypassCommand;
+import logan.pickpocket.commands.ExemptCommand;
+import logan.pickpocket.commands.PickpocketCommand;
 import logan.pickpocket.events.InventoryClick;
 import logan.pickpocket.events.InventoryClose;
 import logan.pickpocket.events.PlayerInteract;
 import logan.pickpocket.events.PlayerJoin;
-import logan.pickpocket.profile.PickpocketItemInventory;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -18,7 +20,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.*;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -53,8 +56,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
     public static final Permission PICKPOCKET_ADMIN     = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
 
-    private static Map<UUID, PickpocketItemInventory> registeredInventories = new HashMap<>();
-
     private PickpocketConfiguration configuration;
 
     private BukkitScheduler scheduler;
@@ -71,9 +72,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
         profiles  = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
-        profilesCommand = new ProfilesCommand();
-        itemsCommand    = new ItemsCommand();
-        stealsCommand   = new StealsCommand();
         adminCommand    = new AdminCommand();
         bypassCommand   = new BypassCommand();
         exemptCommand   = new ExemptCommand();
@@ -124,14 +122,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
             if (args.length == 0)
             {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket profiles' to see a list of loaded profiles.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket items' to see a list of your pickpocket items.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket steals' to check how many times you've stolen.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt [name]' to exempt yourself from being stolen from.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass [name]' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
-                sender.sendMessage(ChatColor.GRAY + "/pickpocket giverandom <amount>");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
             }
             else if (args[0].equalsIgnoreCase("profiles"))
@@ -145,15 +139,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
             else if (args[0].equalsIgnoreCase("steals"))
             {
                 stealsCommand.execute(player, profiles);
-            }
-            else if (args[0].equalsIgnoreCase("giverandom") && player.hasPermission(PICKPOCKET_DEVELOPER))
-            {
-                PickpocketItem[] items = PickpocketItem.values();
-                for (int i = 0; i < Integer.parseInt(args[1]); i++)
-                {
-                    Profile profile = Profiles.get(player);
-                    profile.givePickpocketItem(items[new Random().nextInt(items.length)]);
-                }
             }
             else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN))
             {
@@ -178,15 +163,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
         }
 
         return true;
-    }
-
-    public static void registerInventory(UUID uuid, PickpocketItemInventory inventory)
-    {
-        if (!registeredInventories.containsKey(uuid))
-        {
-            registerListener(inventory);
-            registeredInventories.put(uuid, inventory);
-        }
     }
 
     public static void addProfile(Profile profile)
