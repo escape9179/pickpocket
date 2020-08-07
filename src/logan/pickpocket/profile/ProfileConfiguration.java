@@ -4,13 +4,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Tre on 1/18/2016.
  */
 public class ProfileConfiguration {
-    private final String itemSection = "items";
     private final String adminSection = "admin";
     private final String bypassSection = "bypass";
     private final String exemptSection = "exempt";
@@ -38,7 +36,6 @@ public class ProfileConfiguration {
         try {
             if (!file.exists()) {
                 file.createNewFile();
-                if (!yamlConfiguration.isConfigurationSection(itemSection)) yamlConfiguration.createSection(itemSection);
                 if (!yamlConfiguration.isConfigurationSection(adminSection)) yamlConfiguration.createSection(adminSection);
                 if (!yamlConfiguration.isConfigurationSection(bypassSection)) yamlConfiguration.createSection(bypassSection);
                 if (!yamlConfiguration.isConfigurationSection(exemptSection)) yamlConfiguration.createSection(exemptSection);
@@ -59,11 +56,6 @@ public class ProfileConfiguration {
         }
     }
 
-    public void setItemSection(List<String> values) {
-        yamlConfiguration.set(itemSection, values);
-        saveConfiguration();
-    }
-
     public void setAdminSection(boolean bool) {
         yamlConfiguration.set(adminSection, bool);
         saveConfiguration();
@@ -79,10 +71,6 @@ public class ProfileConfiguration {
         saveConfiguration();
     }
 
-    public String getItemSection() {
-        return itemSection;
-    }
-
     public String getAdminSection() {
         return adminSection;
     }
@@ -93,10 +81,6 @@ public class ProfileConfiguration {
 
     public String getExemptSection() {
         return exemptSection;
-    }
-
-    public List<?> getItemSectionValue() {
-        return yamlConfiguration.getList(itemSection);
     }
 
     public boolean getAdminSectionValue() {
