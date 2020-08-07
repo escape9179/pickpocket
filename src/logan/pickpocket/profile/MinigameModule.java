@@ -4,8 +4,10 @@ import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.MenuItemClickEvent;
 import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -95,10 +97,16 @@ public class MinigameModule
             hitCount.incrementAndGet();
             hitInTime.set(true);
             player.sendMessage(ChatColor.GREEN + "Hit " + profile.getMinigameModule().getHitCount() + " out of " + MAX_TRIES + ".");
+
+            // Play hit sound
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
         }
         else
         {
             player.sendMessage(ChatColor.RED + "Miss.");
+
+            // Play miss sound
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
         }
 
         // Add the item to the players inventory upon winning mini-game.
