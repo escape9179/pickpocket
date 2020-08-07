@@ -111,7 +111,20 @@ public class MinigameModule
 
         // Add the item to the players inventory upon winning mini-game.
         boolean success = doGameLoop();
-        if (success) player.getInventory().addItem(clickedItem);
+        if (success)
+        {
+            Player    victim;
+            Inventory victimInventory;
+
+            victim          = Profiles.get(player).getVictim();
+            victimInventory = victim.getInventory();
+
+            // Remove the item from victims inventory.
+            victimInventory.setItem(victimInventory.first(clickedItem), null);
+
+            // Add item to thieves inventory.
+            player.getInventory().addItem(clickedItem);
+        }
     }
 
     private void reset()
