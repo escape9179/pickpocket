@@ -43,9 +43,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
     private static Map<Player, Integer> cooldowns;
     private static int                  cooldownDelay = 8;
 
-    private PickpocketCommand profilesCommand;
-    private PickpocketCommand itemsCommand;
-    private PickpocketCommand stealsCommand;
     private PickpocketCommand adminCommand;
     private PickpocketCommand bypassCommand;
     private PickpocketCommand exemptCommand;
@@ -133,18 +130,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass' [name]' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
-            }
-            else if (args[0].equalsIgnoreCase("profiles"))
-            {
-                profilesCommand.execute(player, profiles);
-            }
-            else if (args[0].equalsIgnoreCase("items"))
-            {
-                itemsCommand.execute(player, profiles);
-            }
-            else if (args[0].equalsIgnoreCase("steals"))
-            {
-                stealsCommand.execute(player, profiles);
             }
             else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN))
             {
