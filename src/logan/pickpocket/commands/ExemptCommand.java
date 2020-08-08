@@ -1,6 +1,5 @@
 package logan.pickpocket.commands;
 
-import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.Bukkit;
@@ -18,13 +17,6 @@ public class ExemptCommand implements PickpocketCommand {
     @Override
     public <T> void execute(Player player, List<Profile> profiles, T... objects)
     {
-
-        if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_EXEMPT))
-        {
-            player.sendMessage(ChatColor.RED + "No permission.");
-            return;
-        }
-
         if (objects.length == 0)
         {
             Profile profile = Profiles.get(player);

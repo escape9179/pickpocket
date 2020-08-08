@@ -1,6 +1,5 @@
 package logan.pickpocket.commands;
 
-import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.Bukkit;
@@ -19,13 +18,6 @@ public class BypassCommand implements PickpocketCommand {
     {
 
         //TODO Fix array index out of bounds here
-
-        if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_BYPASS))
-        {
-            player.sendMessage(ChatColor.RED + "No permission.");
-            return;
-        }
-
         if (objects.length == 0)
         {
             Profile profile = Profiles.get(player);

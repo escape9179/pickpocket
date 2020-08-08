@@ -47,6 +47,12 @@ public class PlayerInteract implements Listener
             return;
         }
 
+        if (!profile.isParticipating())
+        {
+            player.sendMessage(ChatColor.RED + "You have pick-pocketing disabled.");
+            return;
+        }
+
         if (!pickpocketPlugin.getCooldowns().containsKey(player))
         {
             final int numberOfRandomItems = 4;

@@ -157,6 +157,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
                     bypassCommand.execute(player, profiles, args[1]);
                 else bypassCommand.execute(player, profiles);
             }
+            else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE))
+            {
+                toggleCommand.execute(player, profiles);
+            }
             else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER))
             {
                 configuration.printKeys(player);
