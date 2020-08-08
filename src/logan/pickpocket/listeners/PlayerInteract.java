@@ -76,7 +76,7 @@ public class PlayerInteract implements Listener
 
         rummageButton.addListener(clickEvent ->
         {
-            rummageMenu.close();
+            player.closeInventory();
             showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, 4));
         });
         rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
@@ -92,7 +92,7 @@ public class PlayerInteract implements Listener
                 final int       bottomRightSlot = rummageMenu.getBottomRight();
 
                 inventory.setItem(bottomRightSlot, fillerItem);
-                rummageMenu.close();
+                player.closeInventory();
 
                 profile.setStealing(victim);
             });

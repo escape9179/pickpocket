@@ -61,10 +61,9 @@ public class Menu
         closeCalledFromEvent = value;
     }
 
-    public void close()
+    public void setClosed(boolean value)
     {
-        if (!closeCalledFromEvent) viewer.closeInventory();
-        closed = true;
+        closed = value;
     }
 
     public boolean isClosed()
