@@ -1,9 +1,6 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.commands.AdminCommand;
-import logan.pickpocket.commands.BypassCommand;
-import logan.pickpocket.commands.ExemptCommand;
-import logan.pickpocket.commands.PickpocketCommand;
+import logan.pickpocket.commands.*;
 import logan.pickpocket.events.InventoryClick;
 import logan.pickpocket.events.InventoryClose;
 import logan.pickpocket.events.PlayerInteract;
@@ -50,10 +47,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
     private PickpocketCommand adminCommand;
     private PickpocketCommand bypassCommand;
     private PickpocketCommand exemptCommand;
+    private PickpocketCommand toggleCommand;
 
     public static final Permission PICKPOCKET_EXEMPT    = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public static final Permission PICKPOCKET_BYPASS    = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN     = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
+    public static final Permission PICKPOCKET_TOGGLE    = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
     public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
 
     private PickpocketConfiguration configuration;
@@ -72,9 +71,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
         profiles  = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
-        adminCommand    = new AdminCommand();
-        bypassCommand   = new BypassCommand();
-        exemptCommand   = new ExemptCommand();
+        adminCommand  = new AdminCommand();
+        bypassCommand = new BypassCommand();
+        exemptCommand = new ExemptCommand();
+        toggleCommand = new ToggleCommand();
 
         new InventoryClick();
         new InventoryClose();
@@ -122,9 +122,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
             if (args.length == 0)
             {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket toggle' to toggle pick-pocketing for yourself.");
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt [name]' to exempt yourself from being stolen from.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass [name]' to toggle cooldown bypass.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt' [name]' to exempt yourself from being stolen from.");
+                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass' [name]' to toggle cooldown bypass.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
                 sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
             }

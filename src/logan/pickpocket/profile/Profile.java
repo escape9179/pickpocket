@@ -13,6 +13,7 @@ public class Profile
     private boolean stealing;
     private boolean isPlayingMinigame;
     private boolean isRummaging;
+    private boolean participating;
 
     private ProfileConfiguration profileConfiguration;
     private MinigameModule       minigameModule;
@@ -60,6 +61,17 @@ public class Profile
             stealing = false;
             player.closeInventory();
         }
+    }
+
+    public void setParticipating(boolean participating)
+    {
+        this.participating = participating;
+        profileConfiguration.setParticipatingSection(participating);
+    }
+
+    public boolean isParticipating()
+    {
+        return participating;
     }
 
     public boolean isStealing()

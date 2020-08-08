@@ -38,11 +38,17 @@ public class PlayerInteract implements Listener
 
         if (!(event.getRightClicked() instanceof Player) || !event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
         Player  player  = event.getPlayer();
+        Player  victim  = (Player) event.getRightClicked();
         Profile profile = Profiles.get(player);
+
+        if (!Profiles.get(victim).isParticipating())
+        {
+            player.sendMessage(ChatColor.RED + "That player has pick-pocketing disabled.");
+            return;
+        }
 
         if (!pickpocketPlugin.getCooldowns().containsKey(player))
         {
-            Player    victim              = (Player) event.getRightClicked();
             final int numberOfRandomItems = 4;
 
             showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, numberOfRandomItems));
