@@ -36,7 +36,6 @@ public class GUIAPI
     {
         for (int key : registeredMenus.keySet())
         {
-            System.out.println("Calling event for menu " + key + ".");
             registeredMenus.get(key).onInventoryClick(event);
         }
     }
@@ -45,7 +44,6 @@ public class GUIAPI
     {
         if (registeredMenus.isEmpty())
         {
-            System.out.println("Nothing to close...");
             return;
         }
         Iterator<Integer> menuIterator = registeredMenus.keySet().iterator();
@@ -59,11 +57,8 @@ public class GUIAPI
             {
                 registeredMenu.setCloseCalledFromEvent(true);
                 registeredMenu.close();
-                System.out.println("Viewers are equal. Automatically closing menu.");
                 break;
             }
-
-            System.out.println("Viewers aren't equal.");
         }
 
         List<Integer> menusToClose = new ArrayList<>();
@@ -75,7 +70,6 @@ public class GUIAPI
         menusToClose.forEach(menuId ->
         {
             registeredMenus.remove(menuId);
-            System.out.println("Removed menu with id: " + menuId);
         });
     }
 }

@@ -134,8 +134,6 @@ public class MinigameModule
             @Override
             public void run()
             {
-                System.out.println("Hit: " + hitInTime.get() + ".");
-
                 if (!hitInTime.get())
                 {
                     doGameLoop();
@@ -180,7 +178,6 @@ public class MinigameModule
         {
             resetGameTimerRunnable();
             hitInTime.set(false);
-            System.out.println("Total tries: " + profile.getMinigameModule().getTotalTries() + ".");
             success = false;
         }
 

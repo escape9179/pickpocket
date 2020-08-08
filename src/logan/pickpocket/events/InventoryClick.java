@@ -34,7 +34,6 @@ public class InventoryClick implements Listener
 
         if (clickedItem == null || profile.isRummaging() || profile.isPlayingMinigame())
         {
-            System.out.println("Clicked item is null, player is rummaging, or player is playing mini-game.");
             event.setCancelled(true);
             return;
         }
@@ -43,7 +42,6 @@ public class InventoryClick implements Listener
         {
             if (inventory.getItem(event.getSlot()) == null)
             {
-                System.out.println("Slot was null");
                 return;
             }
         }
@@ -54,7 +52,6 @@ public class InventoryClick implements Listener
 
         if (!profile.isStealing())
         {
-            System.out.println("Player isn't stealing.");
             return;
         }
 

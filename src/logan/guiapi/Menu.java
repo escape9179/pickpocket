@@ -64,7 +64,6 @@ public class Menu
     public void close()
     {
         if (!closeCalledFromEvent) viewer.closeInventory();
-        else System.out.println("Closed was called manually.");
         closed = true;
     }
 
@@ -166,12 +165,10 @@ public class Menu
 
         if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId()))
         {
-            System.out.println("No the right viewer.");
             return;
         }
 
         event.setCancelled(true);
-        System.out.println("Still viewing inventory. Event cancelled.");
 
         menuItems.keySet().stream()
                 .filter(s -> s == event.getSlot())

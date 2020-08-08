@@ -95,8 +95,6 @@ public class PlayerInteract implements Listener
 
         // Play a sound when rummaging
         player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
-
-        System.out.println("Finished repopulating rummage menu.");
     }
 
     private List<ItemStack> getRandomItemsFromPlayer(Player player, int numberOfItems)
