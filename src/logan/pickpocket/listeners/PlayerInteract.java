@@ -127,7 +127,7 @@ public class PlayerInteract implements Listener
         outer:
         for (int i = 0; i < numberOfItems; i++)
         {
-            randomSlot = (int) (Math.random() * inventorySize);
+            randomSlot = 9 + (int) (Math.random() * (inventorySize - 9));
             randomItem = storageContents[randomSlot];
 
             if (randomItem == null) continue;
