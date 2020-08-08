@@ -1,4 +1,4 @@
-package logan.pickpocket.events;
+package logan.pickpocket.listeners;
 
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;

@@ -1,4 +1,4 @@
-package logan.pickpocket.events;
+package logan.pickpocket.listeners;
 
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;

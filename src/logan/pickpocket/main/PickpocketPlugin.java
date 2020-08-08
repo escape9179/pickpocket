@@ -1,10 +1,10 @@
 package logan.pickpocket.main;
 
 import logan.pickpocket.commands.*;
-import logan.pickpocket.events.InventoryClick;
-import logan.pickpocket.events.InventoryClose;
-import logan.pickpocket.events.PlayerInteract;
-import logan.pickpocket.events.PlayerJoin;
+import logan.pickpocket.listeners.InventoryClick;
+import logan.pickpocket.listeners.InventoryClose;
+import logan.pickpocket.listeners.PlayerInteract;
+import logan.pickpocket.listeners.PlayerJoin;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
