@@ -109,6 +109,7 @@ public class PlayerInteract implements Listener
 
             // Close the rummage inventory
             player.closeInventory();
+            player.sendMessage(ChatColor.RED + "They notice.");
         }
 
         // Play a sound when rummaging
