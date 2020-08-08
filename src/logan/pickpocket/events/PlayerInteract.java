@@ -103,7 +103,13 @@ public class PlayerInteract implements Listener
         rummageMenu.show(player);
 
         // 1/5 chance that the player will get caught while rummaging.
-        if (Math.random() < 0.2) victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
+        if (Math.random() < 0.2)
+        {
+            victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
+
+            // Close the rummage inventory
+            player.closeInventory();
+        }
 
         // Play a sound when rummaging
         player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
