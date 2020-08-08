@@ -25,6 +25,8 @@ public class Profile
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
 
+        participating = profileConfiguration.getParticipatingSectionValue();
+
         minigameModule = new MinigameModule(this);
     }
 
