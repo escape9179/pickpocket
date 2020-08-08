@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,15 +51,15 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
     private PickpocketCommand exemptCommand;
     private PickpocketCommand toggleCommand;
 
-    public static final Permission PICKPOCKET_EXEMPT    = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
-    public static final Permission PICKPOCKET_BYPASS    = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
-    public static final Permission PICKPOCKET_ADMIN     = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
-    public static final Permission PICKPOCKET_TOGGLE    = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
-    public static final Permission PICKPOCKET_DEVELOPER = new Permission("pickpocket.developer", "Allows use of developer commands.");
+    public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
+    public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
+    public static final Permission PICKPOCKET_ADMIN  = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
+    public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
 
-    private PickpocketConfiguration configuration;
+    private        BukkitScheduler scheduler;
+    private static File            dataFolder;
+    private static File            configFile;
 
-    private BukkitScheduler scheduler;
 
     public void onEnable()
     {
@@ -67,6 +69,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
         File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
         playerFolder.mkdirs();
+
+        // Copy configuration if not already copied
+        saveResource("config.yml", false);
+
+        dataFolder = getDataFolder();
+        configFile = new File(getDataFolder(), "config.yml");
 
         profiles  = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
@@ -82,9 +90,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
         new PlayerJoin();
 
         server.getPluginManager().registerEvents(this, this);
-
-        configuration = new PickpocketConfiguration(PLUGIN_FOLDER_DIRECTORY, "config.yml");
-        configuration.setup();
 
         scheduler = server.getScheduler();
 
@@ -161,13 +166,19 @@ public class PickpocketPlugin extends JavaPlugin implements Listener
             {
                 toggleCommand.execute(player, profiles);
             }
-            else if (args[0].equalsIgnoreCase("printkeys") && player.hasPermission(PICKPOCKET_DEVELOPER))
-            {
-                configuration.printKeys(player);
-            }
         }
 
         return true;
+    }
+
+    public static void reloadConfiguration()
+    {
+        configFile = new File(dataFolder, "config.yml");
+    }
+
+    public static List<String> getDisabledItems()
+    {
+        return YamlConfiguration.loadConfiguration(configFile).getStringList("disabled-items");
     }
 
     public static void addProfile(Profile profile)

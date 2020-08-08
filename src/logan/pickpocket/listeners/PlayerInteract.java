@@ -123,12 +123,22 @@ public class PlayerInteract implements Listener
         ItemStack             randomItem;
         int                   randomSlot;
 
+        outer:
         for (int i = 0; i < numberOfItems; i++)
         {
             randomSlot = (int) (Math.random() * inventorySize);
             randomItem = storageContents[randomSlot];
 
             if (randomItem == null) continue;
+
+            // Check if the item is banned
+            for (String disabledItem : PickpocketPlugin.getDisabledItems())
+            {
+                Material disabledItemType = Material.getMaterial(disabledItem.toUpperCase());
+
+                // This item is disabled. Skip this random item iteration.
+                if (randomItem.getType().equals(disabledItemType)) continue outer;
+            }
 
             randomItemList.add(randomItem);
         }

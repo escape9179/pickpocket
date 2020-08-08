@@ -1,0 +1,10 @@
+# Pickpocket configuration file
+
+# Items that can't be stolen
+disabled-items:
+  # Example entries
+  # - "diamond_pickaxe"
+  # - "diamond_sword"
+  # - "diamond_shovel"
+  # - "diamond_axe"
+  - "music_disc_11"
