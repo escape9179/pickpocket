@@ -38,7 +38,7 @@ public class InventoryClose implements Listener {
         if (profile.isPlayingMinigame())
         {
             profile.getMinigameModule().stopMinigame();
-            player.sendMessage(ChatColor.RED + "Mini-game stopped. Pickpocket attempt unsuccessful.");
+            player.sendMessage(ChatColor.RED + "Pickpocket attempt unsuccessful.");
         }
     }
 }

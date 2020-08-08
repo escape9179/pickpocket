@@ -27,6 +27,7 @@ public class MinigameModule
     public static final int  INVENTORY_SIZE = 36;
 
     private Profile        profile;
+    private Player         player;
     private BukkitRunnable gameTimerRunnable;
     private BukkitTask     gameTimerTask;
     private Menu           minigameMenu = new Menu("", INVENTORY_SIZE / 9);
@@ -38,13 +39,12 @@ public class MinigameModule
     public MinigameModule(Profile profile)
     {
         this.profile = profile;
+        player       = profile.getPlayer();
     }
 
     public void startMinigame(Inventory inventory, ItemStack clickedItem)
     {
         this.clickedItem = clickedItem;
-        Player player = profile.getPlayer();
-
 
         player.closeInventory();
 
@@ -61,7 +61,7 @@ public class MinigameModule
         gameTimerTask.cancel();
         reset();
         profile.setIsPlayingMinigame(false);
-        minigameMenu.close();
+        player.closeInventory();
     }
 
     private Map<Integer, MenuItem> createMinigameMenuItems(Inventory inventory)
@@ -87,7 +87,6 @@ public class MinigameModule
     private void onMenuItemClick(MenuItemClickEvent event)
     {
         final MenuItem clickedMenuItem = event.getMenuItem();
-        final Player   player          = event.getPlayer();
 
         gameTimerTask.cancel();
 
@@ -96,15 +95,12 @@ public class MinigameModule
         {
             hitCount.incrementAndGet();
             hitInTime.set(true);
-            player.sendMessage(ChatColor.GREEN + "Hit " + profile.getMinigameModule().getHitCount() + " out of " + MAX_TRIES + ".");
 
             // Play hit sound
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
         }
         else
         {
-            player.sendMessage(ChatColor.RED + "Miss.");
-
             // Play miss sound
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
         }
@@ -142,8 +138,10 @@ public class MinigameModule
 
                 if (!hitInTime.get())
                 {
-                    profile.getPlayer().sendMessage(ChatColor.RED + "Miss!");
                     doGameLoop();
+
+                    // Play miss sound.
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
                 }
             }
         };
@@ -160,19 +158,20 @@ public class MinigameModule
             // If the player got more right than wrong
             if (hitCount.get() > MAX_TRIES / 2)
             {
-                profile.getPlayer().sendMessage(ChatColor.GREEN + "Pickpocket success.");
+                player.sendMessage(ChatColor.GREEN + "Theft successful.");
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+
                 success = true;
             }
             else
             {
-                profile.getPlayer().sendMessage(ChatColor.RED + "Pickpocket failure.");
+                player.sendMessage(ChatColor.RED + "Theft unsuccessful.");
+
+                // Play failure sound
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.7f);
             }
 
-            gameTimerTask.cancel();
-            profile.setIsPlayingMinigame(false);
-            minigameMenu.close();
-            reset();
-            profile.getPlayer().sendMessage("Mini-game over.");
+            stopMinigame();
 
             if (!profile.getProfileConfiguration().getBypassSectionValue())
                 PickpocketPlugin.addCooldown(profile.getPlayer());
