@@ -36,7 +36,10 @@ public class PlayerInteract implements Listener
     {
         PickpocketPlugin pickpocketPlugin = PickpocketPlugin.getInstance();
 
-        if (!(event.getRightClicked() instanceof Player) || !event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
+        if (!(event.getRightClicked() instanceof Player) ||
+                !event.getHand().equals(EquipmentSlot.OFF_HAND) ||
+                !event.getPlayer().isSneaking()) return;
+
         Player  player  = event.getPlayer();
         Player  victim  = (Player) event.getRightClicked();
         Profile profile = Profiles.get(player);
