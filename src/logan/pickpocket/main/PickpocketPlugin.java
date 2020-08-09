@@ -71,11 +71,15 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         CommentedConfig commentedConfig = new CommentedConfig(configFile);
         commentedConfig.createKeyIfNoneExists("allow-pickpocket-toggling", true);
-        commentedConfig.createKeyIfNoneExists("show-status-message", true);
+        commentedConfig.createKeyIfNoneExists("show-status-on-interact", true);
+        commentedConfig.createKeyIfNoneExists("show-status-on-login", true);
+
         commentedConfig.createKeyIfNoneExists("disabled-items", Collections.singletonList("cake"));
         commentedConfig.addCommentToKey("allow-pickpocket-toggling", "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
-        commentedConfig.addCommentToKey("show-status-message", "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
+        commentedConfig.addCommentToKey("show-status-on-interact", "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
+        commentedConfig.addCommentToKey("show-status-on-login", "Whether or not to show a players pick-pocket status when logging in.");
         commentedConfig.addCommentToKey("disabled-items", "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
+
         commentedConfig.save();
 
         dataFolder = getDataFolder();
@@ -147,12 +151,16 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return true;
     }
 
-    public static void reloadConfiguration() {
-        configFile = new File(dataFolder, "config.yml");
-    }
-
     public static List<String> getDisabledItems() {
         return YamlConfiguration.loadConfiguration(configFile).getStringList("disabled-items");
+    }
+
+    public static boolean isShowStatusOnInteractEnabled() {
+        return YamlConfiguration.loadConfiguration(configFile).getBoolean("show-status-on-interact");
+    }
+
+    public static boolean isShowStatusOnLoginEnabled() {
+        return YamlConfiguration.loadConfiguration(configFile).getBoolean("show-status-on-login");
     }
 
     public static void addProfile(Profile profile) {
