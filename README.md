@@ -1,4 +1,5 @@
-# Pickpocket
+![Pickpocket logo](resources/pickpocket-logo.png)
+
 This plugin allows players to pickpocket and steal from each other.
 
 When right clicking another player you will be prompted with an inventory allowing you to rummage through the players items, but be careful. There's a small chance that you might get caught whilst doing so.
