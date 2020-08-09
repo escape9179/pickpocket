@@ -58,4 +58,12 @@ public class CommentedConfig {
             e.printStackTrace();
         }
     }
+
+    public YamlConfiguration getYamlConfiguration() {
+        return configuration;
+    }
+
+    public void reload() {
+        configuration = YamlConfiguration.loadConfiguration(file);
+    }
 }

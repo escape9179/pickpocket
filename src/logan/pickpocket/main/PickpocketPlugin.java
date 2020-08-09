@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
@@ -48,15 +47,17 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private PickpocketCommand bypassCommand;
     private PickpocketCommand exemptCommand;
     private PickpocketCommand toggleCommand;
+    private PickpocketCommand reloadCommand;
 
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
+    public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
 
     private BukkitScheduler scheduler;
     private static File dataFolder;
-    private static File configFile;
+    private static CommentedConfig commentedConfig;
 
 
     public void onEnable() {
@@ -67,9 +68,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         folder.mkdirs();
         playerFolder.mkdirs();
 
-        configFile = new File(getDataFolder(), "config.yml");
-
-        CommentedConfig commentedConfig = new CommentedConfig(configFile);
+        commentedConfig = new CommentedConfig(new File(getDataFolder(), "config.yml"));
         commentedConfig.createKeyIfNoneExists("allow-pickpocket-toggling", true);
         commentedConfig.createKeyIfNoneExists("show-status-on-interact", true);
         commentedConfig.createKeyIfNoneExists("show-status-on-login", true);
@@ -91,6 +90,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         bypassCommand = new BypassCommand();
         exemptCommand = new ExemptCommand();
         toggleCommand = new ToggleCommand();
+        reloadCommand = new ReloadCommand();
 
         new InventoryClick();
         new InventoryClose();
@@ -145,22 +145,28 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 else bypassCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE)) {
                 toggleCommand.execute(player, profiles);
+            } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
+                reloadCommand.execute(player, profiles);
             }
         }
 
         return true;
     }
 
+    public static void reloadConfiguration() {
+        commentedConfig.reload();
+    }
+
     public static List<String> getDisabledItems() {
-        return YamlConfiguration.loadConfiguration(configFile).getStringList("disabled-items");
+        return commentedConfig.getYamlConfiguration().getStringList("disabled-items");
     }
 
     public static boolean isShowStatusOnInteractEnabled() {
-        return YamlConfiguration.loadConfiguration(configFile).getBoolean("show-status-on-interact");
+        return commentedConfig.getYamlConfiguration().getBoolean("show-status-on-interact");
     }
 
     public static boolean isShowStatusOnLoginEnabled() {
-        return YamlConfiguration.loadConfiguration(configFile).getBoolean("show-status-on-login");
+        return commentedConfig.getYamlConfiguration().getBoolean("show-status-on-login");
     }
 
     public static void addProfile(Profile profile) {
