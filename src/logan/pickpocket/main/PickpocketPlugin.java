@@ -41,8 +41,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private static Vector<Profile> profiles;
     private static Map<Player, Integer> cooldowns;
-    private static int cooldownDelay = 8;
-
     private PickpocketCommand adminCommand;
     private PickpocketCommand bypassCommand;
     private PickpocketCommand exemptCommand;
@@ -69,11 +67,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         playerFolder.mkdirs();
 
         commentedConfig = new CommentedConfig(new File(getDataFolder(), "config.yml"));
+        commentedConfig.createKeyIfNoneExists("cooldown-time", 10);
         commentedConfig.createKeyIfNoneExists("allow-pickpocket-toggling", true);
         commentedConfig.createKeyIfNoneExists("show-status-on-interact", true);
         commentedConfig.createKeyIfNoneExists("show-status-on-login", true);
-
         commentedConfig.createKeyIfNoneExists("disabled-items", Collections.singletonList("cake"));
+
+        commentedConfig.addCommentToKey("cooldown-time", "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
         commentedConfig.addCommentToKey("allow-pickpocket-toggling", "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
         commentedConfig.addCommentToKey("show-status-on-interact", "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
         commentedConfig.addCommentToKey("show-status-on-login", "Whether or not to show a players pick-pocket status when logging in.");
@@ -169,6 +169,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return commentedConfig.getYamlConfiguration().getBoolean("show-status-on-login");
     }
 
+    public static int getCooldownTime() {
+        return commentedConfig.getYamlConfiguration().getInt("cooldown-time");
+    }
+
     public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
@@ -178,7 +182,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     }
 
     public static void addCooldown(Player player) {
-        cooldowns.put(player, cooldownDelay);
+        cooldowns.put(player, getCooldownTime());
     }
 
     public Map<Player, Integer> getCooldowns() {
