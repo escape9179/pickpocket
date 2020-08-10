@@ -1,9 +1,43 @@
 ![Pickpocket logo](resources/pickpocket-logo.png)
 
-This plugin allows players to pickpocket and steal from each other.
+This plugin provides another way of stealing from other players, via pick-pocketing.
 
-When right clicking another player you will be prompted with an inventory allowing you to rummage through the players items, but be careful. There's a small chance that you might get caught whilst doing so.
-Once you have rummaged sufficiently, click on an item you would like to steal and win the inventory mini-game to complete your theft.
+#### How to pick-pocket
+To initiate pick-pocketing, simply crouch and right-click another player.
+
+![Pickpocket crouch](resources/pp-crouch.gif)
+
+Upon clicking the player you will be presented with the "Rummage" GUI.
+In this GUI you can look through the inventory contents of the player you're
+looking at.
+
+![Pickpocket rummage](resources/pp-rummage.gif)
+
+While rummaging through a players inventory there is a 10% chance that
+will get caught, and the rummage inventory will close, alerting you and
+the person you're pick-pocketing.
+
+Once you have chose then item you would like to pick-pocket, click on it
+and an inventory mini-game will start.
+
+![Pickpocket failure](resources/pp-failure.gif)
+
+During this mini-game the item you have chosen to steal will move to a random
+slot in the inventory every second. You must click the item before the second expires
+otherwise that will count as a miss. If you miss more than twice, or click the item
+less than 3 times, the mini-game inventory will close and you will receive a message
+saying "Theft unsuccessful".
+
+![Pickpocket success](resources/pp-success.gif)
+
+However, if you win this mini-game by clicking on the item a minimum of 3 out
+of 5 times, then you will receive a message saying "Theft successful", and the item
+you stole will get added to your inventory.
+
+#### Disabling pick-pocketing for yourself
+You can choose to opt out of pick-pocketing by using the command '/pickpocket toggle'.
+This command will prevent you from being pick-pocketed and will also prevent you
+from pick-pocketing.
 
 |Command|Permission|Description|
 |-------|----------|-----------|
