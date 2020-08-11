@@ -52,8 +52,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
 
     private BukkitScheduler scheduler;
-    private static File dataFolder;
-
 
     public void onEnable() {
         instance = this;
@@ -62,8 +60,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
         playerFolder.mkdirs();
-
-        dataFolder = getDataFolder();
 
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
