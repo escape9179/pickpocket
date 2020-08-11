@@ -1,5 +1,6 @@
 package logan.pickpocket.listeners;
 
+import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.fill.UniFill;
@@ -42,13 +43,13 @@ public class PlayerInteract implements Listener {
         Profile profile = Profiles.get(player);
 
         if (!Profiles.get(victim).isParticipating()) {
-            if (PickpocketPlugin.isShowStatusOnInteractEnabled())
+            if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
                 player.sendMessage(ChatColor.RED + "That player has pick-pocketing disabled.");
             return;
         }
 
         if (!profile.isParticipating()) {
-            if (PickpocketPlugin.isShowStatusOnInteractEnabled())
+            if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
                 player.sendMessage(ChatColor.RED + "You have pick-pocketing disabled.");
             return;
         }
@@ -125,7 +126,7 @@ public class PlayerInteract implements Listener {
             if (randomItem == null) continue;
 
             // Check if the item is banned
-            for (String disabledItem : PickpocketPlugin.getDisabledItems()) {
+            for (String disabledItem : PickpocketConfiguration.getDisabledItems()) {
                 Material disabledItemType = Material.getMaterial(disabledItem.toUpperCase());
 
                 // This item is disabled. Skip this random item iteration.

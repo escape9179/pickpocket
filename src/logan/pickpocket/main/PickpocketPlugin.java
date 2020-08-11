@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import logan.config.CommentedConfig;
+import logan.config.PickpocketConfiguration;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.InventoryClick;
 import logan.pickpocket.listeners.InventoryClose;
@@ -18,8 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +53,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private BukkitScheduler scheduler;
     private static File dataFolder;
-    private static CommentedConfig commentedConfig;
 
 
     public void onEnable() {
@@ -65,21 +62,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         File playerFolder = new File(PLAYER_DIRECTORY);
         folder.mkdirs();
         playerFolder.mkdirs();
-
-        commentedConfig = new CommentedConfig(new File(getDataFolder(), "config.yml"));
-        commentedConfig.createKeyIfNoneExists("cooldown-time", 10);
-        commentedConfig.createKeyIfNoneExists("allow-pickpocket-toggling", true);
-        commentedConfig.createKeyIfNoneExists("show-status-on-interact", true);
-        commentedConfig.createKeyIfNoneExists("show-status-on-login", true);
-        commentedConfig.createKeyIfNoneExists("disabled-items", Collections.singletonList("cake"));
-
-        commentedConfig.addCommentToKey("cooldown-time", "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
-        commentedConfig.addCommentToKey("allow-pickpocket-toggling", "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
-        commentedConfig.addCommentToKey("show-status-on-interact", "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
-        commentedConfig.addCommentToKey("show-status-on-login", "Whether or not to show a players pick-pocket status when logging in.");
-        commentedConfig.addCommentToKey("disabled-items", "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
-
-        commentedConfig.save();
 
         dataFolder = getDataFolder();
 
@@ -153,26 +135,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return true;
     }
 
-    public static void reloadConfiguration() {
-        commentedConfig.reload();
-    }
-
-    public static List<String> getDisabledItems() {
-        return commentedConfig.getYamlConfiguration().getStringList("disabled-items");
-    }
-
-    public static boolean isShowStatusOnInteractEnabled() {
-        return commentedConfig.getYamlConfiguration().getBoolean("show-status-on-interact");
-    }
-
-    public static boolean isShowStatusOnLoginEnabled() {
-        return commentedConfig.getYamlConfiguration().getBoolean("show-status-on-login");
-    }
-
-    public static int getCooldownTime() {
-        return commentedConfig.getYamlConfiguration().getInt("cooldown-time");
-    }
-
     public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
@@ -182,7 +144,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     }
 
     public static void addCooldown(Player player) {
-        cooldowns.put(player, getCooldownTime());
+        cooldowns.put(player, PickpocketConfiguration.getCooldownTime());
     }
 
     public Map<Player, Integer> getCooldowns() {

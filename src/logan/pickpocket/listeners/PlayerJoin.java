@@ -1,5 +1,6 @@
 package logan.pickpocket.listeners;
 
+import logan.config.PickpocketConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
@@ -24,7 +25,7 @@ public class PlayerJoin implements Listener {
         Profile profile = Profiles.get(player);
 
         // return without showing status message
-        if (!PickpocketPlugin.isShowStatusOnLoginEnabled()) return;
+        if (!PickpocketConfiguration.isShowStatusOnLoginEnabled()) return;
 
         // show status message
         if (profile.isParticipating()) {
