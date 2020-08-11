@@ -79,12 +79,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         scheduler = server.getScheduler();
 
-        scheduler.runTaskTimerAsynchronously(this, new Runnable() {
-            public void run() {
-                for (Player player : cooldowns.keySet()) {
-                    cooldowns.put(player, cooldowns.get(player) - 1);
-                    if (cooldowns.get(player) <= 0) cooldowns.remove(player);
-                }
+        scheduler.runTaskTimerAsynchronously(this, () -> {
+            for (Player player : cooldowns.keySet()) {
+                cooldowns.put(player, cooldowns.get(player) - 1);
+                if (cooldowns.get(player) <= 0) cooldowns.remove(player);
             }
         }, 20, 20);
 
