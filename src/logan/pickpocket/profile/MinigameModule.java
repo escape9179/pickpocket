@@ -59,7 +59,7 @@ public class MinigameModule
     {
         gameTimerTask.cancel();
         reset();
-        profile.setIsPlayingMinigame(false);
+        profile.setPlayingMinigame(false);
         player.closeInventory();
     }
 

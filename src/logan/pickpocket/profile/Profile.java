@@ -17,21 +17,19 @@ import java.util.List;
 /**
  * Created by Tre on 12/14/2015.
  */
-public class Profile
-{
+public class Profile {
 
-    private Player  player;
-    private Player  victim;
-    private boolean stealing;
-    private boolean isPlayingMinigame;
-    private boolean isRummaging;
+    private Player player;
+    private Player victim;
+    private Player predator;
+    private boolean playingMinigame;
+    private boolean rummaging;
     private boolean participating;
 
     private ProfileConfiguration profileConfiguration;
-    private MinigameModule       minigameModule;
+    private MinigameModule minigameModule;
 
-    public Profile(Player player)
-    {
+    public Profile(Player player) {
         this.player = player;
 
         profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
@@ -121,21 +119,20 @@ public class Profile
     }
 
     public boolean isPlayingMinigame() {
-        return isPlayingMinigame;
+        return playingMinigame;
     }
 
     public boolean isRummaging() {
-        return isRummaging;
+        return rummaging;
     }
 
     public void setRummaging(boolean value)
     {
-        isRummaging = value;
+        rummaging = value;
     }
 
-    public void setIsPlayingMinigame(boolean value)
-    {
-        isPlayingMinigame = value;
+    public void setPlayingMinigame(boolean value) {
+        playingMinigame = value;
     }
 
     public void setStealing(Player victim)
@@ -145,22 +142,18 @@ public class Profile
             stealing    = true;
             this.victim = victim;
             minigameModule.getMinigameMenu().setTitle("Pickpocketing " + victim.getName());
-        }
-        else
-        {
-            stealing = false;
-            player.closeInventory();
+        } else {
+            Profiles.get(this.victim).setPredator(null);
+            this.victim = null;
         }
     }
 
-    public void setParticipating(boolean participating)
-    {
+    public void setParticipating(boolean participating) {
         this.participating = participating;
         profileConfiguration.setParticipatingSection(participating);
     }
 
-    public boolean isParticipating()
-    {
+    public boolean isParticipating() {
         return participating;
     }
 

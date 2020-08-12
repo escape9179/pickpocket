@@ -65,6 +65,6 @@ public class InventoryClick implements Listener
         event.setCancelled(true);
 
         profile.getMinigameModule().startMinigame(inventory, clickedItem);
-        profile.setIsPlayingMinigame(true);
+//        profile.setPlayingMinigame(true);
     }
 }
