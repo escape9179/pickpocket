@@ -15,9 +15,9 @@ public class PickpocketConfiguration {
     private static final String statusOnLoginKey = "show-status-on-login";
     private static final String disabledItemsKey = "disabled-items";
 
-    private static CommentedConfig config;
+    private static final CommentedConfig config;
 
-    public PickpocketConfiguration() {
+    static {
         config = new CommentedConfig(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
 
         config.createKeyIfNoneExists(caughtChanceKey, 0.1);
