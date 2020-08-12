@@ -61,6 +61,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         folder.mkdirs();
         playerFolder.mkdirs();
 
+        PickpocketConfiguration.init();
+
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
