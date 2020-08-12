@@ -43,9 +43,10 @@ public class MinigameModule
 
     public void startMinigame(Inventory inventory, ItemStack clickedItem)
     {
-        this.clickedItem = clickedItem;
-
         player.closeInventory();
+
+        profile.setPlayingMinigame(true);
+        this.clickedItem = clickedItem;
 
         Map<Integer, MenuItem> menuItemMap = createMinigameMenuItems(inventory);
         menuItemMap.forEach((k, v) -> minigameMenu.addItem(k, v));

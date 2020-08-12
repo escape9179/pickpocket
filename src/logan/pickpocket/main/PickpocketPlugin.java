@@ -2,10 +2,7 @@ package logan.pickpocket.main;
 
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.commands.*;
-import logan.pickpocket.listeners.InventoryClick;
-import logan.pickpocket.listeners.InventoryClose;
-import logan.pickpocket.listeners.PlayerInteract;
-import logan.pickpocket.listeners.PlayerJoin;
+import logan.pickpocket.listeners.*;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -81,6 +78,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         new PlayerJoin();
 
         server.getPluginManager().registerEvents(this, this);
+        server.getPluginManager().registerEvents(new PlayerMoveListener(), this);
 
         scheduler = server.getScheduler();
 
