@@ -45,6 +45,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private PickpocketCommand toggleCommand;
     private PickpocketCommand reloadCommand;
 
+    public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
@@ -102,7 +103,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         }
         Player player = (Player) sender;
 
-        if (label.equalsIgnoreCase("pickpocket")) {
+        if (label.equalsIgnoreCase("pickpocket") && player.hasPermission(PICKPOCKET_USE)) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
                 sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket toggle' to toggle pick-pocketing for yourself.");
