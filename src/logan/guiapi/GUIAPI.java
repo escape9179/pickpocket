@@ -55,7 +55,6 @@ public class GUIAPI
 
             if (registeredMenu.getViewer().equals(viewer))
             {
-                registeredMenu.setCloseCalledFromEvent(true);
                 registeredMenu.setClosed(true);
                 break;
             }

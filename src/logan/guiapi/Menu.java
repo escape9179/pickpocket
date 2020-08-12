@@ -2,7 +2,6 @@ package logan.guiapi;
 
 import logan.guiapi.fill.FillPlacer;
 import logan.guiapi.fill.Filler;
-import logan.guiapi.util.PlaceholderParser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,11 +9,8 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Tre Logan
@@ -28,7 +24,6 @@ public class Menu
     private       String    title;
     private       Inventory inventory;
     private       int       slots;
-    private       boolean   closeCalledFromEvent;
     private       boolean   closed;
 
     private Player viewer = null;
@@ -41,6 +36,7 @@ public class Menu
         this.title = title;
         slots      = rows * 9;
         nextId++;
+        inventory = Bukkit.createInventory(null, slots, title);
     }
 
     public int getId()
@@ -50,7 +46,6 @@ public class Menu
 
     public void show(Player player) {
         /* Create inventory and add items */
-        inventory = Bukkit.createInventory(player, slots, title);
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
         viewer = player;
 
@@ -67,10 +62,6 @@ public class Menu
         menuItems.clear();
     }
 
-    public void setCloseCalledFromEvent(boolean value) {
-        closeCalledFromEvent = value;
-    }
-
     public void setClosed(boolean value) {
         closed = value;
     }
@@ -78,19 +69,6 @@ public class Menu
     public boolean isClosed()
     {
         return closed;
-    }
-
-    private void parsePlaceholders(Player player)
-    {
-        title = PlaceholderParser.parse(title, player);
-        menuItems.forEach((s, mi) ->
-        {
-            mi.setName(PlaceholderParser.parse(mi.getDisplayName(), player));
-            List<String>   lore   = mi.getLore();
-            Stream<String> stream = lore.stream().map(l -> PlaceholderParser.parse(l, player));
-            lore = stream.collect(Collectors.toList());
-            mi.setLore(lore);
-        });
     }
 
     public void setTitle(String title)
