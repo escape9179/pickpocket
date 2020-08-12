@@ -8,7 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +33,7 @@ public class Menu
 
     private Player viewer = null;
 
-    private Map<Integer, MenuItem> menuItems = new HashMap<>();
+    private Map<Integer, MenuItem> menuItems = new ConcurrentHashMap<>();
 
     public Menu(String title, int rows)
     {
@@ -53,6 +57,10 @@ public class Menu
         GUIAPI.registerMenu(id, this);
 
         player.openInventory(inventory);
+    }
+
+    public void update() {
+        menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
     }
 
     public void clear() {
