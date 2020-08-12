@@ -44,8 +44,7 @@ public class Menu
         return id;
     }
 
-    public void show(Player player)
-    {
+    public void show(Player player) {
         /* Create inventory and add items */
         inventory = Bukkit.createInventory(player, slots, title);
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
@@ -56,13 +55,15 @@ public class Menu
         player.openInventory(inventory);
     }
 
-    public void setCloseCalledFromEvent(boolean value)
-    {
+    public void clear() {
+        menuItems.clear();
+    }
+
+    public void setCloseCalledFromEvent(boolean value) {
         closeCalledFromEvent = value;
     }
 
-    public void setClosed(boolean value)
-    {
+    public void setClosed(boolean value) {
         closed = value;
     }
 
