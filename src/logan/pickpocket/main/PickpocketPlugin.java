@@ -44,6 +44,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private PickpocketCommand exemptCommand;
     private PickpocketCommand toggleCommand;
     private PickpocketCommand reloadCommand;
+    private PickpocketCommand targetCommand;
 
     public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
@@ -72,6 +73,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         exemptCommand = new ExemptCommand();
         toggleCommand = new ToggleCommand();
         reloadCommand = new ReloadCommand();
+        targetCommand = new TargetCommand();
 
         new InventoryClick();
         new InventoryClose();
@@ -126,12 +128,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 toggleCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
                 reloadCommand.execute(player, profiles);
+            } else if ((args.length == 1)) {
+                targetCommand.execute(player, profiles, args[0]);
             }
         }
 
         return true;
     }
-
     public static void addProfile(Profile profile) {
         profiles.add(profile);
     }
