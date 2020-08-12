@@ -33,7 +33,7 @@ public class InventoryClose implements Listener {
             return;
         }
 
-        if (profile.isStealing()) profile.setStealing(null);
+        if (profile.isPredator()) profile.setVictim(null);
 
         if (profile.isPlayingMinigame())
         {

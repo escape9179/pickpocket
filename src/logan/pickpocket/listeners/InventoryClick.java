@@ -50,8 +50,7 @@ public class InventoryClick implements Listener
             e.printStackTrace();
         }
 
-        if (!profile.isStealing())
-        {
+        if (!profile.isPredator()) {
             return;
         }
 

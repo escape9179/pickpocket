@@ -47,7 +47,7 @@ public class Profile {
             rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
             MenuItem rummageButton = new MenuItem("Keep rummaging...", new ItemStack(Material.CHEST));
             rummageButton.addListener(clickEvent -> {
-                populateRummageMenu(rummageMenu, this, victim, numberOfRandomItems);
+                populateRummageMenu(rummageMenu, victim, numberOfRandomItems);
                 rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
                 rummageMenu.update();
                 // 1/5 chance that the player will get caught while rummaging.
@@ -62,16 +62,17 @@ public class Profile {
                 // Play a sound when rummaging
                 player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
             });
-            populateRummageMenu(rummageMenu, this, victim, numberOfRandomItems);
+            populateRummageMenu(rummageMenu, victim, numberOfRandomItems);
             rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
             setRummaging(true);
             rummageMenu.show(player);
+            setVictim(victim);
         } else {
             player.sendMessage(ChatColor.RED + "You must wait " + PickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
     }
 
-    private void populateRummageMenu(Menu rummageMenu, Profile profile, Player victim, int numberOfRandomItems) {
+    private void populateRummageMenu(Menu rummageMenu, Player victim, int numberOfRandomItems) {
         rummageMenu.clear();
         List<ItemStack> randomItems = getRandomItemsFromPlayer(victim, numberOfRandomItems);
         rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
@@ -84,7 +85,6 @@ public class Profile {
                 rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 rummageMenu.update();
                 rummageMenu.close();
-                profile.setStealing(victim);
             });
             rummageMenu.addItem(randomSlot, menuItem);
         }
@@ -126,8 +126,7 @@ public class Profile {
         return rummaging;
     }
 
-    public void setRummaging(boolean value)
-    {
+    public void setRummaging(boolean value) {
         rummaging = value;
     }
 
@@ -135,11 +134,8 @@ public class Profile {
         playingMinigame = value;
     }
 
-    public void setStealing(Player victim)
-    {
-        if (victim != null)
-        {
-            stealing    = true;
+    public void setVictim(Player victim) {
+        if (victim != null) {
             this.victim = victim;
             minigameModule.getMinigameMenu().setTitle("Pickpocketing " + victim.getName());
         } else {
@@ -155,16 +151,6 @@ public class Profile {
 
     public boolean isParticipating() {
         return participating;
-    }
-
-    public boolean isStealing()
-    {
-        return stealing;
-    }
-
-    public Player getVictim()
-    {
-        return victim;
     }
 
     public void setPlayer(Player player)
