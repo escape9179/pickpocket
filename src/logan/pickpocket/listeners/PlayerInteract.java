@@ -67,7 +67,7 @@ public class PlayerInteract implements Listener {
                     victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
 
                     // Close the rummage inventory
-                    player.closeInventory();
+                    rummageMenu.close();
                     player.sendMessage(ChatColor.RED + "They notice.");
                 }
 
@@ -95,7 +95,7 @@ public class PlayerInteract implements Listener {
                 final int bottomRightSlot = rummageMenu.getBottomRight();
                 rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 rummageMenu.update();
-                profile.getPlayer().closeInventory();
+                rummageMenu.close();
                 profile.setStealing(victim);
             });
             rummageMenu.addItem(randomSlot, menuItem);

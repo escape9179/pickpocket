@@ -54,6 +54,12 @@ public class Menu
         player.openInventory(inventory);
     }
 
+    public void close() {
+        viewer.closeInventory();
+        viewer = null;
+        closed = true;
+    }
+
     public void update() {
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
     }
