@@ -5,6 +5,7 @@ import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -137,11 +138,32 @@ public class Profile {
     public void setVictim(Player victim) {
         if (victim != null) {
             this.victim = victim;
+            Profiles.get(victim).setPredator(player);
             minigameModule.getMinigameMenu().setTitle("Pickpocketing " + victim.getName());
         } else {
             Profiles.get(this.victim).setPredator(null);
             this.victim = null;
         }
+    }
+
+    public Player getVictim() {
+        return victim;
+    }
+
+    public void setPredator(Player predator) {
+        this.predator = predator;
+    }
+
+    public Player getPredator() {
+        return predator;
+    }
+
+    public boolean isPredator() {
+        return victim != null;
+    }
+
+    public boolean isVictim() {
+        return predator != null;
     }
 
     public void setParticipating(boolean participating) {
