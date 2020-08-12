@@ -59,7 +59,7 @@ public class CommentedConfig {
         }
     }
 
-    public YamlConfiguration getYamlConfiguration() {
+    public YamlConfiguration getConfiguration() {
         return configuration;
     }
 

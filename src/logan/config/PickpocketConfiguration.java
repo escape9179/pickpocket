@@ -41,7 +41,7 @@ public class PickpocketConfiguration {
     }
 
     public static double getCaughtChance() {
-        return config.getYamlConfiguration().getDouble(caughtChanceKey);
+        return config.getConfiguration().getDouble(caughtChanceKey);
     }
 
     public static int getMinigameRollRate() {
@@ -49,19 +49,19 @@ public class PickpocketConfiguration {
     }
 
     public static List<String> getDisabledItems() {
-        return config.getYamlConfiguration().getStringList(disabledItemsKey);
+        return config.getConfiguration().getStringList(disabledItemsKey);
     }
 
     public static boolean isShowStatusOnInteractEnabled() {
-        return config.getYamlConfiguration().getBoolean(statusOnInteractKey);
+        return config.getConfiguration().getBoolean(statusOnInteractKey);
     }
 
     public static boolean isShowStatusOnLoginEnabled() {
-        return config.getYamlConfiguration().getBoolean(statusOnLoginKey);
+        return config.getConfiguration().getBoolean(statusOnLoginKey);
     }
 
     public static int getCooldownTime() {
-        return config.getYamlConfiguration().getInt(cooldownTimeKey);
+        return config.getConfiguration().getInt(cooldownTimeKey);
     }
 
     public static void reloadConfiguration() {
