@@ -143,7 +143,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         cooldowns.put(player, PickpocketConfiguration.getCooldownTime());
     }
 
-    public Map<Player, Integer> getCooldowns() {
+    public static Map<Player, Integer> getCooldowns() {
         return cooldowns;
     }
 
