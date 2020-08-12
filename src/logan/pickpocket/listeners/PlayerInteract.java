@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -56,59 +55,51 @@ public class PlayerInteract implements Listener {
 
         if (!pickpocketPlugin.getCooldowns().containsKey(player)) {
             final int numberOfRandomItems = 4;
+            Menu rummageMenu = new Menu("Rummage", 4);
+            rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
+            MenuItem rummageButton = new MenuItem("Keep rummaging...", new ItemStack(Material.CHEST));
+            rummageButton.addListener(clickEvent -> {
+                populateRummageMenu(rummageMenu, profile, victim, numberOfRandomItems);
+                rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
+                rummageMenu.update();
+                // 1/5 chance that the player will get caught while rummaging.
+                if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
+                    victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
 
-            showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, numberOfRandomItems));
+                    // Close the rummage inventory
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.RED + "They notice.");
+                }
 
+                // Play a sound when rummaging
+                player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
+            });
+            populateRummageMenu(rummageMenu, profile, victim, numberOfRandomItems);
+            rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
             profile.setRummaging(true);
+            rummageMenu.show(player);
         } else {
             player.sendMessage(ChatColor.RED + "You must wait " + pickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
     }
 
-    private void showNewRummageMenu(Player player, Player victim, List<ItemStack> randomItems) {
-        Menu rummageMenu = new Menu("Rummage", 4);
-        MenuItem rummageButton = new MenuItem("Keep rummaging...", new ItemStack(Material.CHEST));
-
+    private void populateRummageMenu(Menu rummageMenu, Profile profile, Player victim, int numberOfRandomItems) {
+        rummageMenu.clear();
+        List<ItemStack> randomItems = getRandomItemsFromPlayer(victim, numberOfRandomItems);
         rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
-
-        rummageButton.addListener(clickEvent ->
-        {
-            player.closeInventory();
-            showNewRummageMenu(player, victim, getRandomItemsFromPlayer(victim, 4));
-        });
-        rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
-
-        for (int i = 0; i < randomItems.size(); i++) {
-            MenuItem menuItem = new MenuItem(randomItems.get(i));
-            menuItem.addListener(clickEvent ->
-            {
+        for (ItemStack randomItem : randomItems) {
+            int randomSlot = (int) (Math.random() * (rummageMenu.getSlots() - 9));
+            MenuItem menuItem = new MenuItem(randomItem);
+            menuItem.addListener(menuItemClickEvent -> {
                 final ItemStack fillerItem = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-                final Inventory inventory = rummageMenu.getInventory();
-                final Profile profile = Profiles.get(player);
                 final int bottomRightSlot = rummageMenu.getBottomRight();
-
-                inventory.setItem(bottomRightSlot, fillerItem);
-                player.closeInventory();
-
+                rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
+                rummageMenu.update();
+                profile.getPlayer().closeInventory();
                 profile.setStealing(victim);
             });
-
-            rummageMenu.addItem((int) (Math.random() * (rummageMenu.getSlots() - 9)), menuItem);
+            rummageMenu.addItem(randomSlot, menuItem);
         }
-
-        rummageMenu.show(player);
-
-        // 1/5 chance that the player will get caught while rummaging.
-        if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
-            victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
-
-            // Close the rummage inventory
-            player.closeInventory();
-            player.sendMessage(ChatColor.RED + "They notice.");
-        }
-
-        // Play a sound when rummaging
-        player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
     }
 
     private List<ItemStack> getRandomItemsFromPlayer(Player player, int numberOfItems) {
