@@ -1,5 +1,6 @@
 package logan.pickpocket.profile;
 
+import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.MenuItemClickEvent;
@@ -21,8 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinigameModule
 {
-
-    public static final long MAX_TIME       = 20 * 1;
     public static final int  MAX_TRIES      = 5;
     public static final int  INVENTORY_SIZE = 36;
 
@@ -223,6 +222,6 @@ public class MinigameModule
     public void resetGameTimerRunnable()
     {
         gameTimerRunnable = scheduleNewShuffleRunnable();
-        gameTimerTask     = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), MAX_TIME);
+        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), PickpocketConfiguration.getMinigameRollRate());
     }
 }

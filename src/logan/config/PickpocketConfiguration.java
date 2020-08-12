@@ -9,6 +9,7 @@ import java.util.List;
 public class PickpocketConfiguration {
 
     private static final String caughtChanceKey = "caught-chance";
+    private static final String minigameRollRateKey = "minigame-roll-rate";
     private static final String cooldownTimeKey = "cooldown-time";
     private static final String pickpocketToggleKey = "allow-pickpocket-toggling";
     private static final String statusOnInteractKey = "show-status-on-interact";
@@ -21,6 +22,7 @@ public class PickpocketConfiguration {
         config = new CommentedConfig(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
 
         config.createKeyIfNoneExists(caughtChanceKey, 0.1);
+        config.createKeyIfNoneExists(minigameRollRateKey, 20);
         config.createKeyIfNoneExists(cooldownTimeKey, 10);
         config.createKeyIfNoneExists(pickpocketToggleKey, true);
         config.createKeyIfNoneExists(statusOnInteractKey, true);
@@ -28,6 +30,7 @@ public class PickpocketConfiguration {
         config.createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
 
         config.addCommentToKey(caughtChanceKey, "The chance a player will get caught while rummaging.");
+        config.addCommentToKey(minigameRollRateKey, "The time in ticks a user has before the", "mini-game inventory slots are randomized again.");
         config.addCommentToKey(cooldownTimeKey, "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
         config.addCommentToKey(pickpocketToggleKey, "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
         config.addCommentToKey(statusOnInteractKey, "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
@@ -39,6 +42,10 @@ public class PickpocketConfiguration {
 
     public static double getCaughtChance() {
         return config.getYamlConfiguration().getDouble(caughtChanceKey);
+    }
+
+    public static int getMinigameRollRate() {
+        return config.getConfiguration().getInt(minigameRollRateKey);
     }
 
     public static List<String> getDisabledItems() {
