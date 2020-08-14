@@ -43,6 +43,6 @@ public class PlayerInteract implements Listener {
                 player.sendMessage(ChatColor.RED + "You have pick-pocketing disabled.");
             return;
         }
-        profile.pickpocket(victim);
+        profile.performPickpocket(victim);
     }
 }

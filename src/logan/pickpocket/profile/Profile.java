@@ -41,7 +41,7 @@ public class Profile {
         minigameModule = new MinigameModule(this);
     }
 
-    public void pickpocket(Player victim) {
+    public void performPickpocket(Player victim) {
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
             final int numberOfRandomItems = 4;
             Menu rummageMenu = new Menu("Rummage", 4);

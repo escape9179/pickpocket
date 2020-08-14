@@ -33,6 +33,6 @@ public class TargetCommand implements PickpocketCommand {
             player.sendMessage(ChatColor.RED + "That player has pick-pocketing disabled.");
             return;
         }
-        playerProfile.pickpocket(victim);
+        playerProfile.performPickpocket(victim);
     }
 }
