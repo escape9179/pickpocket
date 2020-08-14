@@ -69,6 +69,7 @@ public class Profile {
             setRummaging(true);
             rummageMenu.show(player);
             setVictim(victim);
+            System.out.println("The victim is: " + victim);
         } else {
             player.sendMessage(ChatColor.RED + "You must wait " + PickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }
@@ -87,7 +88,8 @@ public class Profile {
                 rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 rummageMenu.update();
                 rummageMenu.close();
-                minigameModule.startMinigame(rummageMenu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
+                setRummaging(false);
+                minigameModule.startMinigame(victim, rummageMenu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
             });
             rummageMenu.addItem(randomSlot, menuItem);
         }
@@ -141,9 +143,7 @@ public class Profile {
         if (victim != null) {
             this.victim = victim;
             Profiles.get(victim).setPredator(player);
-            minigameModule.getMinigameMenu().setTitle("Pickpocketing " + victim.getName());
         } else {
-            Profiles.get(this.victim).setPredator(null);
             this.victim = null;
         }
     }

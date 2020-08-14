@@ -60,9 +60,5 @@ public class InventoryClick implements Listener
             profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
             return;
         }
-
-        event.setCancelled(true);
-
-        profile.getMinigameModule().startMinigame(inventory, clickedItem);
     }
 }

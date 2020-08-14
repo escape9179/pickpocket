@@ -19,29 +19,29 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MinigameModule
-{
-    public static final int  MAX_TRIES      = 5;
-    public static final int  INVENTORY_SIZE = 36;
+public class MinigameModule {
+    public static final int MAX_TRIES = 5;
+    public static final int INVENTORY_SIZE = 36;
 
-    private Profile        profile;
-    private Player         player;
+    private Profile profile;
+    private Player player;
+    private Player victim;
     private BukkitRunnable gameTimerRunnable;
     private BukkitTask gameTimerTask;
     private Menu minigameMenu;
     private AtomicInteger hitCount = new AtomicInteger(0);
-    private AtomicInteger  totalTries   = new AtomicInteger(0);
-    private AtomicBoolean  hitInTime    = new AtomicBoolean(false);
-    private ItemStack      clickedItem;
+    private AtomicInteger totalTries = new AtomicInteger(0);
+    private AtomicBoolean hitInTime = new AtomicBoolean(false);
+    private ItemStack clickedItem;
 
-    public MinigameModule(Profile profile)
-    {
+    public MinigameModule(Profile profile) {
         this.profile = profile;
-        player       = profile.getPlayer();
+        player = profile.getPlayer();
     }
 
-    public void startMinigame(Inventory inventory, ItemStack clickedItem)
-    {
+    public void startMinigame(Player victim, Inventory inventory, ItemStack clickedItem) {
+        this.victim = victim;
+        minigameMenu = new Menu("Pick-pocketing " + victim.getName(), INVENTORY_SIZE / 9);
         player.closeInventory();
 
         profile.setPlayingMinigame(true);
@@ -106,9 +106,7 @@ public class MinigameModule
 
         // Add the item to the players inventory upon winning mini-game.
         boolean success = doGameLoop();
-        if (success)
-        {
-            Player    victim          = Profiles.get(player).getVictim();
+        if (success) {
             Inventory victimInventory = victim.getInventory();
 
             // Remove the item from victims inventory.

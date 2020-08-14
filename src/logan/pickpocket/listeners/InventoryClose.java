@@ -24,15 +24,18 @@ public class InventoryClose implements Listener {
     {
         GUIAPI.callInventoryCloseEvents(event);
 
-        Player  player  = (Player) event.getPlayer();
+        Player player = (Player) event.getPlayer();
         Profile profile = Profiles.get(player);
 
         if (profile.isPredator()) profile.setVictim(null);
 
-        if (profile.isPlayingMinigame())
-        {
+        if (profile.isPlayingMinigame()) {
             profile.getMinigameModule().stopMinigame();
             player.sendMessage(ChatColor.RED + "Pickpocket attempt unsuccessful.");
+        }
+
+        if (profile.isRummaging()) {
+            profile.setRummaging(false);
         }
     }
 }
