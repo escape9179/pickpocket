@@ -51,7 +51,8 @@ public class Profile {
                 populateRummageMenu(rummageMenu, victim, numberOfRandomItems);
                 rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
                 rummageMenu.update();
-                // 1/5 chance that the player will get caught while rummaging.
+
+                // Perform probability of getting caught
                 if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
                     victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
 
