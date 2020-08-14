@@ -45,7 +45,7 @@ from pick-pocketing.
 |-------|----------|-----------|
 |/pickpocket [name]|pickpocket.use|Allow usage of the plugin. Without this permission a player cannot pick-pocket.|
 |/pickpocket admin|pickpocket.admin|Receive admin notifications when a player has stolen from another player. (may be broken)|
-|/pickpocket exempt [name]|pickpocket.exempt|Exempt yourself or another player from pick-pocketing.|
+|/pickpocket exempt [name]|pickpocket.exempt|Toggle exemption from pick-pocketing for yourself or another player.|
 |/pickpocket bypass [name]|pickpocket.bypass|Toggle cooldown bypass for yourself or another player.|
 |/pickpocket toggle|pickpocket.toggle|Toggle pick-pocketing for yourself.|
 |/pickpocket reload|pickpocket.reload|Reload the configuration file.|
