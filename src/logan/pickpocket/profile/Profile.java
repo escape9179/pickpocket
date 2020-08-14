@@ -57,7 +57,7 @@ public class Profile {
 
                     // Close the rummage inventory
                     rummageMenu.close();
-                    player.sendMessage(ChatColor.RED + "They notice.");
+                    player.sendMessage(ChatColor.RED + "You've been noticed.");
                 }
 
                 // Play a sound when rummaging
