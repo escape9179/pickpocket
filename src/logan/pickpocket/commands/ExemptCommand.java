@@ -17,21 +17,18 @@ public class ExemptCommand implements PickpocketCommand {
     @Override
     public <T> void execute(Player player, List<Profile> profiles, T... objects)
     {
-        if (objects.length == 0)
-        {
+        if (objects.length == 0) {
             Profile profile = Profiles.get(player);
-            boolean bool    = profile.getProfileConfiguration().getExemptSectionValue();
-            profile.getProfileConfiguration().setExemptSection(bool = !bool);
-            player.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + bool + ".");
-        }
-        else
-        {
-            Player  otherPlayer        = Bukkit.getPlayer(objects[1].toString());
-            boolean bool               = Boolean.parseBoolean(objects[0].toString());
+            boolean exemptStaus = !profile.getProfileConfiguration().getExemptSectionValue();
+            profile.getProfileConfiguration().setExemptSection(exemptStaus);
+            player.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + exemptStaus + ".");
+        } else {
+            Player otherPlayer = Bukkit.getPlayer(objects[0].toString());
             Profile otherPlayerProfile = Profiles.get(otherPlayer);
-            otherPlayerProfile.getProfileConfiguration().setExemptSection(bool);
-            player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s exempt status to " + bool + ".");
-            otherPlayer.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + bool + ".");
+            boolean exemptStatus = !otherPlayerProfile.getProfileConfiguration().getExemptSectionValue();
+            otherPlayerProfile.getProfileConfiguration().setExemptSection(exemptStatus);
+            player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s exempt status to " + exemptStatus + ".");
+            otherPlayer.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + exemptStatus + ".");
         }
     }
 }
