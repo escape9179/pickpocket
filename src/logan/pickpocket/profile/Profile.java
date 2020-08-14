@@ -87,6 +87,7 @@ public class Profile {
                 rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 rummageMenu.update();
                 rummageMenu.close();
+                minigameModule.startMinigame(rummageMenu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
             });
             rummageMenu.addItem(randomSlot, menuItem);
         }
