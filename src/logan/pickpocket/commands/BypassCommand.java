@@ -18,21 +18,17 @@ public class BypassCommand implements PickpocketCommand {
     {
 
         //TODO Fix array index out of bounds here
-        if (objects.length == 0)
-        {
+        if (objects.length == 0) {
             Profile profile = Profiles.get(player);
-            boolean bool    = profile.getProfileConfiguration().getBypassSectionValue();
-            profile.getProfileConfiguration().setBypassSection(bool = !bool);
-            player.sendMessage(ChatColor.GRAY + "Your bypass status has been changed to " + bool + ".");
-        }
-        else
-        {
-            Player  otherPlayer        = Bukkit.getPlayer(objects[1].toString());
-            boolean bool               = Boolean.parseBoolean(objects[0].toString());
+            boolean exemptStatus = !profile.getProfileConfiguration().getBypassSectionValue();
+            profile.getProfileConfiguration().setBypassSection(exemptStatus);
+            player.sendMessage(ChatColor.GRAY + "Your bypass status has been changed to " + exemptStatus + ".");
+        } else {
+            Player otherPlayer = Bukkit.getPlayer(objects[0].toString());
             Profile otherPlayerProfile = Profiles.get(otherPlayer);
-            otherPlayerProfile.getProfileConfiguration().setBypassSection(bool);
-            player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s bypass status to " + bool + ".");
-            otherPlayer.sendMessage(ChatColor.GRAY + "Your bypass status has been changed to " + bool + ".");
+            boolean exemptStatus = !otherPlayerProfile.getProfileConfiguration().getExemptSectionValue();
+            player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s bypass status to " + exemptStatus + ".");
+            otherPlayer.sendMessage(ChatColor.GRAY + "Your bypass status has been changed to " + exemptStatus + ".");
         }
     }
 }
