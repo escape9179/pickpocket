@@ -2,7 +2,7 @@
 
 This plugin provides another way of stealing from other players, via pick-pocketing.
 
-#### How to pick-pocket
+### How to Pick-pocket
 To initiate pick-pocketing, simply crouch and right-click another player.
 
 ![Pickpocket crouch](resources/pp-crouch.gif)
@@ -34,22 +34,24 @@ However, if you win this mini-game by clicking on the item a minimum of 3 out
 of 5 times, then you will receive a message saying "Theft successful", and the item
 you stole will get added to your inventory.
 
-#### Disabling pick-pocketing for yourself
+### Disabling Pick-pocketing for Yourself
 You can choose to opt out of pick-pocketing by using the command '/pickpocket toggle'.
 This command will prevent you from being pick-pocketed and will also prevent you
 from pick-pocketing.
 
+### Commands and Permissions
+
 |Command|Permission|Description|
 |-------|----------|-----------|
-|/pickpocket use|pickpocket.use|Allow usage of the plugin. Without this permission a player cannot pick-pocket.|
+|/pickpocket [name]|pickpocket.use|Allow usage of the plugin. Without this permission a player cannot pick-pocket.|
 |/pickpocket admin|pickpocket.admin|Receive admin notifications when a player has stolen from another player. (may be broken)|
 |/pickpocket exempt [name]|pickpocket.exempt|Exempt yourself or another player from pick-pocketing.|
 |/pickpocket bypass [name]|pickpocket.bypass|Toggle cooldown bypass for yourself or another player.|
 |/pickpocket toggle|pickpocket.toggle|Toggle pick-pocketing for yourself.|
 |/pickpocket reload|pickpocket.reload|Reload the configuration file.|
 
-#### Discord
+#### Support Discord
 https://discord.gg/wBc8T7A
 
-#### GitHub Repository (Always most recent)
+#### GitHub Repository
 https://github.com/escape9179/pickpocket
