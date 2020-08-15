@@ -18,6 +18,11 @@ public class CommentedConfig {
      */
     public CommentedConfig(File file) {
         this.file = file;
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         configuration = YamlConfiguration.loadConfiguration(file);
     }
 

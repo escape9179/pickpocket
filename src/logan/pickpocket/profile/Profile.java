@@ -33,7 +33,7 @@ public class Profile {
     public Profile(Player player) {
         this.player = player;
 
-        profileConfiguration = new ProfileConfiguration("plugins/Pickpocket/players/", player.getUniqueId().toString() + ".yml");
+        profileConfiguration = new ProfileConfiguration(PickpocketPlugin.getInstance().getDataFolder() + "/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
 
         participating = profileConfiguration.getParticipatingSectionValue();

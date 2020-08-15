@@ -14,7 +14,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,9 +27,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static PickpocketPlugin instance;
 
     public static final String NAME = "Pickpocket";
-    public static final String PLUGIN_FOLDER_DIRECTORY = "plugins/" + NAME + "/";
-    public static final String PLAYER_DIRECTORY = PLUGIN_FOLDER_DIRECTORY + "players/";
-
     private Server server = getServer();
     private Logger logger = getLogger();
 
@@ -55,11 +51,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
 
-        File folder = new File(PLUGIN_FOLDER_DIRECTORY);
-        File playerFolder = new File(PLAYER_DIRECTORY);
-        folder.mkdirs();
-        playerFolder.mkdirs();
-
+        getDataFolder().mkdirs();
         PickpocketConfiguration.init();
 
         profiles = new Vector<>();

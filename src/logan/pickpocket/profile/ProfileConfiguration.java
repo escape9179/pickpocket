@@ -19,21 +19,11 @@ public class ProfileConfiguration
     private File              file;
     private YamlConfiguration yamlConfiguration;
 
-    public ProfileConfiguration(String path)
-    {
-        this.path = path;
-        initFile(path);
-    }
-
     public ProfileConfiguration(String directory, String fileName)
     {
         this.path = directory + fileName;
-        initFile(directory + fileName);
-    }
-
-    private void initFile(String path)
-    {
-        file              = new File(path);
+        new File(directory).mkdirs();
+        file = new File(path);
         yamlConfiguration = new YamlConfiguration();
     }
 
