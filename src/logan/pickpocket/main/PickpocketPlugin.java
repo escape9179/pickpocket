@@ -1,5 +1,6 @@
 package logan.pickpocket.main;
 
+import logan.bstats.Metrics;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.*;
@@ -80,6 +81,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 if (cooldowns.get(player) <= 0) cooldowns.remove(player);
             }
         }, 20, 20);
+
+        // All you have to do is adding the following two lines in your onEnable method.
+        // You can find the plugin ids of your plugins on the page https://bstats.org/what-is-my-plugin-id
+        int pluginId = 8568; // <-- Replace with the id of your plugin!
+        Metrics metrics = new Metrics(this, pluginId);
 
         logger.info(getName() + " enabled.");
     }
