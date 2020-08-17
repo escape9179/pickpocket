@@ -104,17 +104,7 @@ public class MinigameModule {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
         }
 
-        // Add the item to the players inventory upon winning mini-game.
-        boolean success = doGameLoop();
-        if (success) {
-            Inventory victimInventory = victim.getInventory();
-
-            // Remove the item from victims inventory.
-            victimInventory.setItem(victimInventory.first(clickedItem), null);
-
-            // Add item to thieves inventory.
-            player.getInventory().addItem(clickedItem);
-        }
+        doGameLoop();
     }
 
     private void reset()
@@ -142,21 +132,23 @@ public class MinigameModule {
         };
     }
 
-    public boolean doGameLoop()
-    {
-        boolean success = false;
-
+    public void doGameLoop() {
         shuffleInventoryItems();
 
-        if (totalTries.incrementAndGet() >= MAX_TRIES)
-        {
+        if (totalTries.incrementAndGet() >= MAX_TRIES) {
             // If the player got more right than wrong
-            if (hitCount.get() > MAX_TRIES / 2)
-            {
+            if (hitCount.get() > MAX_TRIES / 2) {
                 player.sendMessage(ChatColor.GREEN + "Theft successful.");
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
 
-                success = true;
+                Inventory victimInventory = victim.getInventory();
+
+                // Remove the item from victims inventory.
+                victimInventory.setItem(victimInventory.first(clickedItem), null);
+
+                // Add item to thieves inventory.
+                player.getInventory().addItem(clickedItem);
+
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
             }
             else
             {
@@ -175,10 +167,7 @@ public class MinigameModule {
         {
             resetGameTimerRunnable();
             hitInTime.set(false);
-            success = false;
         }
-
-        return success;
     }
 
     public void shuffleInventoryItems()
