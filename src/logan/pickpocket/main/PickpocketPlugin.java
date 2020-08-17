@@ -2,6 +2,7 @@ package logan.pickpocket.main;
 
 import logan.bstats.Metrics;
 import logan.config.PickpocketConfiguration;
+import logan.pickpocket.ColorUtils;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.*;
 import logan.pickpocket.profile.Profile;
@@ -104,12 +105,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         if (label.equalsIgnoreCase("pickpocket") && player.hasPermission(PICKPOCKET_USE)) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket toggle' to toggle pick-pocketing for yourself.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket admin' to receive admin notifications.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket exempt' [name]' to exempt yourself from being stolen from.");
-                sender.sendMessage(ChatColor.GRAY + "Type '/pickpocket bypass' [name]' to toggle cooldown bypass.");
-                sender.sendMessage(ChatColor.DARK_GRAY + "Developer Area");
-                sender.sendMessage(ChatColor.GRAY + "/pickpocket printkeys");
+                sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
+                sender.sendMessage(ColorUtils.colorize("/pickpocket admin &7- Toggle admin notifications for yourself."));
+                sender.sendMessage(ColorUtils.colorize("/pickpocket exempt [name] &7- Exempt yourself or another player from being stolen from."));
+                sender.sendMessage(ColorUtils.colorize("/pickpocket bypass [name] &7- Toggle cooldown bypass for yourself or another player."));
+                sender.sendMessage(ColorUtils.colorize("/pickpocket {name} &7- Pick-pocket a player near you."));
             } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
                 adminCommand.execute(player, profiles, args);
             } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
