@@ -4,7 +4,10 @@ import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.MenuItemClickEvent;
+import logan.pickpocket.ColorUtils;
 import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.main.Profiles;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -55,22 +58,19 @@ public class MinigameModule {
         resetGameTimerRunnable();
     }
 
-    public void stopMinigame()
-    {
+    public void stopMinigame() {
         gameTimerTask.cancel();
         reset();
         profile.setPlayingMinigame(false);
         player.closeInventory();
     }
 
-    private Map<Integer, MenuItem> createMinigameMenuItems(Inventory inventory)
-    {
+    private Map<Integer, MenuItem> createMinigameMenuItems(Inventory inventory) {
         Map<Integer, MenuItem> menuItemMap = new HashMap<>();
 
-        for (int i = 0; i < INVENTORY_SIZE; i++)
-        {
+        for (int i = 0; i < INVENTORY_SIZE; i++) {
             ItemStack currentItem = inventory.getItem(i);
-            MenuItem  menuItem;
+            MenuItem menuItem;
 
             if (currentItem == null) currentItem = new ItemStack(Material.AIR, 1);
 
@@ -83,23 +83,19 @@ public class MinigameModule {
         return menuItemMap;
     }
 
-    private void onMenuItemClick(MenuItemClickEvent event)
-    {
+    private void onMenuItemClick(MenuItemClickEvent event) {
         final MenuItem clickedMenuItem = event.getMenuItem();
 
         gameTimerTask.cancel();
 
         // The user clicked the correct item
-        if (clickedMenuItem != null && clickedMenuItem.getItemStack().getType().equals(clickedItem.getType()))
-        {
+        if (clickedMenuItem != null && clickedMenuItem.getItemStack().getType().equals(clickedItem.getType())) {
             hitCount.incrementAndGet();
             hitInTime.set(true);
 
             // Play hit sound
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-        }
-        else
-        {
+        } else {
             // Play miss sound
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
         }
@@ -107,22 +103,17 @@ public class MinigameModule {
         doGameLoop();
     }
 
-    private void reset()
-    {
+    private void reset() {
         hitCount.set(0);
         totalTries.set(0);
         hitInTime.set(false);
     }
 
-    public BukkitRunnable scheduleNewShuffleRunnable()
-    {
-        return new BukkitRunnable()
-        {
+    public BukkitRunnable scheduleNewShuffleRunnable() {
+        return new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                if (!hitInTime.get())
-                {
+            public void run() {
+                if (!hitInTime.get()) {
                     doGameLoop();
 
                     // Play miss sound.
@@ -149,41 +140,37 @@ public class MinigameModule {
                 player.getInventory().addItem(clickedItem);
 
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+
+                showAdminNotifications(true);
             }
-            else
-            {
+            else {
                 player.sendMessage(ChatColor.RED + "Theft unsuccessful.");
 
                 // Play failure sound
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.7f);
+
+                showAdminNotifications(false);
             }
 
             stopMinigame();
 
             if (!profile.getProfileConfiguration().getBypassSectionValue())
                 PickpocketPlugin.addCooldown(profile.getPlayer());
-        }
-        else
-        {
+        } else {
             resetGameTimerRunnable();
             hitInTime.set(false);
         }
     }
 
-    public void shuffleInventoryItems()
-    {
-        for (int i = 0; i < INVENTORY_SIZE; i++)
-        {
+    public void shuffleInventoryItems() {
+        for (int i = 0; i < INVENTORY_SIZE; i++) {
             ItemStack currentItem = minigameMenu.getInventory().getItem(i);
             if (currentItem == null) continue;
             int randomSlot = (int) (Math.random() * INVENTORY_SIZE);
-            if (minigameMenu.getInventory().getItem(randomSlot) == null)
-            {
+            if (minigameMenu.getInventory().getItem(randomSlot) == null) {
                 minigameMenu.getInventory().setItem(randomSlot, currentItem);
                 minigameMenu.getInventory().setItem(i, null);
-            }
-            else
-            {
+            } else {
                 ItemStack temp = minigameMenu.getInventory().getItem(randomSlot);
                 minigameMenu.getInventory().setItem(randomSlot, currentItem);
                 minigameMenu.getInventory().setItem(i, temp);
@@ -191,24 +178,31 @@ public class MinigameModule {
         }
     }
 
-    public int getHitCount()
-    {
+    public int getHitCount() {
         return hitCount.get();
     }
 
-    public int getTotalTries()
-    {
+    public int getTotalTries() {
         return totalTries.get();
     }
 
-    public Menu getMinigameMenu()
-    {
+    public Menu getMinigameMenu() {
         return minigameMenu;
     }
 
-    public void resetGameTimerRunnable()
-    {
+    public void resetGameTimerRunnable() {
         gameTimerRunnable = scheduleNewShuffleRunnable();
         gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), PickpocketConfiguration.getMinigameRollRate());
+    }
+
+    public void showAdminNotifications(boolean success) {
+        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
+            Profile profile = Profiles.get(onlinePlayer);
+            if (profile.getProfileConfiguration().getAdminSectionValue()) {
+                onlinePlayer.sendMessage(ColorUtils.colorize("&7[Pickpocket] &f" + player.getName() + "&7 has " +
+                        ((success) ? "&asucceeded" : "&cfailed") +
+                        " &7in " + "pick-pocketing &f" + victim.getName() + "&7."));
+            }
+        });
     }
 }
