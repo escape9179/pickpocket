@@ -29,6 +29,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static PickpocketPlugin instance;
 
     public static final String NAME = "Pickpocket";
+    public static final String PLUGIN_PREFIX = "[" + NAME + "]";
     private Server server = getServer();
     private Logger logger = getLogger();
 
@@ -153,5 +154,9 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static void registerListener(Listener listener) {
         instance.getServer().getPluginManager().registerEvents(listener, instance);
+    }
+
+    public static void log(String message) {
+        System.out.println(PLUGIN_PREFIX + " " + message);
     }
 }
