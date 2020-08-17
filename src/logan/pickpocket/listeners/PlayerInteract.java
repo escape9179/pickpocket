@@ -22,7 +22,6 @@ public class PlayerInteract implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        PickpocketPlugin pickpocketPlugin = PickpocketPlugin.getInstance();
 
         if (!(event.getRightClicked() instanceof Player) ||
                 !event.getHand().equals(EquipmentSlot.OFF_HAND) ||
