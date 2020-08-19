@@ -2,7 +2,9 @@ package logan.config;
 
 import logan.pickpocket.main.PickpocketPlugin;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,23 +21,27 @@ public class PickpocketConfiguration {
     private static CommentedConfig config;
 
     public static void init() {
-        config = new CommentedConfig(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
+        try {
+            config = new CommentedConfig(Files.lines(Paths.get("../config.yml")), PickpocketPlugin.getInstance().getDataFolder().getPath() + "/config.yml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        config.createKeyIfNoneExists(caughtChanceKey, 0.1);
-        config.createKeyIfNoneExists(minigameRollRateKey, 20);
-        config.createKeyIfNoneExists(cooldownTimeKey, 10);
-        config.createKeyIfNoneExists(pickpocketToggleKey, true);
-        config.createKeyIfNoneExists(statusOnInteractKey, true);
-        config.createKeyIfNoneExists(statusOnLoginKey, true);
-        config.createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
+        config.createKeyValuePair(caughtChanceKey, 0.1);
+        config.createKeyValuePair(minigameRollRateKey, 20);
+        config.createKeyValuePair(cooldownTimeKey, 10);
+        config.createKeyValuePair(pickpocketToggleKey, true);
+        config.createKeyValuePair(statusOnInteractKey, true);
+        config.createKeyValuePair(statusOnLoginKey, true);
+        config.createKeyValuePair(disabledItemsKey, Collections.singletonList("cake"));
 
-        config.addCommentToKey(caughtChanceKey, "The chance a player will get caught while rummaging.");
-        config.addCommentToKey(minigameRollRateKey, "The time in ticks a user has before the", "mini-game inventory slots are randomized again.");
-        config.addCommentToKey(cooldownTimeKey, "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
-        config.addCommentToKey(pickpocketToggleKey, "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
-        config.addCommentToKey(statusOnInteractKey, "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
-        config.addCommentToKey(statusOnLoginKey, "Whether or not to show a players pick-pocket status when logging in.");
-        config.addCommentToKey(disabledItemsKey, "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
+        config.addComment(caughtChanceKey, "The chance a player will get caught while rummaging.");
+        config.addComment(minigameRollRateKey, "The time in ticks a user has before the", "mini-game inventory slots are randomized again.");
+        config.addComment(cooldownTimeKey, "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
+        config.addComment(pickpocketToggleKey, "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
+        config.addComment(statusOnInteractKey, "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
+        config.addComment(statusOnLoginKey, "Whether or not to show a players pick-pocket status when logging in.");
+        config.addComment(disabledItemsKey, "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
 
         config.save();
     }
@@ -65,6 +71,6 @@ public class PickpocketConfiguration {
     }
 
     public static void reloadConfiguration() {
-        config.reload();
+        config.loadConfiguration();
     }
 }
