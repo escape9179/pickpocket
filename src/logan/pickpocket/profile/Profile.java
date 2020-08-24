@@ -68,7 +68,6 @@ public class Profile {
             setRummaging(true);
             rummageMenu.show(player);
             setVictim(victim);
-            System.out.println("The victim is: " + victim);
         } else {
             player.sendMessage(ChatColor.RED + "You must wait " + PickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
         }

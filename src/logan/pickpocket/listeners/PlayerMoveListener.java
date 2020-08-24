@@ -31,11 +31,9 @@ public class PlayerMoveListener implements Listener {
 
         // Check if the player is a victim
         if (playerProfile.isVictim()) {
-            System.out.println("The player is a victim.");
             Profile predatorProfile = Profiles.get(playerProfile.getPredator());
             if (predatorProfile.isPlayingMinigame()) {
                 predatorProfile.getMinigameModule().stopMinigame();
-                System.out.println("Stopping predator mini-game.");
             }
             if (predatorProfile.isRummaging()) {
                 predatorProfile.getPlayer().closeInventory();
