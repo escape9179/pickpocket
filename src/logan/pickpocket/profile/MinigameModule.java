@@ -10,7 +10,6 @@ import logan.pickpocket.main.Profiles;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -94,10 +93,10 @@ public class MinigameModule {
             hitInTime.set(true);
 
             // Play hit sound
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+            player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundEntityExperienceOrbPickup(), 1.0f, 1.0f);
         } else {
             // Play miss sound
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
+            player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockNoteBlockBass(), 1.0F, 1.0f);
         }
 
         doGameLoop();
@@ -117,7 +116,7 @@ public class MinigameModule {
                     doGameLoop();
 
                     // Play miss sound.
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 1.0f);
+                    player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockNoteBlockBass(), 1.0F, 1.0f);
                 }
             }
         };
@@ -139,7 +138,7 @@ public class MinigameModule {
                 // Add item to thieves inventory.
                 player.getInventory().addItem(clickedItem);
 
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+                player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundEntityItemPickup(), 1.0f, 1.0f);
 
                 showAdminNotifications(true);
             }
@@ -147,7 +146,7 @@ public class MinigameModule {
                 player.sendMessage(ChatColor.RED + "Theft unsuccessful.");
 
                 // Play failure sound
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.7f);
+                player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockNoteBlockBass(), 1.0f, 0.7f);
 
                 showAdminNotifications(false);
             }

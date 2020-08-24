@@ -8,7 +8,6 @@ import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,7 +44,7 @@ public class Profile {
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
             final int numberOfRandomItems = 4;
             Menu rummageMenu = new Menu("Rummage", 4);
-            rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
+            rummageMenu.fill(new UniFill(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane()));
             MenuItem rummageButton = new MenuItem("Keep rummaging...", new ItemStack(Material.CHEST));
             rummageButton.addListener(clickEvent -> {
                 populateRummageMenu(rummageMenu, victim, numberOfRandomItems);
@@ -62,7 +61,7 @@ public class Profile {
                 }
 
                 // Play a sound when rummaging
-                player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
+                player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockSnowStep(), 1.0f, 0.5f);
             });
             populateRummageMenu(rummageMenu, victim, numberOfRandomItems);
             rummageMenu.addItem(rummageMenu.getBottomRight(), rummageButton);
@@ -78,12 +77,12 @@ public class Profile {
     private void populateRummageMenu(Menu rummageMenu, Player victim, int numberOfRandomItems) {
         rummageMenu.clear();
         List<ItemStack> randomItems = getRandomItemsFromPlayer(victim, numberOfRandomItems);
-        rummageMenu.fill(new UniFill(Material.WHITE_STAINED_GLASS_PANE));
+        rummageMenu.fill(new UniFill(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane()));
         for (ItemStack randomItem : randomItems) {
             int randomSlot = (int) (Math.random() * (rummageMenu.getSlots() - 9));
             MenuItem menuItem = new MenuItem(randomItem);
             menuItem.addListener(menuItemClickEvent -> {
-                final ItemStack fillerItem = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+                final ItemStack fillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane());
                 final int bottomRightSlot = rummageMenu.getBottomRight();
                 rummageMenu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 rummageMenu.update();
@@ -97,8 +96,8 @@ public class Profile {
 
     private List<ItemStack> getRandomItemsFromPlayer(Player player, int numberOfItems) {
         final List<ItemStack> randomItemList = new ArrayList<>();
-        final ItemStack[] storageContents = player.getInventory().getStorageContents();
-        final int inventorySize = player.getInventory().getStorageContents().length;
+        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(player.getInventory());
+        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(player.getInventory()).length;
         ItemStack randomItem;
         int randomSlot;
 

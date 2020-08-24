@@ -6,6 +6,10 @@ import logan.pickpocket.ColorUtils;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.*;
 import logan.pickpocket.profile.Profile;
+import logan.wrapper.APIWrapper;
+import logan.wrapper.APIWrapper1_14;
+import logan.wrapper.APIWrapper1_8;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -51,8 +55,36 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private BukkitScheduler scheduler;
 
+    private static APIWrapper wrapper;
+
     public void onEnable() {
+
         instance = this;
+
+        // Create an instance of a wrapper compatible with
+        // the Bukkit version running on the server.
+        String version = Bukkit.getBukkitVersion().split("-")[0];
+        String[] semanticNumbers = version.split(".");
+        PickpocketPlugin.log("Semantic number size = " + semanticNumbers.length + ".");
+        String majorMinorVersion = String.join(".", semanticNumbers[0], semanticNumbers[1]);
+        switch (majorMinorVersion) {
+            case "1.8":
+            case "1.9":
+            case "1.10":
+            case "1.11":
+            case "1.12":
+            case "1.13":
+                wrapper = new APIWrapper1_8();
+                break;
+            case "1.14":
+            case "1.15":
+            case "1.16":
+                wrapper = new APIWrapper1_14();
+                break;
+            default:
+                PickpocketPlugin.log("Unsupported version. Disabling...");
+                getServer().getPluginManager().disablePlugin(this);
+        }
 
         getDataFolder().mkdirs();
         PickpocketConfiguration.init();
@@ -158,5 +190,9 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static void log(String message) {
         System.out.println(PLUGIN_PREFIX + " " + message);
+    }
+
+    public static APIWrapper getAPIWrapper() {
+        return wrapper;
     }
 }
