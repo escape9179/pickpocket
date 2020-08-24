@@ -9,27 +9,27 @@ public class APIWrapper1_8 implements APIWrapper {
 
     @Override
     public Material getMaterialWhiteStainedGlassPane() {
-        return Material.STAINED_GLASS_PANE;
+        return Material.valueOf("STAINED_GLASS_PANE");
     }
 
     @Override
     public Sound getSoundBlockSnowStep() {
-        return Sound.STEP_SNOW;
+        return Sound.valueOf("STEP_SNOW");
     }
 
     @Override
     public Sound getSoundEntityExperienceOrbPickup() {
-        return Sound.ORB_PICKUP;
+        return Sound.valueOf("ORB_PICKUP");
     }
 
     @Override
     public Sound getSoundBlockNoteBlockBass() {
-        return Sound.NOTE_BASS;
+        return Sound.valueOf("NOTE_BASS");
     }
 
     @Override
     public Sound getSoundEntityItemPickup() {
-        return Sound.ITEM_PICKUP;
+        return Sound.valueOf("ITEM_PICKUP");
     }
 
     @Override
