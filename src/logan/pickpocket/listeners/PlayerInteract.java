@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -24,7 +23,6 @@ public class PlayerInteract implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
 
         if (!(event.getRightClicked() instanceof Player) ||
-                !event.getHand().equals(EquipmentSlot.OFF_HAND) ||
                 !event.getPlayer().isSneaking()) return;
 
         Player player = event.getPlayer();
