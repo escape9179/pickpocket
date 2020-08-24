@@ -1,5 +1,6 @@
 package logan.pickpocket.profile;
 
+import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
@@ -8,7 +9,6 @@ import logan.pickpocket.ColorUtils;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -128,7 +128,7 @@ public class MinigameModule {
         if (totalTries.incrementAndGet() >= MAX_TRIES) {
             // If the player got more right than wrong
             if (hitCount.get() > MAX_TRIES / 2) {
-                player.sendMessage(ChatColor.GREEN + "Theft successful.");
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_SUCCESSFUL_KEY));
 
                 Inventory victimInventory = victim.getInventory();
 
@@ -143,7 +143,7 @@ public class MinigameModule {
                 showAdminNotifications(true);
             }
             else {
-                player.sendMessage(ChatColor.RED + "Theft unsuccessful.");
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_UNSUCCESSFUL_KEY));
 
                 // Play failure sound
                 player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockNoteBlockBass(), 1.0f, 0.7f);

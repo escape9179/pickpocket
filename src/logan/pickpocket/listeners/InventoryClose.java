@@ -1,10 +1,10 @@
 package logan.pickpocket.listeners;
 
+import logan.config.MessageConfiguration;
 import logan.guiapi.GUIAPI;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +31,7 @@ public class InventoryClose implements Listener {
 
         if (profile.isPlayingMinigame()) {
             profile.getMinigameModule().stopMinigame();
-            player.sendMessage(ChatColor.RED + "Pickpocket attempt unsuccessful.");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_UNSUCCESSFUL_KEY));
         }
 
         if (profile.isRummaging()) {

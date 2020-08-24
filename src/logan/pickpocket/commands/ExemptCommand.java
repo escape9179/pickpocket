@@ -1,9 +1,10 @@
 package logan.pickpocket.commands;
 
+import logan.config.MessageConfiguration;
+import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -19,16 +20,16 @@ public class ExemptCommand implements PickpocketCommand {
     {
         if (objects.length == 0) {
             Profile profile = Profiles.get(player);
-            boolean exemptStaus = !profile.getProfileConfiguration().getExemptSectionValue();
-            profile.getProfileConfiguration().setExemptSection(exemptStaus);
-            player.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + exemptStaus + ".");
+            boolean exemptStatus = !profile.getProfileConfiguration().getExemptSectionValue();
+            profile.getProfileConfiguration().setExemptSection(exemptStatus);
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.EXEMPT_STATUS_CHANGE_KEY, Boolean.toString(exemptStatus)));
         } else {
             Player otherPlayer = Bukkit.getPlayer(objects[0].toString());
             Profile otherPlayerProfile = Profiles.get(otherPlayer);
             boolean exemptStatus = !otherPlayerProfile.getProfileConfiguration().getExemptSectionValue();
             otherPlayerProfile.getProfileConfiguration().setExemptSection(exemptStatus);
-            player.sendMessage(ChatColor.GRAY + "Changed " + otherPlayer.getName() + "'s exempt status to " + exemptStatus + ".");
-            otherPlayer.sendMessage(ChatColor.GRAY + "Your exempt status has been changed to " + exemptStatus + ".");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.EXEMPT_STATUS_CHANGE_OTHER_KEY, otherPlayer, Boolean.toString(exemptStatus)));
+            otherPlayer.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.EXEMPT_STATUS_CHANGE_KEY, Boolean.toString(exemptStatus)));
         }
     }
 }

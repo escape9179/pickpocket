@@ -1,10 +1,10 @@
 package logan.pickpocket.listeners;
 
+import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,11 +29,9 @@ public class PlayerJoin implements Listener {
 
         // show status message
         if (profile.isParticipating()) {
-            player.sendMessage(ChatColor.GRAY + "You are currently participating in pick-pocketing.");
-            player.sendMessage(ChatColor.GRAY + "Use '/pickpocket toggle' to disable pick-pocketing.");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PARTICIPATING_TRUE_NOTIFICATION_KEY));
         } else {
-            player.sendMessage(ChatColor.GRAY + "You are currently not participating in pick-pocketing.");
-            player.sendMessage(ChatColor.GRAY + "Use '/pickpocket toggle' to enable pick-pocketing.");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PARTICIPATING_FALSE_NOTIFICATION_KEY));
         }
     }
 }

@@ -1,8 +1,9 @@
 package logan.pickpocket.listeners;
 
+import logan.config.MessageConfiguration;
+import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -23,7 +24,7 @@ public class PlayerMoveListener implements Listener {
                 playerProfile.getPlayer().closeInventory();
                 playerProfile.setRummaging(false);
             }
-            event.getPlayer().sendMessage(ChatColor.RED + "You cannot move whilst pick-pocketing.");
+            event.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_ON_MOVE_WARNING_KEY));
             playerProfile.setVictim(null);
             victimProfile.setPredator(null);
             return;
@@ -39,7 +40,7 @@ public class PlayerMoveListener implements Listener {
                 predatorProfile.getPlayer().closeInventory();
                 predatorProfile.setRummaging(false);
             }
-            playerProfile.getPredator().sendMessage(ChatColor.RED + "The player moved.");
+            playerProfile.getPredator().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY));
             playerProfile.setPredator(null);
             predatorProfile.setVictim(null);
         }

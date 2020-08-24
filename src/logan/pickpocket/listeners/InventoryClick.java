@@ -1,10 +1,10 @@
 package logan.pickpocket.listeners;
 
+import logan.config.MessageConfiguration;
 import logan.guiapi.GUIAPI;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,8 +57,7 @@ public class InventoryClick implements Listener
         if (Profiles.get(profile.getVictim()).getProfileConfiguration().getExemptSectionValue())
         {
             event.setCancelled(true);
-            profile.getPlayer().sendMessage(ChatColor.GRAY + "This person cannot be stolen from.");
-            return;
+            profile.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PERSON_CANT_BE_STOLEN_FROM_KEY));
         }
     }
 }

@@ -1,6 +1,7 @@
 package logan.pickpocket.main;
 
 import logan.bstats.Metrics;
+import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.ColorUtils;
 import logan.pickpocket.commands.*;
@@ -57,6 +58,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private static APIWrapper wrapper;
 
+    private static MessageConfiguration messageConfiguration;
+
     public void onEnable() {
 
         instance = this;
@@ -86,7 +89,17 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         }
 
         getDataFolder().mkdirs();
+
+        //
+        // Create and initialize configuration files.
+        //
+
+        // Initialize main configuration file
         PickpocketConfiguration.init();
+
+        // Initialize and create message configuration file.
+        messageConfiguration = new MessageConfiguration();
+        messageConfiguration.create();
 
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
@@ -193,5 +206,9 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static APIWrapper getAPIWrapper() {
         return wrapper;
+    }
+
+    public static MessageConfiguration getMessageConfiguration() {
+        return messageConfiguration;
     }
 }

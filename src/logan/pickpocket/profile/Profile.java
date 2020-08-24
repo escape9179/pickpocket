@@ -1,12 +1,12 @@
 package logan.pickpocket.profile;
 
+import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,11 +53,11 @@ public class Profile {
 
                 // Perform probability of getting caught
                 if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
-                    victim.sendMessage(ChatColor.RED + "You feel something touch your side.");
+                    victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
 
                     // Close the rummage inventory
                     rummageMenu.close();
-                    player.sendMessage(ChatColor.RED + "You've been noticed.");
+                    player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
                 }
 
                 // Play a sound when rummaging
@@ -69,7 +69,7 @@ public class Profile {
             rummageMenu.show(player);
             setVictim(victim);
         } else {
-            player.sendMessage(ChatColor.RED + "You must wait " + PickpocketPlugin.getCooldowns().get(player) + " seconds before attempting another pickpocket.");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.COOLDOWN_NOTICE_KEY, PickpocketPlugin.getCooldowns().get(player).toString()));
         }
     }
 

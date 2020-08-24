@@ -1,10 +1,10 @@
 package logan.pickpocket.listeners;
 
+import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.profile.Profile;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,13 +47,13 @@ public class PlayerInteract implements Listener {
 
         if (!Profiles.get(victim).isParticipating()) {
             if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
-                player.sendMessage(ChatColor.RED + "That player has pick-pocketing disabled.");
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_OTHER_KEY));
             return;
         }
 
         if (!profile.isParticipating()) {
             if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
-                player.sendMessage(ChatColor.RED + "You have pick-pocketing disabled.");
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_KEY));
             return;
         }
         profile.performPickpocket(victim);
