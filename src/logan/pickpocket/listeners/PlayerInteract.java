@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -24,6 +25,21 @@ public class PlayerInteract implements Listener {
 
         if (!(event.getRightClicked() instanceof Player) ||
                 !event.getPlayer().isSneaking()) return;
+
+        // The interact event is fired for both hands. This will prevent it from
+        // getting fired twice using Bukkit 1.9+.
+        EquipmentSlot offHand = null;
+        try {
+            offHand = EquipmentSlot.valueOf("OFF_HAND");
+        } catch (IllegalArgumentException e) {
+            // The Bukkit API version being used is below 1.9, so
+            // we don't have to worry about it being fired twice.
+        }
+
+        if (offHand != null) {
+            if (event.getHand() != offHand)
+                return;
+        }
 
         Player player = event.getPlayer();
         Player victim = (Player) event.getRightClicked();
