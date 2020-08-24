@@ -36,10 +36,10 @@ public class PlayerInteract implements Listener {
             // we don't have to worry about it being fired twice.
         }
 
-        if (offHand != null) {
-            if (event.getHand() != offHand)
-                return;
-        }
+        // If offHand is null then getHand() doesn't exist,
+        // and if getHand() isn't offHand, we should return
+        // so this code isn't run twice.
+        if (offHand != null && event.getHand() != offHand) return;
 
         Player player = event.getPlayer();
         Player victim = (Player) event.getRightClicked();
