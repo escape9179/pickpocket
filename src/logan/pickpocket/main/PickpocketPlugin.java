@@ -64,8 +64,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         // Create an instance of a wrapper compatible with
         // the Bukkit version running on the server.
         String version = Bukkit.getBukkitVersion().split("-")[0];
-        String[] semanticNumbers = version.split(".");
-        PickpocketPlugin.log("Semantic number size = " + semanticNumbers.length + ".");
+        String[] semanticNumbers = version.split("\\.");
         String majorMinorVersion = String.join(".", semanticNumbers[0], semanticNumbers[1]);
         switch (majorMinorVersion) {
             case "1.8":
