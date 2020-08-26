@@ -16,10 +16,10 @@ public class PickpocketConfiguration {
     private static final String statusOnLoginKey = "show-status-on-login";
     private static final String disabledItemsKey = "disabled-items";
 
-    private static CommentedConfig config;
+    private static CommentedConfiguration config;
 
     public static void init() {
-        config = new CommentedConfig(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
+        config = new CommentedConfiguration(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
 
         config.createKeyIfNoneExists(caughtChanceKey, 0.1);
         config.createKeyIfNoneExists(minigameRollRateKey, 20);

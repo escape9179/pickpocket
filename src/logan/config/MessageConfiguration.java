@@ -12,7 +12,7 @@ import java.io.File;
  */
 public class MessageConfiguration {
 
-    private CommentedConfig commentedConfiguration;
+    private CommentedConfiguration commentedConfiguration;
 
     public static final String ADMIN_STATUS_CHANGE_KEY = "admin-status-change";
     public static final String BYPASS_STATUS_CHANGE_KEY = "bypass-status-change";
@@ -38,7 +38,7 @@ public class MessageConfiguration {
     public static final String COOLDOWN_NOTICE_KEY = "cooldown-notice";
 
     public MessageConfiguration() {
-        commentedConfiguration = new CommentedConfig(new File(PickpocketPlugin.getInstance().getDataFolder(), "messages.yml"));
+        commentedConfiguration = new CommentedConfiguration(new File(PickpocketPlugin.getInstance().getDataFolder(), "messages.yml"));
     }
 
     public void create() {

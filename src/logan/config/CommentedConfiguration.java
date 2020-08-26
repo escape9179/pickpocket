@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommentedConfig {
+public class CommentedConfiguration {
     private Map<String, String[]> commentToKeyMap = new HashMap<>();
     private YamlConfiguration configuration;
     private File file;
@@ -16,7 +16,7 @@ public class CommentedConfig {
     /**
      * Create a commented config from an existing file.
      */
-    public CommentedConfig(File file) {
+    public CommentedConfiguration(File file) {
         this.file = file;
         try {
             file.createNewFile();
