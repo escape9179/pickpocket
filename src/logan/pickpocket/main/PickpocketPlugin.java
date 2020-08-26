@@ -21,6 +21,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -194,6 +195,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static PickpocketPlugin getInstance() {
         return instance;
+    }
+
+    public static File getPluginFolder() {
+        return instance.getDataFolder();
     }
 
     public static void registerListener(Listener listener) {
