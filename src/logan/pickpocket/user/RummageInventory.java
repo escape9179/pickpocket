@@ -71,9 +71,9 @@ public class RummageInventory {
                 predator.getMinigameModule().startMinigame(victim, menu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
             });
             menu.addItem(randomSlot, menuItem);
-            menu.addItem(menu.getBottomRight(), rummageButton);
-            menu.update();
         }
+        menu.addItem(menu.getBottomRight(), rummageButton);
+        menu.update();
     }
 
     private List<ItemStack> getRandomItemsFromPlayer() {
