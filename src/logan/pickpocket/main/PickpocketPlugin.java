@@ -6,7 +6,7 @@ import logan.config.PickpocketConfiguration;
 import logan.pickpocket.ColorUtils;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.*;
-import logan.pickpocket.profile.Profile;
+import logan.pickpocket.user.PickpocketUser;
 import logan.wrapper.APIWrapper;
 import logan.wrapper.APIWrapper1_14;
 import logan.wrapper.APIWrapper1_8;
@@ -39,7 +39,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private Server server = getServer();
     private Logger logger = getLogger();
 
-    private static Vector<Profile> profiles;
+    private static Vector<PickpocketUser> profiles;
     private static Map<Player, Integer> cooldowns;
     private PickpocketCommand adminCommand;
     private PickpocketCommand bypassCommand;
@@ -177,11 +177,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         return true;
     }
-    public static void addProfile(Profile profile) {
+
+    public static void addProfile(PickpocketUser profile) {
         profiles.add(profile);
     }
 
-    public static Vector<Profile> getProfiles() {
+    public static Vector<PickpocketUser> getProfiles() {
         return profiles;
     }
 

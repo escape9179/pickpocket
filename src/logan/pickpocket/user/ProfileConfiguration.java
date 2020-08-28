@@ -1,4 +1,4 @@
-package logan.pickpocket.profile;
+package logan.pickpocket.user;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 

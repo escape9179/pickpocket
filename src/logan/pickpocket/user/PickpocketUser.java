@@ -1,19 +1,18 @@
-package logan.pickpocket.profile;
+package logan.pickpocket.user;
 
 import logan.config.MessageConfiguration;
-import logan.pickpocket.RummageInventory;
 import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.main.Profiles;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
  * Created by Tre on 12/14/2015.
  */
-public class Profile {
+public class PickpocketUser {
 
     private Player player;
-    private Player victim;
-    private Player predator;
+    private PickpocketUser victim;
+    private PickpocketUser predator;
     private boolean playingMinigame;
     private boolean rummaging;
     private boolean participating;
@@ -21,7 +20,7 @@ public class Profile {
     private ProfileConfiguration profileConfiguration;
     private MinigameModule minigameModule;
 
-    public Profile(Player player) {
+    public PickpocketUser(Player player) {
         this.player = player;
 
         profileConfiguration = new ProfileConfiguration(PickpocketPlugin.getInstance().getDataFolder() + "/players/", player.getUniqueId().toString() + ".yml");
@@ -32,10 +31,10 @@ public class Profile {
         minigameModule = new MinigameModule(this);
     }
 
-    public void performPickpocket(Player victim) {
+    public void performPickpocket(PickpocketUser victim) {
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
             RummageInventory rummageInventory = new RummageInventory(victim);
-            rummageInventory.show(player);
+            rummageInventory.show(this);
             setRummaging(true);
             setVictim(victim);
         } else {
@@ -59,24 +58,24 @@ public class Profile {
         playingMinigame = value;
     }
 
-    public void setVictim(Player victim) {
+    public void setVictim(PickpocketUser victim) {
         if (victim != null) {
             this.victim = victim;
-            Profiles.get(victim).setPredator(player);
+            victim.setPredator(this);
         } else {
             this.victim = null;
         }
     }
 
-    public Player getVictim() {
+    public PickpocketUser getVictim() {
         return victim;
     }
 
-    public void setPredator(Player predator) {
+    public void setPredator(PickpocketUser predator) {
         this.predator = predator;
     }
 
-    public Player getPredator() {
+    public PickpocketUser getPredator() {
         return predator;
     }
 
@@ -107,13 +106,19 @@ public class Profile {
         return player;
     }
 
-    public ProfileConfiguration getProfileConfiguration()
-    {
+    public ProfileConfiguration getProfileConfiguration() {
         return profileConfiguration;
     }
 
-    public MinigameModule getMinigameModule()
-    {
+    public MinigameModule getMinigameModule() {
         return minigameModule;
+    }
+
+    public void sendMessage(String message, Object... args) {
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(message, args)));
+    }
+
+    public void playRummageSound() {
+        player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockSnowStep(), 1.0f, 0.5f);
     }
 }

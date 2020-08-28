@@ -3,7 +3,7 @@ package logan.pickpocket.listeners;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
-import logan.pickpocket.profile.Profile;
+import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -12,11 +12,11 @@ public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
 
-        Profile playerProfile = Profiles.get(event.getPlayer());
+        PickpocketUser playerProfile = Profiles.get(event.getPlayer());
 
         // Check if the player is a predator
         if (playerProfile.isPredator()) {
-            Profile victimProfile = Profiles.get(playerProfile.getVictim());
+            PickpocketUser victimProfile = playerProfile.getVictim();
             if (playerProfile.isPlayingMinigame()) {
                 playerProfile.getMinigameModule().stopMinigame();
             }
@@ -32,7 +32,7 @@ public class PlayerMoveListener implements Listener {
 
         // Check if the player is a victim
         if (playerProfile.isVictim()) {
-            Profile predatorProfile = Profiles.get(playerProfile.getPredator());
+            PickpocketUser predatorProfile = playerProfile.getPredator();
             if (predatorProfile.isPlayingMinigame()) {
                 predatorProfile.getMinigameModule().stopMinigame();
             }

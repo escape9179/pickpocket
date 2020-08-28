@@ -4,7 +4,7 @@ import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
-import logan.pickpocket.profile.Profile;
+import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +22,7 @@ public class PlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
 
         Player player = event.getPlayer();
-        Profile profile = Profiles.get(player);
+        PickpocketUser profile = Profiles.get(player);
 
         // return without showing status message
         if (!PickpocketConfiguration.isShowStatusOnLoginEnabled()) return;

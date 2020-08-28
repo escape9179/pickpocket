@@ -1,4 +1,4 @@
-package logan.pickpocket;
+package logan.pickpocket.user;
 
 import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
@@ -7,7 +7,6 @@ import logan.guiapi.MenuItem;
 import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -17,22 +16,20 @@ public class RummageInventory {
 
     private static final String menuTitle = "Rummage";
     private static final String rummageButtonText = "Keep rummaging...";
+    private MenuItem rummageButton;
     private static final int randomItemCount = 4;
     private Menu menu;
-    private Player predator;
-    private Player victim;
+    private PickpocketUser victim;
 
-    public RummageInventory(Player predator, Player victim) {
-        this.predator = predator;
+    public RummageInventory(PickpocketUser victim) {
         this.victim = victim;
 
         menu = new Menu(menuTitle, 4);
         menu.fill(new UniFill(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane()));
-        MenuItem rummageButton = new MenuItem(rummageButtonText, new ItemStack(Material.CHEST));
+        rummageButton = new MenuItem(rummageButtonText, new ItemStack(Material.CHEST));
         rummageButton.addListener(clickEvent -> {
+            PickpocketUser predator = victim.getPredator();
             populateRummageMenu();
-            menu.addItem(menu.getBottomRight(), rummageButton);
-            menu.update();
 
             // Perform probability of getting caught
             if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
@@ -43,16 +40,16 @@ public class RummageInventory {
                 predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
             }
 
-            // Play a sound when rummaging
-            predator.playSound(predator.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockSnowStep(), 1.0f, 0.5f);
+            predator.playRummageSound();
         });
-        populateRummageMenu();
-        menu.addItem(menu.getBottomRight(), rummageButton);
-        setVictim(victim);
     }
 
-    public void show(Player player) {
-        menu.show(player);
+    public void show(PickpocketUser predator) {
+        predator.setVictim(victim);
+
+        populateRummageMenu();
+        menu.addItem(menu.getBottomRight(), rummageButton);
+        menu.show(predator.getPlayer());
     }
 
     private void populateRummageMenu() {
@@ -68,17 +65,21 @@ public class RummageInventory {
                 menu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 menu.update();
                 menu.close();
-                setRummaging(false);
-                minigameModule.startMinigame(victim, menu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
+
+                PickpocketUser predator = victim.getPredator();
+                predator.setRummaging(false);
+                predator.getMinigameModule().startMinigame(victim, menu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
             });
             menu.addItem(randomSlot, menuItem);
+            menu.addItem(menu.getBottomRight(), rummageButton);
+            menu.update();
         }
     }
 
     private List<ItemStack> getRandomItemsFromPlayer() {
         final List<ItemStack> randomItemList = new ArrayList<>();
-        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getInventory());
-        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getInventory()).length;
+        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getPlayer().getInventory());
+        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getPlayer().getInventory()).length;
         ItemStack randomItem;
         int randomSlot;
 

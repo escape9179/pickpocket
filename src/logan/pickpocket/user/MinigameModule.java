@@ -1,4 +1,4 @@
-package logan.pickpocket.profile;
+package logan.pickpocket.user;
 
 import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
@@ -25,9 +25,9 @@ public class MinigameModule {
     public static final int MAX_TRIES = 5;
     public static final int INVENTORY_SIZE = 36;
 
-    private Profile profile;
+    private PickpocketUser profile;
     private Player player;
-    private Player victim;
+    private PickpocketUser victim;
     private BukkitRunnable gameTimerRunnable;
     private BukkitTask gameTimerTask;
     private Menu minigameMenu;
@@ -36,14 +36,14 @@ public class MinigameModule {
     private AtomicBoolean hitInTime = new AtomicBoolean(false);
     private ItemStack clickedItem;
 
-    public MinigameModule(Profile profile) {
+    public MinigameModule(PickpocketUser profile) {
         this.profile = profile;
         player = profile.getPlayer();
     }
 
-    public void startMinigame(Player victim, Inventory inventory, ItemStack clickedItem) {
+    public void startMinigame(PickpocketUser victim, Inventory inventory, ItemStack clickedItem) {
         this.victim = victim;
-        minigameMenu = new Menu("Pick-pocketing " + victim.getName(), INVENTORY_SIZE / 9);
+        minigameMenu = new Menu("Pick-pocketing " + victim.getPlayer().getName(), INVENTORY_SIZE / 9);
         player.closeInventory();
 
         profile.setPlayingMinigame(true);
@@ -130,7 +130,7 @@ public class MinigameModule {
             if (hitCount.get() > MAX_TRIES / 2) {
                 player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_SUCCESSFUL_KEY));
 
-                Inventory victimInventory = victim.getInventory();
+                Inventory victimInventory = victim.getPlayer().getInventory();
 
                 // Remove the item from victims inventory.
                 victimInventory.setItem(victimInventory.first(clickedItem), null);
@@ -196,11 +196,11 @@ public class MinigameModule {
 
     public void showAdminNotifications(boolean success) {
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-            Profile profile = Profiles.get(onlinePlayer);
+            PickpocketUser profile = Profiles.get(onlinePlayer);
             if (profile.getProfileConfiguration().getAdminSectionValue()) {
                 onlinePlayer.sendMessage(ColorUtils.colorize("&7[Pickpocket] &f" + player.getName() + "&7 has " +
                         ((success) ? "&asucceeded" : "&cfailed") +
-                        " &7in " + "pick-pocketing &f" + victim.getName() + "&7."));
+                        " &7in " + "pick-pocketing &f" + victim.getPlayer().getName() + "&7."));
             }
         });
     }

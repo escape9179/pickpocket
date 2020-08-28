@@ -4,7 +4,7 @@ import logan.config.MessageConfiguration;
 import logan.guiapi.GUIAPI;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
-import logan.pickpocket.profile.Profile;
+import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,23 +23,20 @@ public class InventoryClick implements Listener
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event)
-    {
+    public void onInventoryClick(InventoryClickEvent event) {
         GUIAPI.callInventoryClickEvents(event);
 
-        Player    player      = (Player) event.getWhoClicked();
-        Profile   profile     = Profiles.get(player);
-        Inventory inventory   = event.getClickedInventory();
+        Player player = (Player) event.getWhoClicked();
+        PickpocketUser profile = Profiles.get(player);
+        Inventory inventory = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if (clickedItem == null || profile.isRummaging() || profile.isPlayingMinigame())
-        {
+        if (clickedItem == null || profile.isRummaging() || profile.isPlayingMinigame()) {
             event.setCancelled(true);
             return;
         }
 
-        try
-        {
+        try {
             if (inventory.getItem(event.getSlot()) == null)
             {
                 return;
@@ -54,8 +51,7 @@ public class InventoryClick implements Listener
             return;
         }
 
-        if (Profiles.get(profile.getVictim()).getProfileConfiguration().getExemptSectionValue())
-        {
+        if (profile.getVictim().getProfileConfiguration().getExemptSectionValue()) {
             event.setCancelled(true);
             profile.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PERSON_CANT_BE_STOLEN_FROM_KEY));
         }
