@@ -5,7 +5,7 @@ import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class APIWrapper1_14 implements APIWrapper {
+public class APIWrapper1_13 implements APIWrapper {
 
     @Override
     public Material getMaterialWhiteStainedGlassPane() {
