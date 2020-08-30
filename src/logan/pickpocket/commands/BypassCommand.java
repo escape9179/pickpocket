@@ -30,9 +30,9 @@ public class BypassCommand implements PickpocketCommand {
                 return;
             }
             PickpocketUser otherPlayerProfile = Profiles.get(otherPlayer);
-            boolean exemptStatus = !otherPlayerProfile.getProfileConfiguration().getExemptSectionValue();
-            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.BYPASS_STATUS_CHANGE_OTHER_KEY, otherPlayer, Boolean.toString(exemptStatus)));
-            otherPlayer.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.BYPASS_STATUS_CHANGE_KEY, Boolean.toString(exemptStatus)));
+            boolean bypassStatus = !otherPlayerProfile.getProfileConfiguration().getBypassSectionValue();
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.BYPASS_STATUS_CHANGE_OTHER_KEY, otherPlayer, Boolean.toString(bypassStatus)));
+            otherPlayer.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.BYPASS_STATUS_CHANGE_KEY, Boolean.toString(bypassStatus)));
         }
     }
 }
