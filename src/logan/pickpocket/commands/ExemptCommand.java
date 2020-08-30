@@ -24,6 +24,10 @@ public class ExemptCommand implements PickpocketCommand {
             player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.EXEMPT_STATUS_CHANGE_KEY, Boolean.toString(exemptStatus)));
         } else {
             Player otherPlayer = Bukkit.getPlayer(objects[0].toString());
+            if (otherPlayer == null) {
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_NOT_FOUND_KEY));
+                return;
+            }
             PickpocketUser otherPlayerProfile = Profiles.get(otherPlayer);
             boolean exemptStatus = !otherPlayerProfile.getProfileConfiguration().getExemptSectionValue();
             otherPlayerProfile.getProfileConfiguration().setExemptSection(exemptStatus);
