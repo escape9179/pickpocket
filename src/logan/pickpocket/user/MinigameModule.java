@@ -127,7 +127,7 @@ public class MinigameModule {
 
         if (totalTries.incrementAndGet() >= MAX_TRIES) {
             // If the player got more right than wrong
-            if (hitCount.get() > MAX_TRIES / 2) {
+            if (hitCount.get() >= MAX_TRIES) {
                 player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_SUCCESSFUL_KEY));
 
                 Inventory victimInventory = victim.getPlayer().getInventory();
