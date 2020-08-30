@@ -64,6 +64,8 @@ public class RummageInventory {
                     menu.close();
                     predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
                     noticeTimerCurrentSlot = 0;
+                    if (!predator.getProfileConfiguration().getBypassSectionValue())
+                        PickpocketPlugin.addCooldown(predator.getPlayer());
                     rummageTimerTask.cancel();
                 }
                 int slotsToFill = menu.getSlots() / ticksUntilNoticed;
