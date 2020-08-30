@@ -30,8 +30,6 @@ public class CommentedConfiguration {
     }
 
     public void createKeyIfNoneExists(String key, Object defaultValue) {
-        if (defaultValue instanceof String)
-            defaultValue = "\"" + defaultValue + "\"";
         if (!configuration.isSet(key)) {
             configuration.set(key, defaultValue);
         }
