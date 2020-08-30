@@ -58,7 +58,7 @@ public class CommentedConfiguration {
                 }
                 fileWriter.append(key)
                         .append(": ")
-                        .append(String.valueOf(value))
+                        .append(value instanceof String ? "\"" + value + "\"" : String.valueOf(value))
                         .append(System.lineSeparator())
                         .append(System.lineSeparator());
             }

@@ -40,11 +40,11 @@ public class MessageConfiguration extends CommentedConfiguration {
     }
 
     public void create() {
-        createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to !value.");
-        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to !value.");
-        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed !player's bypass status to !value.");
-        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to !value.");
-        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Your exempt status has been changed to !value.");
+        createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.");
+        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.");
+        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed %player%'s bypass status to %value%.");
+        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to %value%.");
+        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Your exempt status has been changed to %value%.");
         createKeyIfNoneExists(RELOAD_NOTIFICATION_KEY, "&aReloaded Pickpocket configuration.");
         createKeyIfNoneExists(PLAYER_NOT_FOUND_KEY, "&cPlayer not found.");
         createKeyIfNoneExists(PLAYER_NOT_ACCESSIBLE_KEY, "&cThat player is not accessible.");
@@ -61,7 +61,7 @@ public class MessageConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY, "&cThe player moved.");
         createKeyIfNoneExists(PICKPOCKET_VICTIM_WARNING_KEY, "&cYou feel something touch your side.");
         createKeyIfNoneExists(PICKPOCKET_NOTICED_WARNING_KEY, "&cYou've been noticed.");
-        createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait !value seconds before attempting another pickpocket.");
+        createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait %value% seconds before attempting another pickpocket.");
 
         save();
     }
@@ -73,20 +73,20 @@ public class MessageConfiguration extends CommentedConfiguration {
 
     public String getMessage(String key, String value) {
         String keyValue = getConfiguration().getString(key);
-        String parsedValue = keyValue.replace("!value", value);
+        String parsedValue = keyValue.replace("%value%", value);
         return ColorUtils.colorize(parsedValue);
     }
 
     public String getMessage(String key, Player player) {
         String keyValue = getConfiguration().getString(key);
-        String parsedValue = keyValue.replace("!player", player.getName());
+        String parsedValue = keyValue.replace("%player%", player.getName());
         return ColorUtils.colorize(parsedValue);
     }
 
     public String getMessage(String key, Player player, String value) {
         String keyValue = getConfiguration().getString(key);
-        String replacedValue = keyValue.replace("!player", player.getName());
-        String replacedPlayer = replacedValue.replace("!value", value);
+        String replacedValue = keyValue.replace("%player%", player.getName());
+        String replacedPlayer = replacedValue.replace("%value%", value);
         return ColorUtils.colorize(replacedPlayer);
     }
 }
