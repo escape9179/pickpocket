@@ -59,6 +59,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private static APIWrapper wrapper;
 
+    private static PickpocketConfiguration pickpocketConfiguration;
     private static MessageConfiguration messageConfiguration;
 
     public void onEnable() {
@@ -96,7 +97,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         //
 
         // Initialize main configuration file
-        PickpocketConfiguration.init();
+        pickpocketConfiguration = new PickpocketConfiguration();
+        pickpocketConfiguration.create();
 
         // Initialize and create message configuration file.
         messageConfiguration = new MessageConfiguration();
@@ -187,7 +189,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     }
 
     public static void addCooldown(Player player) {
-        cooldowns.put(player, PickpocketConfiguration.getCooldownTime());
+        cooldowns.put(player, pickpocketConfiguration.getCooldownTime());
     }
 
     public static Map<Player, Integer> getCooldowns() {
@@ -212,6 +214,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static APIWrapper getAPIWrapper() {
         return wrapper;
+    }
+
+    public static PickpocketConfiguration getPickpocketConfiguration() {
+        return pickpocketConfiguration;
     }
 
     public static MessageConfiguration getMessageConfiguration() {

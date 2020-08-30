@@ -1,7 +1,6 @@
 package logan.pickpocket.listeners;
 
 import logan.config.MessageConfiguration;
-import logan.config.PickpocketConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
@@ -47,13 +46,13 @@ public class PlayerInteract implements Listener {
         PickpocketUser profile = Profiles.get(player);
 
         if (!victimUser.isParticipating()) {
-            if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
+            if (PickpocketPlugin.getPickpocketConfiguration().isShowStatusOnInteractEnabled())
                 player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_OTHER_KEY));
             return;
         }
 
         if (!profile.isParticipating()) {
-            if (PickpocketConfiguration.isShowStatusOnInteractEnabled())
+            if (PickpocketPlugin.getPickpocketConfiguration().isShowStatusOnInteractEnabled())
                 player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_KEY));
             return;
         }

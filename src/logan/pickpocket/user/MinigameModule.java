@@ -1,7 +1,6 @@
 package logan.pickpocket.user;
 
 import logan.config.MessageConfiguration;
-import logan.config.PickpocketConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.MenuItemClickEvent;
@@ -191,7 +190,7 @@ public class MinigameModule {
 
     public void resetGameTimerRunnable() {
         gameTimerRunnable = scheduleNewShuffleRunnable();
-        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), PickpocketConfiguration.getMinigameRollRate());
+        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), PickpocketPlugin.getPickpocketConfiguration().getMinigameRollRate());
     }
 
     public void showAdminNotifications(boolean success) {
