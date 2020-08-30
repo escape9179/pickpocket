@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommentedConfiguration {
+
+    private static final String COMMENT_PREFIX = "# ";
+
     private Map<String, String[]> commentToKeyMap = new HashMap<>();
     private YamlConfiguration configuration;
     private File file;
@@ -52,7 +55,7 @@ public class CommentedConfiguration {
                 String[] commentArray = commentToKeyMap.get(key);
                 if (commentArray != null) {
                     for (String comment : commentArray) {
-                        fileWriter.append("# ").append(comment).append(System.lineSeparator());
+                        fileWriter.append(COMMENT_PREFIX).append(comment).append(System.lineSeparator());
                     }
                 }
                 fileWriter.append(key)
