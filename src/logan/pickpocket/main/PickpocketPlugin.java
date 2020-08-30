@@ -8,7 +8,7 @@ import logan.pickpocket.commands.*;
 import logan.pickpocket.listeners.*;
 import logan.pickpocket.profile.Profile;
 import logan.wrapper.APIWrapper;
-import logan.wrapper.APIWrapper1_14;
+import logan.wrapper.APIWrapper1_13;
 import logan.wrapper.APIWrapper1_8;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -75,13 +75,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             case "1.10":
             case "1.11":
             case "1.12":
-            case "1.13":
                 wrapper = new APIWrapper1_8();
                 break;
+            case "1.13":
             case "1.14":
             case "1.15":
             case "1.16":
-                wrapper = new APIWrapper1_14();
+                wrapper = new APIWrapper1_13();
                 break;
             default:
                 PickpocketPlugin.log("Unsupported version. Disabling...");
