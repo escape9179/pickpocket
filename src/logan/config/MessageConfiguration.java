@@ -42,11 +42,11 @@ public class MessageConfiguration {
     }
 
     public void create() {
-        commentedConfiguration.createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.");
-        commentedConfiguration.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.");
-        commentedConfiguration.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed %player%'s bypass status to %value%.");
-        commentedConfiguration.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to %value%.");
-        commentedConfiguration.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Your exempt status has been changed to %value%.");
+        commentedConfiguration.createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to !value.");
+        commentedConfiguration.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to !value.");
+        commentedConfiguration.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed !player's bypass status to !value.");
+        commentedConfiguration.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to !value.");
+        commentedConfiguration.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Your exempt status has been changed to !value.");
         commentedConfiguration.createKeyIfNoneExists(RELOAD_NOTIFICATION_KEY, "&aReloaded Pickpocket configuration.");
         commentedConfiguration.createKeyIfNoneExists(PLAYER_NOT_FOUND_KEY, "&cPlayer not found.");
         commentedConfiguration.createKeyIfNoneExists(PLAYER_NOT_ACCESSIBLE_KEY, "&cThat player is not accessible.");
@@ -63,7 +63,7 @@ public class MessageConfiguration {
         commentedConfiguration.createKeyIfNoneExists(PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY, "&cThe player moved.");
         commentedConfiguration.createKeyIfNoneExists(PICKPOCKET_VICTIM_WARNING_KEY, "&cYou feel something touch your side.");
         commentedConfiguration.createKeyIfNoneExists(PICKPOCKET_NOTICED_WARNING_KEY, "&cYou've been noticed.");
-        commentedConfiguration.createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait %value% seconds before attempting another pickpocket.");
+        commentedConfiguration.createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait !value seconds before attempting another pickpocket.");
 
         commentedConfiguration.save();
     }
@@ -75,20 +75,20 @@ public class MessageConfiguration {
 
     public String getMessage(String key, String value) {
         String keyValue = commentedConfiguration.getConfiguration().getString(key);
-        String parsedValue = keyValue.replace("%value%", value);
+        String parsedValue = keyValue.replace("!value", value);
         return ColorUtils.colorize(parsedValue);
     }
 
     public String getMessage(String key, Player player) {
         String keyValue = commentedConfiguration.getConfiguration().getString(key);
-        String parsedValue = keyValue.replace("%player%", player.getName());
+        String parsedValue = keyValue.replace("!player", player.getName());
         return ColorUtils.colorize(parsedValue);
     }
 
     public String getMessage(String key, Player player, String value) {
         String keyValue = commentedConfiguration.getConfiguration().getString(key);
-        String replacedValue = keyValue.replace("%player%", player.getName());
-        String replacedPlayer = replacedValue.replace("%value%", value);
+        String replacedValue = keyValue.replace("!player", player.getName());
+        String replacedPlayer = replacedValue.replace("!value", value);
         return ColorUtils.colorize(replacedPlayer);
     }
 }
