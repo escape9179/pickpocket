@@ -9,6 +9,8 @@ public interface APIWrapper {
 
     Material getMaterialWhiteStainedGlassPane();
 
+    ItemStack getItemStackRedStainedGlassPane();
+
     Sound getSoundBlockSnowStep();
 
     Sound getSoundEntityExperienceOrbPickup();

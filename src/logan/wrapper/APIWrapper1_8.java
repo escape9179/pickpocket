@@ -13,6 +13,11 @@ public class APIWrapper1_8 implements APIWrapper {
     }
 
     @Override
+    public ItemStack getItemStackRedStainedGlassPane() {
+        return new ItemStack(getMaterialWhiteStainedGlassPane(), 1, (short) 14);
+    }
+
+    @Override
     public Sound getSoundBlockSnowStep() {
         return Sound.valueOf("STEP_SNOW");
     }

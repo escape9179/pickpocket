@@ -8,7 +8,6 @@ import java.util.List;
 
 public class PickpocketConfiguration {
 
-    private static final String caughtChanceKey = "caught-chance";
     private static final String minigameRollRateKey = "minigame-roll-rate";
     private static final String cooldownTimeKey = "cooldown-time";
     private static final String pickpocketToggleKey = "allow-pickpocket-toggling";
@@ -21,7 +20,6 @@ public class PickpocketConfiguration {
     public static void init() {
         config = new CommentedConfiguration(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
 
-        config.createKeyIfNoneExists(caughtChanceKey, 0.1);
         config.createKeyIfNoneExists(minigameRollRateKey, 20);
         config.createKeyIfNoneExists(cooldownTimeKey, 10);
         config.createKeyIfNoneExists(pickpocketToggleKey, true);
@@ -29,7 +27,6 @@ public class PickpocketConfiguration {
         config.createKeyIfNoneExists(statusOnLoginKey, true);
         config.createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
 
-        config.addCommentToKey(caughtChanceKey, "The chance a player will get caught while rummaging.");
         config.addCommentToKey(minigameRollRateKey, "The time in ticks a user has before the", "mini-game inventory slots are randomized again.");
         config.addCommentToKey(cooldownTimeKey, "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
         config.addCommentToKey(pickpocketToggleKey, "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
@@ -38,10 +35,6 @@ public class PickpocketConfiguration {
         config.addCommentToKey(disabledItemsKey, "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
 
         config.save();
-    }
-
-    public static double getCaughtChance() {
-        return config.getConfiguration().getDouble(caughtChanceKey);
     }
 
     public static int getMinigameRollRate() {

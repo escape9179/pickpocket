@@ -8,38 +8,40 @@ import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RummageInventory {
 
     private static final String menuTitle = "Rummage";
     private static final String rummageButtonText = "Keep rummaging...";
-    private MenuItem rummageButton;
     private static final int randomItemCount = 4;
+    private static final int rummageTimerTickRate = 20;
+    private static final int ticksUntilNoticed = 4;
+    int noticeTimerCurrentSlot = 0;
+    final ItemStack noticeFillerItem;
+    final ItemStack fillerItem;
+    private BukkitTask rummageTimerTask;
+    private MenuItem rummageButton;
     private Menu menu;
     private PickpocketUser victim;
 
     public RummageInventory(PickpocketUser victim) {
         this.victim = victim;
 
+        fillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane());
+        noticeFillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getItemStackRedStainedGlassPane());
+
         menu = new Menu(menuTitle, 4);
-        menu.fill(new UniFill(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane()));
+        menu.fill(new UniFill(fillerItem.getType()));
         rummageButton = new MenuItem(rummageButtonText, new ItemStack(Material.CHEST));
         rummageButton.addListener(clickEvent -> {
             PickpocketUser predator = victim.getPredator();
             populateRummageMenu();
-
-            // Perform probability of getting caught
-            if (Math.random() < PickpocketConfiguration.getCaughtChance()) {
-                victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
-
-                // Close the rummage inventory
-                menu.close();
-                predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
-            }
-
             predator.playRummageSound();
         });
     }
@@ -50,17 +52,45 @@ public class RummageInventory {
         populateRummageMenu();
         menu.addItem(menu.getBottomRight(), rummageButton);
         menu.show(predator.getPlayer());
+
+        // Start rummage timer
+        rummageTimerTask = new BukkitRunnable() {
+            AtomicInteger tickCount = new AtomicInteger(0);
+
+            @Override
+            public void run() {
+                if (tickCount.getAndIncrement() >= ticksUntilNoticed) {
+                    victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
+                    // Close the rummage inventory
+                    menu.close();
+                    predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
+                    noticeTimerCurrentSlot = 0;
+                    rummageTimerTask.cancel();
+                }
+                int slotsToFill = menu.getSlots() / ticksUntilNoticed;
+                for (int i = noticeTimerCurrentSlot; i < slotsToFill + noticeTimerCurrentSlot; i++) {
+                    if (menu.getInventory().getItem(i).getType() != fillerItem.getType())
+                        continue;
+                    menu.addItem(i, new MenuItem(noticeFillerItem));
+                }
+                noticeTimerCurrentSlot += slotsToFill;
+                menu.update();
+            }
+        }.runTaskTimer(PickpocketPlugin.getInstance(), rummageTimerTickRate, rummageTimerTickRate);
     }
 
     private void populateRummageMenu() {
         menu.clear();
         List<ItemStack> randomItems = getRandomItemsFromPlayer();
-        menu.fill(new UniFill(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane()));
+        menu.fill(new UniFill(fillerItem.getType()));
+        for (int i = 0; i < noticeTimerCurrentSlot; i++) {
+            menu.addItem(i, new MenuItem(noticeFillerItem));
+        }
         for (ItemStack randomItem : randomItems) {
             int randomSlot = (int) (Math.random() * (menu.getSlots() - 9));
             MenuItem menuItem = new MenuItem(randomItem);
             menuItem.addListener(menuItemClickEvent -> {
-                final ItemStack fillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane());
+                rummageTimerTask.cancel();
                 final int bottomRightSlot = menu.getBottomRight();
                 menu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 menu.update();
