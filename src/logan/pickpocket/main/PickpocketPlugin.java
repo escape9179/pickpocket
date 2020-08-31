@@ -10,6 +10,7 @@ import logan.pickpocket.user.PickpocketUser;
 import logan.wrapper.APIWrapper;
 import logan.wrapper.APIWrapper1_13;
 import logan.wrapper.APIWrapper1_8;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -18,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -54,13 +56,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
-
     private BukkitScheduler scheduler;
-
     private static APIWrapper wrapper;
-
     private static PickpocketConfiguration pickpocketConfiguration;
     private static MessageConfiguration messageConfiguration;
+    private static Economy econ = null;
+    private static boolean vaultEnabled;
 
     public void onEnable() {
 
@@ -136,11 +137,30 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         int pluginId = 8568; // <-- Replace with the id of your plugin!
         new Metrics(this, pluginId);
 
+        // Set-up Vault economy
+        if (!setupEconomy()) {
+            log("Vault not found. Players won't steal money when pick-pocketing.");
+            vaultEnabled = false;
+            return;
+        }
+
         logger.info(getName() + " enabled.");
     }
 
     public void onDisable() {
         logger.info(getName() + " disabled.");
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -222,5 +242,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static MessageConfiguration getMessageConfiguration() {
         return messageConfiguration;
+    }
+
+    public static Economy getEconomy() {
+        return econ;
+    }
+
+    public static boolean isVaultEnabled() {
+        return vaultEnabled;
     }
 }

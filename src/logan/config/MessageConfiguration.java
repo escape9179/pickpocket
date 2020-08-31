@@ -34,6 +34,8 @@ public class MessageConfiguration extends CommentedConfiguration {
     public static final String PICKPOCKET_VICTIM_WARNING_KEY = "pickpocket-victim-warning";
     public static final String PICKPOCKET_NOTICED_WARNING_KEY = "pickpocket-noticed-warning";
     public static final String COOLDOWN_NOTICE_KEY = "cooldown-notice";
+    public static final String NO_MONEY_RECEIVED = "no-money-received";
+    public static final String MONEY_AMOUNT_RECEIVED = "money-amount-received";
 
     public MessageConfiguration() {
         super(new File(PickpocketPlugin.getInstance().getDataFolder(), "messages.yml"));
@@ -62,6 +64,8 @@ public class MessageConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(PICKPOCKET_VICTIM_WARNING_KEY, "&cYou feel something touch your side.");
         createKeyIfNoneExists(PICKPOCKET_NOTICED_WARNING_KEY, "&cYou've been noticed.");
         createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait %value% seconds before attempting another pickpocket.");
+        createKeyIfNoneExists(NO_MONEY_RECEIVED, "&cYou received no money.");
+        createKeyIfNoneExists(MONEY_AMOUNT_RECEIVED, "&aYou received $%value%.");
 
         save();
     }

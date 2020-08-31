@@ -3,6 +3,7 @@ name: PickPocket
 version: 3.0
 author: escape9179
 api-version: "1.13"
+softdepend: [ Vault ]
 commands:
   pickpocket:
     aliases: pp

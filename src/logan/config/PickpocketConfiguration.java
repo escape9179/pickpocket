@@ -8,6 +8,8 @@ import java.util.List;
 
 public class PickpocketConfiguration extends CommentedConfiguration {
 
+    private static final String loseMoney = "lose-money-on-pickpocket";
+    private static final String moneyLost = "pickpocket-money-lost";
     private static final String minigameRollRateKey = "minigame-roll-rate";
     private static final String cooldownTimeKey = "cooldown-time";
     private static final String pickpocketToggleKey = "allow-pickpocket-toggling";
@@ -20,6 +22,8 @@ public class PickpocketConfiguration extends CommentedConfiguration {
     }
 
     public void create() {
+        createKeyIfNoneExists(loseMoney, false);
+        createKeyIfNoneExists(moneyLost, 0.025);
         createKeyIfNoneExists(minigameRollRateKey, 20);
         createKeyIfNoneExists(cooldownTimeKey, 10);
         createKeyIfNoneExists(pickpocketToggleKey, true);
@@ -27,6 +31,8 @@ public class PickpocketConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(statusOnLoginKey, true);
         createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
 
+        addCommentToKey(loseMoney, "Whether or not predators should take money from", "victims when pick-pocketing.");
+        addCommentToKey(moneyLost, "The percentage of money taken by the predator after", "successfully pick-pocketing another player.");
         addCommentToKey(minigameRollRateKey, "The time in ticks a user has before the", "mini-game inventory slots are randomized again.");
         addCommentToKey(cooldownTimeKey, "The time the player must wait in seconds", "between pick-pocketing attempts.", "An attempt is when a player successfully", "pick-pockets another player.");
         addCommentToKey(pickpocketToggleKey, "Allow players to disable pick-pocketing", "for themselves. This will also disallow others", "from pick-pocketing them.");
@@ -35,6 +41,14 @@ public class PickpocketConfiguration extends CommentedConfiguration {
         addCommentToKey(disabledItemsKey, "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
 
         save();
+    }
+
+    public boolean getIsMoneyLostEnabled() {
+        return getConfiguration().getBoolean(loseMoney);
+    }
+
+    public double getMoneyLostPercentage() {
+        return getConfiguration().getDouble(moneyLost);
     }
 
     public int getMinigameRollRate() {
