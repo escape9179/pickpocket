@@ -22,9 +22,9 @@ public class Menu
 
     private final int       id;
     private       String    title;
-    private       Inventory inventory;
-    private       int       slots;
-    private       boolean   closed;
+    private Inventory inventory;
+    private int size;
+    private boolean closed;
 
     private Player viewer = null;
 
@@ -34,9 +34,9 @@ public class Menu
     {
         id         = nextId;
         this.title = title;
-        slots      = rows * 9;
+        size = rows * 9;
         nextId++;
-        inventory = Bukkit.createInventory(null, slots, title);
+        inventory = Bukkit.createInventory(null, size, title);
     }
 
     public int getId()
@@ -84,7 +84,7 @@ public class Menu
 
     public void setRows(int rows)
     {
-        this.slots = rows * 9;
+        this.size = rows * 9;
     }
 
     public void fill(Filler fillPattern)
@@ -122,9 +122,8 @@ public class Menu
         return inventory;
     }
 
-    public int getSlots()
-    {
-        return slots;
+    public int getSize() {
+        return size;
     }
 
     public int getTopLeft()
@@ -139,12 +138,12 @@ public class Menu
 
     public int getBottomLeft()
     {
-        return slots - 9;
+        return size - 9;
     }
 
     public int getBottomRight()
     {
-        return slots - 1;
+        return size - 1;
     }
 
     public Player getViewer()

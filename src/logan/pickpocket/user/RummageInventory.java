@@ -68,7 +68,7 @@ public class RummageInventory {
                         PickpocketPlugin.addCooldown(predator.getPlayer());
                     rummageTimerTask.cancel();
                 }
-                int slotsToFill = menu.getSlots() / ticksUntilNoticed;
+                int slotsToFill = menu.getSize() / ticksUntilNoticed;
                 for (int i = noticeTimerCurrentSlot; i < slotsToFill + noticeTimerCurrentSlot; i++) {
                     if (menu.getInventory().getItem(i).getType() != fillerItem.getType())
                         continue;
@@ -88,7 +88,7 @@ public class RummageInventory {
             menu.addItem(i, new MenuItem(noticeFillerItem));
         }
         for (ItemStack randomItem : randomItems) {
-            int randomSlot = (int) (Math.random() * (menu.getSlots() - 9));
+            int randomSlot = (int) (Math.random() * (menu.getSize() - 9));
             MenuItem menuItem = new MenuItem(randomItem);
             menuItem.addListener(menuItemClickEvent -> {
                 PickpocketUser predator = victim.getPredator();

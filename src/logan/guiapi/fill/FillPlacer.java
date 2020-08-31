@@ -30,7 +30,7 @@ public class FillPlacer {
 
     public void placeIntermittently(Menu menu, int start, int spacing, Collection<Integer> slots, FillMode mode) {
 
-        int size = menu.getSlots();
+        int size = menu.getSize();
         double times = ((double) (size - start) / spacing);
         times = Math.ceil(times);
 
