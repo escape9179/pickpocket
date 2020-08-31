@@ -137,7 +137,6 @@ public class RummageInventory {
     }
 
     public void close() {
-        if (!rummageTimerTask.isCancelled())
-            rummageTimerTask.cancel();
+        rummageTimerTask.cancel();
     }
 }
