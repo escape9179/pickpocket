@@ -5,7 +5,6 @@ import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.fill.UniFill;
 import logan.pickpocket.main.PickpocketPlugin;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -92,27 +91,15 @@ public class RummageInventory {
             int randomSlot = (int) (Math.random() * (menu.getSlots() - 9));
             MenuItem menuItem = new MenuItem(randomItem);
             menuItem.addListener(menuItemClickEvent -> {
+                PickpocketUser predator = victim.getPredator();
+                predator.setRummaging(false);
+
                 rummageTimerTask.cancel();
                 final int bottomRightSlot = menu.getBottomRight();
                 menu.addItem(bottomRightSlot, new MenuItem(fillerItem));
                 menu.update();
                 menu.close();
 
-                PickpocketUser predator = victim.getPredator();
-                // Give predator percentage of victims balance.
-                if (PickpocketPlugin.isVaultEnabled() && PickpocketPlugin.getPickpocketConfiguration().getIsMoneyLostEnabled()) {
-                    Economy economy = PickpocketPlugin.getEconomy();
-                    double victimBalance = economy.getBalance(victim.getPlayer());
-                    double balanceToTake = victimBalance * PickpocketPlugin.getPickpocketConfiguration().getMoneyLostPercentage();
-                    if (balanceToTake <= 0) {
-                        predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.NO_MONEY_RECEIVED));
-                    } else {
-                        economy.withdrawPlayer(victim.getPlayer(), balanceToTake);
-                        economy.depositPlayer(predator.getPlayer(), balanceToTake);
-                        predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.MONEY_AMOUNT_RECEIVED, String.valueOf(balanceToTake)));
-                    }
-                }
-                predator.setRummaging(false);
                 predator.getMinigameModule().startMinigame(victim, menu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
             });
             menu.addItem(randomSlot, menuItem);
@@ -147,5 +134,10 @@ public class RummageInventory {
         }
 
         return randomItemList;
+    }
+
+    public void close() {
+        if (!rummageTimerTask.isCancelled())
+            rummageTimerTask.cancel();
     }
 }

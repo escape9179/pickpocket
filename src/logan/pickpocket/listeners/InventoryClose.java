@@ -27,15 +27,16 @@ public class InventoryClose implements Listener {
         Player player = (Player) event.getPlayer();
         PickpocketUser profile = Profiles.get(player);
 
-        if (profile.isPredator()) profile.setVictim(null);
-
         if (profile.isPlayingMinigame()) {
             profile.getMinigameModule().stopMinigame();
             player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_UNSUCCESSFUL_KEY));
         }
 
         if (profile.isRummaging()) {
+            profile.getOpenRummageInventory().close();
             profile.setRummaging(false);
+            profile.getVictim().setPredator(null);
+            profile.setVictim(null);
         }
     }
 }

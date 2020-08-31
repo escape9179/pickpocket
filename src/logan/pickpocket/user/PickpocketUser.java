@@ -15,6 +15,7 @@ public class PickpocketUser {
     private PickpocketUser predator;
     private boolean playingMinigame;
     private boolean rummaging;
+    private RummageInventory openRummageInventory;
     private boolean participating;
 
     private ProfileConfiguration profileConfiguration;
@@ -33,13 +34,18 @@ public class PickpocketUser {
 
     public void performPickpocket(PickpocketUser victim) {
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
-            RummageInventory rummageInventory = new RummageInventory(victim);
-            rummageInventory.show(this);
+            openRummageInventory = new RummageInventory(victim);
+            openRummageInventory.show(this);
             setRummaging(true);
             setVictim(victim);
+            victim.setPredator(this);
         } else {
             player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.COOLDOWN_NOTICE_KEY, PickpocketPlugin.getCooldowns().get(player).toString()));
         }
+    }
+
+    public RummageInventory getOpenRummageInventory() {
+        return openRummageInventory;
     }
 
     public boolean isPlayingMinigame() {
@@ -59,12 +65,7 @@ public class PickpocketUser {
     }
 
     public void setVictim(PickpocketUser victim) {
-        if (victim != null) {
-            this.victim = victim;
-            victim.setPredator(this);
-        } else {
-            this.victim = null;
-        }
+        this.victim = victim;
     }
 
     public PickpocketUser getVictim() {

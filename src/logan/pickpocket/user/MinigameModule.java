@@ -7,6 +7,7 @@ import logan.guiapi.MenuItemClickEvent;
 import logan.pickpocket.ColorUtils;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,6 +62,8 @@ public class MinigameModule {
         reset();
         profile.setPlayingMinigame(false);
         player.closeInventory();
+        profile.getVictim().setPredator(null);
+        profile.setVictim(null);
     }
 
     private Map<Integer, MenuItem> createMinigameMenuItems(Inventory inventory) {
@@ -136,6 +139,20 @@ public class MinigameModule {
 
                 // Add item to thieves inventory.
                 player.getInventory().addItem(clickedItem);
+
+                // Give predator percentage of victims balance.
+                if (PickpocketPlugin.isVaultEnabled() && PickpocketPlugin.getPickpocketConfiguration().getIsMoneyLostEnabled()) {
+                    Economy economy = PickpocketPlugin.getEconomy();
+                    double victimBalance = economy.getBalance(victim.getPlayer());
+                    double balanceToTake = victimBalance * PickpocketPlugin.getPickpocketConfiguration().getMoneyLostPercentage();
+                    if (balanceToTake <= 0) {
+                        player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.NO_MONEY_RECEIVED));
+                    } else {
+                        economy.withdrawPlayer(victim.getPlayer(), balanceToTake);
+                        economy.depositPlayer(player.getPlayer(), balanceToTake);
+                        player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.MONEY_AMOUNT_RECEIVED, String.valueOf(balanceToTake)));
+                    }
+                }
 
                 player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundEntityItemPickup(), 1.0f, 1.0f);
 
