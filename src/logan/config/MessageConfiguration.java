@@ -36,6 +36,8 @@ public class MessageConfiguration extends CommentedConfiguration {
     public static final String COOLDOWN_NOTICE_KEY = "cooldown-notice";
     public static final String NO_MONEY_RECEIVED = "no-money-received";
     public static final String MONEY_AMOUNT_RECEIVED = "money-amount-received";
+    public static final String PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION = "admin-notify-success";
+    public static final String PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure";
 
     public MessageConfiguration() {
         super(new File(PickpocketPlugin.getInstance().getDataFolder(), "messages.yml"));
@@ -66,6 +68,8 @@ public class MessageConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(COOLDOWN_NOTICE_KEY, "&cYou must wait %value% seconds before attempting another pickpocket.");
         createKeyIfNoneExists(NO_MONEY_RECEIVED, "&cYou received no money.");
         createKeyIfNoneExists(MONEY_AMOUNT_RECEIVED, "&aYou received $%value%.");
+        createKeyIfNoneExists(PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION, "&a%player% succeeded in pick-pocketing %victim%.");
+        createKeyIfNoneExists(PICKPOCKET_FAILURE_ADMIN_NOTIFICATION, "&c%player% failed in pick-pocketing %victim%.");
 
         save();
     }
@@ -92,5 +96,12 @@ public class MessageConfiguration extends CommentedConfiguration {
         String replacedValue = keyValue.replace("%player%", player.getName());
         String replacedPlayer = replacedValue.replace("%value%", value);
         return ColorUtils.colorize(replacedPlayer);
+    }
+
+    public String getMessage(String key, Player player, Player victim) {
+        String keyValue = getConfiguration().getString(key);
+        String replacedPlayer = keyValue.replace("%player%", player.getName());
+        String replacedVictim = replacedPlayer.replace("%victim%", victim.getName());
+        return ColorUtils.colorize(replacedVictim);
     }
 }

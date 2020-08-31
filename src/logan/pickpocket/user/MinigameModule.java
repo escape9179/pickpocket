@@ -4,7 +4,6 @@ import logan.config.MessageConfiguration;
 import logan.guiapi.Menu;
 import logan.guiapi.MenuItem;
 import logan.guiapi.MenuItemClickEvent;
-import logan.pickpocket.ColorUtils;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import net.milkbowl.vault.economy.Economy;
@@ -157,8 +156,7 @@ public class MinigameModule {
                 player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundEntityItemPickup(), 1.0f, 1.0f);
 
                 showAdminNotifications(true);
-            }
-            else {
+            } else {
                 player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_UNSUCCESSFUL_KEY));
 
                 // Play failure sound
@@ -214,9 +212,10 @@ public class MinigameModule {
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
             PickpocketUser profile = Profiles.get(onlinePlayer);
             if (profile.getProfileConfiguration().getAdminSectionValue()) {
-                onlinePlayer.sendMessage(ColorUtils.colorize("&7[Pickpocket] &f" + player.getName() + "&7 has " +
-                        ((success) ? "&asucceeded" : "&cfailed") +
-                        " &7in " + "pick-pocketing &f" + victim.getPlayer().getName() + "&7."));
+                if (success)
+                    onlinePlayer.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION, player, victim.getPlayer()));
+                else
+                    onlinePlayer.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_FAILURE_ADMIN_NOTIFICATION, player, victim.getPlayer()));
             }
         });
     }
