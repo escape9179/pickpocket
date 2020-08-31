@@ -150,7 +150,7 @@ public class MinigameModule {
                     } else {
                         economy.withdrawPlayer(victim.getPlayer(), balanceToTake);
                         economy.depositPlayer(player.getPlayer(), balanceToTake);
-                        player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.MONEY_AMOUNT_RECEIVED, String.valueOf(balanceToTake)));
+                        player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.MONEY_AMOUNT_RECEIVED, String.format("%.2f", balanceToTake)));
                     }
                 }
 
