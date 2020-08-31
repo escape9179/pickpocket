@@ -13,15 +13,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 /**
  * Created by Tre on 12/28/2015.
  */
-public class InventoryClose implements Listener {
+public class InventoryCloseListener implements Listener {
 
-    public InventoryClose() {
+    public InventoryCloseListener() {
         PickpocketPlugin.registerListener(this);
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event)
-    {
+    public void onInventoryClose(InventoryCloseEvent event) {
         GUIAPI.callInventoryCloseEvents(event);
 
         Player player = (Player) event.getPlayer();

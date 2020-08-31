@@ -115,10 +115,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         reloadCommand = new ReloadCommand();
         targetCommand = new TargetCommand();
 
-        new InventoryClick();
-        new InventoryClose();
-        new PlayerInteract();
-        new PlayerJoin();
+        new InventoryClickListener();
+        new InventoryCloseListener();
+        new PlayerInteractListener();
+        new PlayerJoinListener();
 
         server.getPluginManager().registerEvents(this, this);
         server.getPluginManager().registerEvents(new PlayerMoveListener(), this);

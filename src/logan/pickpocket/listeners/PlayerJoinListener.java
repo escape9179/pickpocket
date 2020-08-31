@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 /**
  * Created by Tre on 12/28/2015.
  */
-public class PlayerJoin implements Listener {
-    public PlayerJoin() {
+public class PlayerJoinListener implements Listener {
+    public PlayerJoinListener() {
         PickpocketPlugin.registerListener(this);
     }
 

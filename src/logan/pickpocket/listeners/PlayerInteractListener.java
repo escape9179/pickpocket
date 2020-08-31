@@ -13,9 +13,9 @@ import org.bukkit.inventory.EquipmentSlot;
 /**
  * Created by Tre on 12/28/2015.
  */
-public class PlayerInteract implements Listener {
+public class PlayerInteractListener implements Listener {
 
-    public PlayerInteract() {
+    public PlayerInteractListener() {
         PickpocketPlugin.registerListener(this);
     }
 

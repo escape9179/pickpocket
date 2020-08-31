@@ -15,10 +15,8 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Created by Tre on 12/28/2015.
  */
-public class InventoryClick implements Listener
-{
-    public InventoryClick()
-    {
+public class InventoryClickListener implements Listener {
+    public InventoryClickListener() {
         PickpocketPlugin.registerListener(this);
     }
 
