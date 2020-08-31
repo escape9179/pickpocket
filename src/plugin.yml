@@ -1,6 +1,6 @@
 main: logan.pickpocket.main.PickpocketPlugin
 name: PickPocket
-version: 2.4
+version: 2.5
 author: escape9179
 api-version: "1.13"
 softdepend: [ Vault ]
