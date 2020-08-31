@@ -140,9 +140,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         // Set-up Vault economy
         if (!setupEconomy()) {
             log("Vault not found. Players won't steal money when pick-pocketing.");
-            vaultEnabled = false;
             return;
-        }
+        } else vaultEnabled = true;
 
         logger.info(getName() + " enabled.");
     }
