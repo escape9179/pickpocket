@@ -1,5 +1,10 @@
 package logan.pickpocket.main;
 
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import logan.bstats.Metrics;
 import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
@@ -62,6 +67,29 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
     private static boolean vaultEnabled;
+    public static StateFlag PICKPOCKET_FLAG;
+
+    @Override
+    public void onLoad() {
+        // Register custom WorldGuard flags if WorldGuard is present.
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+            try {
+                StateFlag flag = new StateFlag("pickpocketing", true);
+                registry.register(flag);
+                PICKPOCKET_FLAG = flag;
+            } catch (FlagConflictException e) {
+                Flag<?> existing = registry.get("pickpocketing");
+                if (existing instanceof StateFlag) {
+                    PICKPOCKET_FLAG = (StateFlag) existing;
+                } else {
+                    // This custom flag conflicts with another flag from a different plugin.
+                    PickpocketPlugin.log(ChatColor.RED + "The world guard flag 'pickpocketing' conflicts with another flag." +
+                            " Per-region pick-pocketing may function properly.");
+                }
+            }
+        }
+    }
 
     public void onEnable() {
 
