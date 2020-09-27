@@ -1,5 +1,12 @@
 package logan.pickpocket.user;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.ChatColor;
@@ -33,6 +40,14 @@ public class PickpocketUser {
     }
 
     public void performPickpocket(PickpocketUser victim) {
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionQuery query = container.createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(player.getLocation()));
+        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+        if (!set.testState(localPlayer, PickpocketPlugin.PICKPOCKET_FLAG)) {
+            player.sendMessage("Pick-pocketing isn't allowed here.");
+            return;
+        }
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
             openRummageInventory = new RummageInventory(victim);
             openRummageInventory.show(this);
