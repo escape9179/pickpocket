@@ -67,6 +67,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
     private static boolean vaultEnabled;
+    private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
     @Override
@@ -75,11 +76,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
             try {
-                StateFlag flag = new StateFlag("pickpocketing", true);
+                StateFlag flag = new StateFlag(pickpocketFlagName, true);
                 registry.register(flag);
                 PICKPOCKET_FLAG = flag;
             } catch (FlagConflictException e) {
-                Flag<?> existing = registry.get("pickpocketing");
+                Flag<?> existing = registry.get(pickpocketFlagName);
                 if (existing instanceof StateFlag) {
                     PICKPOCKET_FLAG = (StateFlag) existing;
                 } else {

@@ -25,6 +25,7 @@ public class MessageConfiguration extends CommentedConfiguration {
     public static final String PICKPOCKET_TOGGLE_ON_KEY = "pickpocket-toggle-on";
     public static final String PICKPOCKET_TOGGLE_OFF_KEY = "pickpocket-toggle-off";
     public static final String PERSON_CANT_BE_STOLEN_FROM_KEY = "person-cant-be-stolen-from";
+    public static final String PICKPOCKET_REGION_DISALLOW_KEY = "pickpocket-region-disallow";
     public static final String PICKPOCKET_UNSUCCESSFUL_KEY = "pickpocket-unsuccessful";
     public static final String PICKPOCKET_SUCCESSFUL_KEY = "pickpocket-successful";
     public static final String PARTICIPATING_TRUE_NOTIFICATION_KEY = "participating-true-notification";
@@ -57,6 +58,7 @@ public class MessageConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(PICKPOCKET_TOGGLE_ON_KEY, "&7Pick-pocketing is now enabled.");
         createKeyIfNoneExists(PICKPOCKET_TOGGLE_OFF_KEY, "&7Pick-pocketing is now disabled.");
         createKeyIfNoneExists(PERSON_CANT_BE_STOLEN_FROM_KEY, "&7This person cannot be stolen from.");
+        createKeyIfNoneExists(PICKPOCKET_REGION_DISALLOW_KEY, "&cPick-pocketing is disabled in this region.");
         createKeyIfNoneExists(PICKPOCKET_UNSUCCESSFUL_KEY, "&cPickpocket attempt unsuccessful.");
         createKeyIfNoneExists(PICKPOCKET_SUCCESSFUL_KEY, "&aPickpocket attempt successful.");
         createKeyIfNoneExists(PARTICIPATING_TRUE_NOTIFICATION_KEY, "&7You are currently participating in pick-pocketing.");
