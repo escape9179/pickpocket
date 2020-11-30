@@ -41,6 +41,12 @@ public class PlayerInteractListener implements Listener {
         if (offHand != null && event.getHand() != offHand) return;
 
         Player player = event.getPlayer();
+
+        // Nothing will happen to players who don't have the pick-pocket use permission.
+        if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {
+            return;
+        }
+
         Player victim = (Player) event.getRightClicked();
         PickpocketUser victimUser = Profiles.get(victim);
         PickpocketUser profile = Profiles.get(player);
