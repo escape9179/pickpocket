@@ -2,6 +2,7 @@ package logan.pickpocket.user;
 
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -13,6 +14,7 @@ public class PickpocketUser {
     private Player player;
     private PickpocketUser victim;
     private PickpocketUser predator;
+    private PickpocketUser recentPredator;
     private boolean playingMinigame;
     private boolean rummaging;
     private RummageInventory openRummageInventory;
@@ -22,7 +24,7 @@ public class PickpocketUser {
     private MinigameModule minigameModule;
 
     public PickpocketUser(Player player) {
-        this.player = player;
+        this.player = Bukkit.getPlayer(player.getUniqueId());
 
         profileConfiguration = new ProfileConfiguration(PickpocketPlugin.getInstance().getDataFolder() + "/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
@@ -74,10 +76,17 @@ public class PickpocketUser {
 
     public void setPredator(PickpocketUser predator) {
         this.predator = predator;
+        if (predator != null) {
+            recentPredator = predator;
+        }
     }
 
     public PickpocketUser getPredator() {
         return predator;
+    }
+
+    public PickpocketUser getRecentPredator() {
+        return recentPredator;
     }
 
     public boolean isPredator() {
@@ -97,13 +106,11 @@ public class PickpocketUser {
         return participating;
     }
 
-    public void setPlayer(Player player)
-    {
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return player;
     }
 
