@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -70,32 +71,16 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
-    @Override
-    public void onLoad() {
-        // Register custom WorldGuard flags if WorldGuard is present.
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-            try {
-                StateFlag flag = new StateFlag(pickpocketFlagName, true);
-                registry.register(flag);
-                PICKPOCKET_FLAG = flag;
-            } catch (FlagConflictException e) {
-                Flag<?> existing = registry.get(pickpocketFlagName);
-                if (existing instanceof StateFlag) {
-                    PICKPOCKET_FLAG = (StateFlag) existing;
-                } else {
-                    // This custom flag conflicts with another flag from a different plugin.
-                    PickpocketPlugin.log(ChatColor.RED + "The world guard flag 'pickpocketing' conflicts with another flag." +
-                            " Per-region pick-pocketing may function properly.");
-                }
-            }
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("com.sk89q.worldguard.WorldGuard");
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null;
         }
+        return (WorldGuardPlugin) plugin;
     }
 
-    public void onEnable() {
-
-        instance = this;
-
+    @Override
+    public void onLoad() {
         // Create an instance of a wrapper compatible with
         // the Bukkit version running on the server.
         String version = Bukkit.getBukkitVersion().split("-")[0];
@@ -119,6 +104,30 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 PickpocketPlugin.log("Unsupported version. Disabling...");
                 getServer().getPluginManager().disablePlugin(this);
         }
+
+        // Register custom WorldGuard flags if WorldGuard is present.
+        if (getWorldGuard() != null) {
+            FlagRegistry registry = getAPIWrapper().getWorldGuardFlagRegistiry();
+            try {
+                StateFlag flag = new StateFlag(pickpocketFlagName, true);
+                registry.register(flag);
+                PICKPOCKET_FLAG = flag;
+            } catch (FlagConflictException e) {
+                Flag<?> existing = registry.get(pickpocketFlagName);
+                if (existing instanceof StateFlag) {
+                    PICKPOCKET_FLAG = (StateFlag) existing;
+                } else {
+                    // This custom flag conflicts with another flag from a different plugin.
+                    PickpocketPlugin.log(ChatColor.RED + "The world guard flag 'pickpocketing' conflicts with another flag." +
+                            " Per-region pick-pocketing may function properly.");
+                }
+            }
+        }
+    }
+
+    public void onEnable() {
+
+        instance = this;
 
         getDataFolder().mkdirs();
 
@@ -169,10 +178,22 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         // Set-up Vault economy
         if (!setupEconomy()) {
             log("Vault not found. Players won't steal money when pick-pocketing.");
-            return;
         } else vaultEnabled = true;
 
         logger.info(getName() + " enabled.");
+
+        System.out.println("Attempting to find class again!");
+        System.out.println("Attempting to find class again!");
+        System.out.println("Attempting to find class again!");
+        try {
+            System.out.println("Attempting to find class again...");
+            Class.forName("com.sk89q.worldguard.WorldGuard");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Done attempting to find class!");
+        System.out.println("Done attempting to find class!");
+        System.out.println("Done attempting to find class!");
     }
 
     public void onDisable() {

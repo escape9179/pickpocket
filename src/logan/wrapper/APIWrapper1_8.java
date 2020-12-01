@@ -1,5 +1,7 @@
 package logan.wrapper;
 
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
+import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
@@ -45,5 +47,10 @@ public class APIWrapper1_8 implements APIWrapper {
             storageContents[i] = inventoryContents[i];
         }
         return storageContents;
+    }
+
+    @Override
+    public FlagRegistry getWorldGuardFlagRegistiry() {
+        return PickpocketPlugin.getInstance().getWorldGuard().getFlagRegistry();
     }
 }
