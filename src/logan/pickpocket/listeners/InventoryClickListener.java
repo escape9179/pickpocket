@@ -29,7 +29,7 @@ public class InventoryClickListener implements Listener {
         Inventory inventory = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if (clickedItem == null || profile.isRummaging() || profile.isPlayingMinigame()) {
+        if (profile.isRummaging() || profile.isPlayingMinigame()) {
             event.setCancelled(true);
             return;
         }
@@ -50,6 +50,7 @@ public class InventoryClickListener implements Listener {
         }
 
         if (profile.getVictim().getProfileConfiguration().getExemptSectionValue()) {
+            System.out.println("Person can't be stolen from.");
             event.setCancelled(true);
             profile.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PERSON_CANT_BE_STOLEN_FROM_KEY));
         }
