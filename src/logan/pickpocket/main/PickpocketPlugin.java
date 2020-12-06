@@ -1,5 +1,11 @@
 package logan.pickpocket.main;
 
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import logan.bstats.Metrics;
 import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
@@ -62,11 +68,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
     private static boolean vaultEnabled;
+    private static String pickpocketFlagName = "pickpocket";
+    public static StateFlag PICKPOCKET_FLAG;
 
-    public void onEnable() {
-
-        instance = this;
-
+    @Override
+    public void onLoad() {
         // Create an instance of a wrapper compatible with
         // the Bukkit version running on the server.
         String version = Bukkit.getBukkitVersion().split("-")[0];
@@ -90,6 +96,39 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 PickpocketPlugin.log("Unsupported version. Disabling...");
                 getServer().getPluginManager().disablePlugin(this);
         }
+
+        // Register custom WorldGuard flags if WorldGuard is present.
+        if (WorldGuardPlugin.inst() != null) {
+            FlagRegistry registry = null;
+            if (wrapper instanceof APIWrapper1_8) {
+                registry = WorldGuardPlugin.inst().getFlagRegistry();
+            } else if (wrapper instanceof APIWrapper1_13) {
+                registry = WorldGuard.getInstance().getFlagRegistry();
+            }
+            if (registry == null) {
+                PickpocketPlugin.log("WorldGuard FlagRegistry null. Unable to load 'pickpocket' flag.");
+                return;
+            }
+            try {
+                StateFlag flag = new StateFlag(pickpocketFlagName, true);
+                registry.register(flag);
+                PICKPOCKET_FLAG = flag;
+            } catch (FlagConflictException e) {
+                Flag<?> existing = registry.get(pickpocketFlagName);
+                if (existing instanceof StateFlag) {
+                    PICKPOCKET_FLAG = (StateFlag) existing;
+                } else {
+                    // This custom flag conflicts with another flag from a different plugin.
+                    PickpocketPlugin.log(ChatColor.RED + "The world guard flag 'pickpocketing' conflicts with another flag." +
+                            " Per-region pick-pocketing may function properly.");
+                }
+            }
+        }
+    }
+
+    public void onEnable() {
+
+        instance = this;
 
         getDataFolder().mkdirs();
 
@@ -140,7 +179,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         // Set-up Vault economy
         if (!setupEconomy()) {
             log("Vault not found. Players won't steal money when pick-pocketing.");
-            return;
         } else vaultEnabled = true;
 
         logger.info(getName() + " enabled.");
