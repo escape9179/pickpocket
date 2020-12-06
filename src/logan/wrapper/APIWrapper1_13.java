@@ -1,13 +1,9 @@
 package logan.wrapper;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class APIWrapper1_13 implements APIWrapper {
 
@@ -44,22 +40,5 @@ public class APIWrapper1_13 implements APIWrapper {
     @Override
     public ItemStack[] getInventoryStorageContents(Inventory inventory) {
         return inventory.getStorageContents();
-    }
-
-    @Override
-    public FlagRegistry getWorldGuardFlagRegistiry() {
-        try {
-            Class<?> worldGuardClass = Class.forName("com.sk89q.worldguard.WorldGuard");
-            WorldGuardPlugin worldGuardPlugin
-                    = (WorldGuardPlugin) worldGuardClass
-                    .getMethod("getInstance")
-                    .invoke(null);
-            return (FlagRegistry) worldGuardPlugin.getClass()
-                    .getMethod("getFlagRegistry")
-                    .invoke(worldGuardPlugin);
-        } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

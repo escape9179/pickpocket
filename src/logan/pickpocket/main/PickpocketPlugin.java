@@ -1,5 +1,6 @@
 package logan.pickpocket.main;
 
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -24,7 +25,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -71,14 +71,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
-    public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("com.sk89q.worldguard.WorldGuard");
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            return null;
-        }
-        return (WorldGuardPlugin) plugin;
-    }
-
     @Override
     public void onLoad() {
         // Create an instance of a wrapper compatible with
@@ -106,8 +98,17 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         }
 
         // Register custom WorldGuard flags if WorldGuard is present.
-        if (getWorldGuard() != null) {
-            FlagRegistry registry = getAPIWrapper().getWorldGuardFlagRegistiry();
+        if (WorldGuardPlugin.inst() != null) {
+            FlagRegistry registry = null;
+            if (wrapper instanceof APIWrapper1_8) {
+                registry = WorldGuardPlugin.inst().getFlagRegistry();
+            } else if (wrapper instanceof APIWrapper1_13) {
+                registry = WorldGuard.getInstance().getFlagRegistry();
+            }
+            if (registry == null) {
+                PickpocketPlugin.log("WorldGuard FlagRegistry null. Unable to load 'pickpocket' flag.");
+                return;
+            }
             try {
                 StateFlag flag = new StateFlag(pickpocketFlagName, true);
                 registry.register(flag);
@@ -181,19 +182,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         } else vaultEnabled = true;
 
         logger.info(getName() + " enabled.");
-
-        System.out.println("Attempting to find class again!");
-        System.out.println("Attempting to find class again!");
-        System.out.println("Attempting to find class again!");
-        try {
-            System.out.println("Attempting to find class again...");
-            Class.forName("com.sk89q.worldguard.WorldGuard");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Done attempting to find class!");
-        System.out.println("Done attempting to find class!");
-        System.out.println("Done attempting to find class!");
     }
 
     public void onDisable() {

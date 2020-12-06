@@ -1,5 +1,6 @@
 package logan.pickpocket.user;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.wrapper.APIWrapper1_13;
@@ -41,13 +42,13 @@ public class PickpocketUser {
         if (PickpocketPlugin.getAPIWrapper() instanceof APIWrapper1_8) {
             // Old (WorldGuard pre-7.0) way of checking world guard region flags.
             com.sk89q.worldguard.LocalPlayer localPlayer = com.sk89q.worldguard.bukkit.WorldGuardPlugin.inst().wrapPlayer(player);
-            com.sk89q.worldguard.bukkit.RegionContainer container = PickpocketPlugin.getInstance().getWorldGuard().getRegionContainer();
+            com.sk89q.worldguard.bukkit.RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
             com.sk89q.worldguard.bukkit.RegionQuery query = container.createQuery();
             Location playerLocation = player.getLocation();
             isAllowedPickpocketing = query.testState(playerLocation, localPlayer, PickpocketPlugin.PICKPOCKET_FLAG);
         } else if (PickpocketPlugin.getAPIWrapper() instanceof APIWrapper1_13) {
             // New way (WorldGuard 7.0) way of checking region flags.
-            com.sk89q.worldguard.LocalPlayer localPlayer = com.sk89q.worldguard.bukkit.WorldGuardPlugin.inst().wrapPlayer(player);
+            com.sk89q.worldguard.LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
             com.sk89q.worldguard.protection.regions.RegionContainer container
                     = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
             com.sk89q.worldguard.protection.regions.RegionQuery query = container.createQuery();

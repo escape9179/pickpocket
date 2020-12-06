@@ -1,6 +1,5 @@
 package logan.wrapper;
 
-import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
@@ -21,6 +20,4 @@ public interface APIWrapper {
     Sound getSoundEntityItemPickup();
 
     ItemStack[] getInventoryStorageContents(Inventory inventory);
-
-    FlagRegistry getWorldGuardFlagRegistiry();
 }
