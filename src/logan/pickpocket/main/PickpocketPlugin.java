@@ -1,10 +1,8 @@
 package logan.pickpocket.main;
 
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import logan.bstats.Metrics;
 import logan.config.MessageConfiguration;
@@ -69,6 +67,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
     private static boolean vaultEnabled;
+    private static boolean worldGuardPresent;
     private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
@@ -100,36 +99,30 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         // Load WorldGuard classes.
         Class<WorldGuard> worldGuardClass;
-        Class<WorldGuardPlugin> worldGuardPluginClass;
         Class<FlagRegistry> flagRegistryClass;
-        Class<Flag> flagClass;
         Class<StateFlag> stateFlagClass;
-        Class<FlagConflictException> flagConflictExceptionClass;
         try {
             worldGuardClass = (Class<WorldGuard>) Class.forName("com.sk89q.worldguard.WorldGuard");
-            worldGuardPluginClass = (Class<WorldGuardPlugin>) Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
             flagRegistryClass = (Class<FlagRegistry>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
-            flagClass = (Class<Flag>) Class.forName("com.sk89q.worldguard.protection.flags.Flag");
             stateFlagClass = (Class<StateFlag>) Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
-            flagConflictExceptionClass = (Class<FlagConflictException>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagConflictException");
         } catch (ClassNotFoundException e) {
-            System.out.println("Caught ClassNotFoundException while loading WorldGuard.");
+            PickpocketPlugin.log("Error resolving WorldGuard classes. Per-region pick-pocketing won't work.");
+            worldGuardPresent = false;
             return;
         }
 
+        worldGuardPresent = true;
+
         // Register custom WorldGuard flags if WorldGuard is present.
         try {
-            FlagRegistry flagRegistry = null;
-            flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getInstance").invoke(null);
-            if (flagRegistry == null) {
-                System.out.println("FlagRegistry null.");
-                return;
-            }
+            FlagRegistry flagRegistry;
+            WorldGuard worldGuardInstance = (WorldGuard) worldGuardClass.getMethod("getInstance").invoke(null);
+            flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getFlagRegistry").invoke(worldGuardInstance);
             StateFlag stateFlag
                     = stateFlagClass
-                    .getConstructor(String.class, Boolean.class)
+                    .getConstructor(String.class, boolean.class)
                     .newInstance(pickpocketFlagName, true);
-            flagRegistryClass.getMethod("register").invoke(flagRegistry, stateFlag); // FIXME Might still throw exception?
+            flagRegistryClass.getMethod("register", Flag.class).invoke(flagRegistry, stateFlag);
             PICKPOCKET_FLAG = stateFlag;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -307,5 +300,9 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static boolean isVaultEnabled() {
         return vaultEnabled;
+    }
+
+    public static boolean isWorldGuardPresent() {
+        return worldGuardPresent;
     }
 }
