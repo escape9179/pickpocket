@@ -45,7 +45,6 @@ public class PickpocketUser {
     public void performPickpocket(PickpocketUser victim) {
         boolean isAllowedPickpocketing = true;
         if (PickpocketPlugin.isWorldGuardPresent()) {
-            // New way (WorldGuard 7.0) way of checking region flags.
             LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
