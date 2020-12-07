@@ -54,7 +54,6 @@ public class PickpocketUser {
         }
 
         if (!isAllowedPickpocketing) {
-            //TODO Add to message configuration
             player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_REGION_DISALLOW_KEY));
             return;
         }
