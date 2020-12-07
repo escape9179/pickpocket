@@ -55,7 +55,7 @@ public class PickpocketUser {
 
         if (!isAllowedPickpocketing) {
             //TODO Add to message configuration
-            player.sendMessage("Pick-pocketing isn't allowed here.");
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_REGION_DISALLOW_KEY));
             return;
         }
         if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
