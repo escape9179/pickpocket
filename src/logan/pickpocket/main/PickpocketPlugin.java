@@ -30,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,32 +98,51 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 getServer().getPluginManager().disablePlugin(this);
         }
 
+        // Load WorldGuard classes.
+        Class<WorldGuard> worldGuardClass;
+        Class<WorldGuardPlugin> worldGuardPluginClass;
+        Class<FlagRegistry> flagRegistryClass;
+        Class<Flag> flagClass;
+        Class<StateFlag> stateFlagClass;
+        Class<FlagConflictException> flagConflictExceptionClass;
+        try {
+            worldGuardClass = (Class<WorldGuard>) Class.forName("com.sk89q.worldguard.WorldGuard");
+            worldGuardPluginClass = (Class<WorldGuardPlugin>) Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
+            flagRegistryClass = (Class<FlagRegistry>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
+            flagClass = (Class<Flag>) Class.forName("com.sk89q.worldguard.protection.flags.Flag");
+            stateFlagClass = (Class<StateFlag>) Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
+            flagConflictExceptionClass = (Class<FlagConflictException>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagConflictException");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Caught ClassNotFoundException while loading WorldGuard.");
+            return;
+        }
+
         // Register custom WorldGuard flags if WorldGuard is present.
-        if (WorldGuardPlugin.inst() != null) {
-            FlagRegistry registry = null;
-            if (wrapper instanceof APIWrapper1_8) {
-                registry = WorldGuardPlugin.inst().getFlagRegistry();
-            } else if (wrapper instanceof APIWrapper1_13) {
-                registry = WorldGuard.getInstance().getFlagRegistry();
-            }
-            if (registry == null) {
-                PickpocketPlugin.log("WorldGuard FlagRegistry null. Unable to load 'pickpocket' flag.");
+        try {
+            FlagRegistry flagRegistry = null;
+            flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getInstance").invoke(null);
+            if (flagRegistry == null) {
+                System.out.println("FlagRegistry null.");
                 return;
             }
-            try {
-                StateFlag flag = new StateFlag(pickpocketFlagName, true);
-                registry.register(flag);
-                PICKPOCKET_FLAG = flag;
-            } catch (FlagConflictException e) {
-                Flag<?> existing = registry.get(pickpocketFlagName);
-                if (existing instanceof StateFlag) {
-                    PICKPOCKET_FLAG = (StateFlag) existing;
-                } else {
-                    // This custom flag conflicts with another flag from a different plugin.
-                    PickpocketPlugin.log(ChatColor.RED + "The world guard flag 'pickpocketing' conflicts with another flag." +
-                            " Per-region pick-pocketing may function properly.");
-                }
-            }
+            StateFlag stateFlag
+                    = stateFlagClass
+                    .getConstructor(String.class, Boolean.class)
+                    .newInstance(pickpocketFlagName, true);
+            flagRegistryClass.getMethod("register").invoke(flagRegistry, stateFlag); // FIXME Might still throw exception?
+            PICKPOCKET_FLAG = stateFlag;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Add code
+            // This could be a FlagConflictException
+            e.printStackTrace();
         }
     }
 
