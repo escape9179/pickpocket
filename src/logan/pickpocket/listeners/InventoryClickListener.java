@@ -35,13 +35,10 @@ public class InventoryClickListener implements Listener {
         }
 
         try {
-            if (inventory.getItem(event.getSlot()) == null)
-            {
+            if (inventory == null || inventory.getItem(event.getSlot()) == null) {
                 return;
             }
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
 
