@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -27,7 +26,6 @@ public class InventoryClickListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         PickpocketUser profile = Profiles.get(player);
         Inventory inventory = event.getClickedInventory();
-        ItemStack clickedItem = event.getCurrentItem();
 
         if (profile.isRummaging() || profile.isPlayingMinigame()) {
             event.setCancelled(true);
