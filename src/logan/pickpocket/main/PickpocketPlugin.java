@@ -220,7 +220,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         }
         Player player = (Player) sender;
 
-        if (label.equalsIgnoreCase("pickpocket") && player.hasPermission(PICKPOCKET_USE)) {
+        if (label.equalsIgnoreCase("pickpocket") && (player.isOp() || player.hasPermission(PICKPOCKET_USE))) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
                 sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
