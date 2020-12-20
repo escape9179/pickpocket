@@ -45,7 +45,6 @@ public class InventoryClickListener implements Listener {
         }
 
         if (profile.getVictim().getProfileConfiguration().getExemptSectionValue()) {
-            System.out.println("Person can't be stolen from.");
             event.setCancelled(true);
             profile.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PERSON_CANT_BE_STOLEN_FROM_KEY));
         }
