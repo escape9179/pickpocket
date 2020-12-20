@@ -194,6 +194,16 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             log("Vault not found. Players won't steal money when pick-pocketing.");
         } else vaultEnabled = true;
 
+        /* Check for updates */
+        new UpdateChecker(this, 16273).getVersion(version -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                logger.info("There is not a new update available.");
+            } else {
+                logger.info("There is a new update available.");
+                logger.info(String.format("Pickpocket %s -> %s", this.getDescription().getVersion(), version));
+            }
+        });
+
         logger.info(getName() + " enabled.");
     }
 
