@@ -8,6 +8,7 @@ import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -41,8 +42,18 @@ public class MinigameModule {
     }
 
     public void startMinigame(PickpocketUser victim, Inventory inventory, ItemStack clickedItem) {
-        this.victim = victim;
+
+        this.player = Bukkit.getPlayer(player.getUniqueId());
+
+        if (Bukkit.getPlayer(victim.getPlayer().getUniqueId()) == null) {
+            player.sendMessage(ChatColor.RED + "That player isn't available anymore.");
+            return;
+        }
+
+        this.victim = Profiles.get(Bukkit.getPlayer(victim.getPlayer().getUniqueId()));
+
         minigameMenu = new Menu("Pick-pocketing " + victim.getPlayer().getName(), INVENTORY_SIZE / 9);
+
         player.closeInventory();
 
         profile.setPlayingMinigame(true);
