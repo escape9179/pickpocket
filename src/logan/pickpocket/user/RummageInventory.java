@@ -59,11 +59,7 @@ public class RummageInventory {
             @Override
             public void run() {
                 if (tickCount.getAndIncrement() >= ticksUntilNoticed) {
-
-                    if (victim != null) {
-                        victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
-                    }
-
+                    victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
                     // Close the rummage inventory
                     menu.close();
                     predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));

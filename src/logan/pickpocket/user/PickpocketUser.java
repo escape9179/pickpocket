@@ -13,15 +13,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
 
 /**
  * Created by Tre on 12/14/2015.
  */
 public class PickpocketUser {
 
-    private UUID uuid;
+    private Player player;
     private PickpocketUser victim;
     private PickpocketUser predator;
     private PickpocketUser recentPredator;
@@ -33,10 +31,10 @@ public class PickpocketUser {
     private ProfileConfiguration profileConfiguration;
     private MinigameModule minigameModule;
 
-    public PickpocketUser(UUID uuid) {
-        this.uuid = uuid;
+    public PickpocketUser(Player player) {
+        this.player = Bukkit.getPlayer(player.getUniqueId());
 
-        profileConfiguration = new ProfileConfiguration(PickpocketPlugin.getInstance().getDataFolder() + "/players/", uuid.toString() + ".yml");
+        profileConfiguration = new ProfileConfiguration(PickpocketPlugin.getInstance().getDataFolder() + "/players/", player.getUniqueId().toString() + ".yml");
         profileConfiguration.createSections();
 
         participating = profileConfiguration.getParticipatingSectionValue();
@@ -45,30 +43,27 @@ public class PickpocketUser {
     }
 
     public void performPickpocket(PickpocketUser victim) {
-
-        minigameModule = new MinigameModule(this);
-
         boolean isAllowedPickpocketing = true;
         if (PickpocketPlugin.isWorldGuardPresent()) {
-            LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(getPlayer());
+            LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
-            Location worldEditLocation = BukkitAdapter.adapt(getPlayer().getLocation());
+            Location worldEditLocation = BukkitAdapter.adapt(player.getLocation());
             isAllowedPickpocketing = query.testState(worldEditLocation, localPlayer, PickpocketPlugin.PICKPOCKET_FLAG);
         }
 
         if (!isAllowedPickpocketing) {
-            getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_REGION_DISALLOW_KEY));
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_REGION_DISALLOW_KEY));
             return;
         }
-        if (!PickpocketPlugin.getCooldowns().containsKey(uuid)) {
+        if (!PickpocketPlugin.getCooldowns().containsKey(player)) {
             openRummageInventory = new RummageInventory(victim);
             openRummageInventory.show(this);
             setRummaging(true);
             setVictim(victim);
             victim.setPredator(this);
         } else {
-            getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.COOLDOWN_NOTICE_KEY, PickpocketPlugin.getCooldowns().get(uuid).toString()));
+            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.COOLDOWN_NOTICE_KEY, PickpocketPlugin.getCooldowns().get(player).toString()));
         }
     }
 
@@ -132,16 +127,12 @@ public class PickpocketUser {
         return participating;
     }
 
-    public void setPlayer(UUID uuid) {
-        this.uuid = uuid;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(uuid);
-    }
-
-    public UUID getUuid() {
-        return uuid;
+        return player;
     }
 
     public ProfileConfiguration getProfileConfiguration() {
@@ -153,17 +144,10 @@ public class PickpocketUser {
     }
 
     public void sendMessage(String message, Object... args) {
-        getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(message, args)));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(message, args)));
     }
 
     public void playRummageSound() {
-        getPlayer().playSound(getPlayer().getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockSnowStep(), 1.0f, 0.5f);
-    }
-
-    @Override
-    public String toString() {
-        return "player: " + (uuid != null ? getPlayer().getName() : "null") + "\nvictim: " + (victim != null ? victim.getPlayer().getName() : "null")
-                + "\npredator: " + (predator != null ? predator.getPlayer().getName() : "null") + "\nrecent predator: " + (recentPredator != null ? recentPredator.getPlayer().getName() : "null"
-                + "\nmini-game: " + playingMinigame + "\nrummaging: " + rummaging + "\nparticipating: " + participating);
+        player.playSound(player.getLocation(), PickpocketPlugin.getAPIWrapper().getSoundBlockSnowStep(), 1.0f, 0.5f);
     }
 }
