@@ -52,6 +52,7 @@ public class Menu
         GUIAPI.registerMenu(id, this);
 
         player.openInventory(inventory);
+        player.updateInventory();
     }
 
     public void close() {
