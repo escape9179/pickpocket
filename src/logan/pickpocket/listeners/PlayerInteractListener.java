@@ -5,7 +5,6 @@ import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,7 +52,7 @@ public class PlayerInteractListener implements Listener {
         if (PickpocketPlugin.isEssentialsPresent()) {
             User user = PickpocketPlugin.getEssentials().getUser(event.getRightClicked().getUniqueId());
             if (user.isAfk()) {
-                player.sendMessage(ChatColor.RED + "That player is AFK.");
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_AFK_MESSAGE));
                 return;
             }
         }
