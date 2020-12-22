@@ -39,7 +39,8 @@ public class MessageConfiguration extends CommentedConfiguration {
     public static final String MONEY_AMOUNT_RECEIVED = "money-amount-received";
     public static final String PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION = "admin-notify-success";
     public static final String PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure";
-    public static final String PLAYER_AFK_MESSAGE = "player-afk";
+    public static final String PLAYER_STEAL_FROM_AFK = "player-attempt-steal-from-afk";
+    public static final String PLAYER_STEAL_WHILE_AFK = "player-attempt-steal-while-afk";
 
     public MessageConfiguration() {
         super(new File(PickpocketPlugin.getInstance().getDataFolder(), "messages.yml"));
@@ -73,7 +74,8 @@ public class MessageConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(MONEY_AMOUNT_RECEIVED, "&aYou received $%value%.");
         createKeyIfNoneExists(PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION, "&a%player% succeeded in pick-pocketing %victim%.");
         createKeyIfNoneExists(PICKPOCKET_FAILURE_ADMIN_NOTIFICATION, "&c%player% failed in pick-pocketing %victim%.");
-        createKeyIfNoneExists(PLAYER_AFK_MESSAGE, "&cThat player is AFK.");
+        createKeyIfNoneExists(PLAYER_STEAL_FROM_AFK, "&cThat player is AFK.");
+        createKeyIfNoneExists(PLAYER_STEAL_WHILE_AFK, "&cYou cannot pick-pocket while AFK.");
 
         save();
     }

@@ -1,6 +1,6 @@
 package logan.pickpocket.listeners;
 
-import com.earth2me.essentials.User;
+import com.earth2me.essentials.Essentials;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
@@ -48,11 +48,19 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        /* Make sure person getting pick-pocketed isn't AFK */
+        /* AFK checks */
         if (PickpocketPlugin.isEssentialsPresent()) {
-            User user = PickpocketPlugin.getEssentials().getUser(event.getRightClicked().getUniqueId());
-            if (user.isAfk()) {
-                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_AFK_MESSAGE));
+            Essentials essentials = PickpocketPlugin.getEssentials();
+
+            /* Check if the victim is AFK */
+            if (essentials.getUser(event.getRightClicked().getUniqueId()).isAfk()) {
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_STEAL_FROM_AFK));
+                return;
+            }
+
+            /* Check if the predator is AFK */
+            if (essentials.getUser(event.getPlayer().getUniqueId()).isAfk()) {
+                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_STEAL_WHILE_AFK));
                 return;
             }
         }
