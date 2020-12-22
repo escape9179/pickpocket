@@ -1,9 +1,11 @@
 package logan.pickpocket.listeners;
 
+import com.earth2me.essentials.User;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,6 +47,15 @@ public class PlayerInteractListener implements Listener {
         // Nothing will happen to players who don't have the pick-pocket use permission.
         if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {
             return;
+        }
+
+        /* Make sure person getting pick-pocketed isn't AFK */
+        if (PickpocketPlugin.isEssentialsPresent()) {
+            User user = PickpocketPlugin.getEssentials().getUser(event.getRightClicked().getUniqueId());
+            if (user.isAfk()) {
+                player.sendMessage(ChatColor.RED + "That player is AFK.");
+                return;
+            }
         }
 
         Player victim = (Player) event.getRightClicked();
