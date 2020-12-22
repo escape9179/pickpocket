@@ -323,6 +323,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return worldGuardPresent;
     }
 
+    public static Essentials getEssentials() {
+        return essentials;
+    }
+
     public static boolean isEssentialsPresent() {
         return essentials != null;
     }
