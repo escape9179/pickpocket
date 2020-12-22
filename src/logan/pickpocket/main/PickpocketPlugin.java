@@ -1,5 +1,6 @@
 package logan.pickpocket.main;
 
+import com.earth2me.essentials.Essentials;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -66,6 +67,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static PickpocketConfiguration pickpocketConfiguration;
     private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
+    private static Essentials essentials;
     private static boolean vaultEnabled;
     private static boolean worldGuardPresent;
     private static String pickpocketFlagName = "pickpocket";
@@ -194,6 +196,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             log("Vault not found. Players won't steal money when pick-pocketing.");
         } else vaultEnabled = true;
 
+        /* Set up Essentials */
+        if ((essentials = (Essentials) getServer().getPluginManager().getPlugin("Essentials")) == null) {
+            logger.info("Essentials not found. People can steal from AFK players!");
+        }
+
         /* Check for updates */
         new UpdateChecker(this, 16273).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
@@ -314,5 +321,9 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static boolean isWorldGuardPresent() {
         return worldGuardPresent;
+    }
+
+    public static boolean isEssentialsPresent() {
+        return essentials != null;
     }
 }

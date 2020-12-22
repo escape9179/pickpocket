@@ -3,7 +3,7 @@ name: PickPocket
 version: 2.5.4
 author: escape9179
 api-version: "1.13"
-softdepend: [ Vault, WorldGuard, WorldEdit ]
+softdepend: [ Vault, WorldGuard, WorldEdit, Essentials ]
 commands:
   pickpocket:
     aliases: pp
