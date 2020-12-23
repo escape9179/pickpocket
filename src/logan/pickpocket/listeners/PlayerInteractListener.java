@@ -1,10 +1,13 @@
 package logan.pickpocket.listeners;
 
 import com.earth2me.essentials.Essentials;
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Town;
 import logan.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +45,7 @@ public class PlayerInteractListener implements Listener {
         if (offHand != null && event.getHand() != offHand) return;
 
         Player player = event.getPlayer();
+        Player victim = (Player) event.getRightClicked();
 
         // Nothing will happen to players who don't have the pick-pocket use permission.
         if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {
@@ -65,7 +69,20 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
-        Player victim = (Player) event.getRightClicked();
+        /* Foreign town member check */
+        if (PickpocketPlugin.isTownyPresent()) {
+            if (!isTownMember(player) && isTownMember(victim) && !PickpocketPlugin.getPickpocketConfiguration().isForeignTownTheftEnabled()) {
+                player.sendMessage(ChatColor.RED + "You cannot steal from players in their own town.");
+                return;
+            }
+
+            /* Same town member check */
+            if (isTownMember(player) && isTownMember(victim) && !PickpocketPlugin.getPickpocketConfiguration().isSameTownTheftEnabled()) {
+                player.sendMessage(ChatColor.RED + "You cannot steal from your own town-folk!");
+                return;
+            }
+        }
+
         PickpocketUser victimUser = Profiles.get(victim);
         PickpocketUser profile = Profiles.get(player);
 
@@ -81,5 +98,10 @@ public class PlayerInteractListener implements Listener {
             return;
         }
         profile.performPickpocket(victimUser);
+    }
+
+    private static boolean isTownMember(Player player) {
+        Town town = TownyAPI.getInstance().getTown(player.getLocation());
+        return town.hasResident(player.getName());
     }
 }

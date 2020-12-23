@@ -16,6 +16,8 @@ public class PickpocketConfiguration extends CommentedConfiguration {
     private static final String statusOnInteractKey = "show-status-on-interact";
     private static final String statusOnLoginKey = "show-status-on-login";
     private static final String disabledItemsKey = "disabled-items";
+    private static final String foreignTownTheftKey = "foreign-town-theft";
+    private static final String sameTownTheftKey = "same-town-theft";
 
     public PickpocketConfiguration() {
         super(new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml"));
@@ -30,6 +32,8 @@ public class PickpocketConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(statusOnInteractKey, true);
         createKeyIfNoneExists(statusOnLoginKey, true);
         createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
+        createKeyIfNoneExists(foreignTownTheftKey, false);
+        createKeyIfNoneExists(sameTownTheftKey, false);
 
         addCommentToKey(loseMoney, "Whether or not predators should take money from", "victims when pick-pocketing.");
         addCommentToKey(moneyLost, "The percentage of money taken by the predator after", "successfully pick-pocketing another player.");
@@ -39,6 +43,8 @@ public class PickpocketConfiguration extends CommentedConfiguration {
         addCommentToKey(statusOnInteractKey, "Whether or not to show a players the", "pick-pocket status message when they attempt", "to pick-pocket another player whilst they, or the", "victim has pick-pocketing disabled.");
         addCommentToKey(statusOnLoginKey, "Whether or not to show a players pick-pocket status when logging in.");
         addCommentToKey(disabledItemsKey, "Items that can't be stolen and therefore, won't show", "up in the rummage GUI. A list of Minecraft IDs can be found", "at www.deadmap.com/idlist");
+        addCommentToKey(foreignTownTheftKey, "Whether players should be able to steal from people in their own town.");
+        addCommentToKey(sameTownTheftKey, "Whether players should be able to steal from their own town-folk");
 
         save();
     }
@@ -69,5 +75,13 @@ public class PickpocketConfiguration extends CommentedConfiguration {
 
     public int getCooldownTime() {
         return getConfiguration().getInt(cooldownTimeKey);
+    }
+
+    public boolean isForeignTownTheftEnabled() {
+        return getConfiguration().getBoolean(foreignTownTheftKey);
+    }
+
+    public boolean isSameTownTheftEnabled() {
+        return getConfiguration().getBoolean(sameTownTheftKey);
     }
 }

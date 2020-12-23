@@ -70,6 +70,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private static Essentials essentials;
     private static boolean vaultEnabled;
     private static boolean worldGuardPresent;
+    private static boolean townyPresent;
     private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
@@ -201,6 +202,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             logger.info("Essentials not found. People can steal from AFK players!");
         }
 
+        /* Set up towny */
+        if (getServer().getPluginManager().getPlugin("Towny") != null) {
+            townyPresent = true;
+        }
+
         /* Check for updates */
         new UpdateChecker(this, 16273).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
@@ -321,6 +327,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static boolean isWorldGuardPresent() {
         return worldGuardPresent;
+    }
+
+    public static boolean isTownyPresent() {
+        return townyPresent;
     }
 
     public static Essentials getEssentials() {
