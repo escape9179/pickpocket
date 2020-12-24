@@ -1,6 +1,6 @@
 package logan.pickpocket.listeners;
 
-import logan.config.MessageConfiguration;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
@@ -27,10 +27,9 @@ public class PlayerJoinListener implements Listener {
         if (!PickpocketPlugin.getPickpocketConfiguration().isShowStatusOnLoginEnabled()) return;
 
         // show status message
-        if (profile.isParticipating()) {
-            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PARTICIPATING_TRUE_NOTIFICATION_KEY));
-        } else {
-            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PARTICIPATING_FALSE_NOTIFICATION_KEY));
-        }
+        if (profile.isParticipating())
+            player.sendMessage(MessageConfiguration.getParticipatingTrueNotificationMessage());
+        else
+            player.sendMessage(MessageConfiguration.getParticipatingFalseNotificationMessage());
     }
 }

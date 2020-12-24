@@ -1,7 +1,6 @@
 package logan.pickpocket.listeners;
 
-import logan.config.MessageConfiguration;
-import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
@@ -46,13 +45,13 @@ public class PlayerMoveListener implements Listener {
         if (playerProfile.isPredator()) {
             PickpocketUser victimProfile = playerProfile.getVictim();
             if (playerProfile.isPlayingMinigame()) {
-                playerProfile.getMinigameModule().stopMinigame();
+                playerProfile.getCurrentMinigame().stop();
             }
             if (playerProfile.isRummaging()) {
-                playerProfile.getPlayer().closeInventory();
+                playerProfile.getBukkitPlayer().closeInventory();
                 playerProfile.setRummaging(false);
             }
-            player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_ON_MOVE_WARNING_KEY));
+            player.sendMessage(MessageConfiguration.getPickpocketOnMoveWarningMessage());
             playerProfile.setVictim(null);
             victimProfile.setPredator(null);
             return;
@@ -62,13 +61,13 @@ public class PlayerMoveListener implements Listener {
         if (playerProfile.isVictim()) {
             PickpocketUser predatorProfile = playerProfile.getPredator();
             if (predatorProfile.isPlayingMinigame()) {
-                predatorProfile.getMinigameModule().stopMinigame();
+                predatorProfile.getCurrentMinigame().stop();
             }
             if (predatorProfile.isRummaging()) {
-                predatorProfile.getPlayer().closeInventory();
+                predatorProfile.getBukkitPlayer().closeInventory();
                 predatorProfile.setRummaging(false);
             }
-            playerProfile.getRecentPredator().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY));
+            playerProfile.getLastPredator().sendMessage(MessageConfiguration.getPickpocketOnMoveOtherWarningMessage());
             playerProfile.setPredator(null);
             predatorProfile.setVictim(null);
         }
