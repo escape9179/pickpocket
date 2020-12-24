@@ -23,7 +23,6 @@ public class PlayerMoveListener implements Listener {
 
         Player player = event.getPlayer();
 
-        PickpocketUser playerProfile = Profiles.get(player);
         Location previousLocation = playerLocationMap.get(player.getUniqueId());
         Location currentLocation = player.getLocation();
 
@@ -40,6 +39,8 @@ public class PlayerMoveListener implements Listener {
         } else {
             playerLocationMap.put(player.getUniqueId(), currentLocation);
         }
+
+        PickpocketUser playerProfile = Profiles.get(player);
 
         // Check if the player is a predator.
         if (playerProfile.isPredator()) {
