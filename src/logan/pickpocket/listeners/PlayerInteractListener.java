@@ -102,6 +102,6 @@ public class PlayerInteractListener implements Listener {
 
     private static boolean isTownMember(Player player) {
         Town town = TownyAPI.getInstance().getTown(player.getLocation());
-        return town.hasResident(player.getName());
+        return town != null && town.hasResident(player.getName());
     }
 }
