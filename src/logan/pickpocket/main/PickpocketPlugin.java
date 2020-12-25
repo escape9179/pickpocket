@@ -205,6 +205,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         /* Set up towny */
         if (getServer().getPluginManager().getPlugin("Towny") != null) {
             townyPresent = true;
+            logger.info("Towny rules in effect. Change them in config.yml.");
         }
 
         /* Check for updates */
