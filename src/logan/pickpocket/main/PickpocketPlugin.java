@@ -213,7 +213,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 logger.info("There is not a new update available.");
             } else {
-                logger.info("There is a new update available.");
+                logger.info("There is a new update available from https://www.spigotmc.org/resources/pickpocket.16273/.");
                 logger.info(String.format("Pickpocket %s -> %s", this.getDescription().getVersion(), version));
             }
         });
