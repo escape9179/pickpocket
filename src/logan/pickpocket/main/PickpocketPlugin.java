@@ -55,7 +55,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private PickpocketCommand reloadCommand;
     private PickpocketCommand targetCommand;
 
-    public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
+//    public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
     public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
@@ -230,7 +230,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         }
         Player player = (Player) sender;
 
-        if (label.equalsIgnoreCase("pickpocket") && (player.isOp() || player.hasPermission(PICKPOCKET_USE))) {
+        if (label.equalsIgnoreCase("pickpocket")) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
                 sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
@@ -238,19 +238,19 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 sender.sendMessage(ColorUtils.colorize("/pickpocket exempt [name] &7- Exempt yourself or another player from being stolen from."));
                 sender.sendMessage(ColorUtils.colorize("/pickpocket bypass [name] &7- Toggle cooldown bypass for yourself or another player."));
                 sender.sendMessage(ColorUtils.colorize("/pickpocket {name} &7- Pick-pocket a player near you."));
-            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
+            } else if (args[0].equalsIgnoreCase("admin") && (player.isOp() || player.hasPermission(PICKPOCKET_ADMIN))) {
                 adminCommand.execute(player, profiles, args);
-            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
+            } else if (args[0].equalsIgnoreCase("exempt") && (player.isOp() || player.hasPermission(PICKPOCKET_EXEMPT))) {
                 if (args.length > 1)
                     exemptCommand.execute(player, profiles, args[1]);
                 else exemptCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
+            } else if (args[0].equalsIgnoreCase("bypass") && (player.isOp() || player.hasPermission(PICKPOCKET_BYPASS))) {
                 if (args.length > 1)
                     bypassCommand.execute(player, profiles, args[1]);
                 else bypassCommand.execute(player, profiles);
             } else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE)) {
                 toggleCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
+            } else if (args[0].equalsIgnoreCase("reload") && (player.isOp() || player.hasPermission(PICKPOCKET_RELOAD))) {
                 reloadCommand.execute(player, profiles);
             } else if ((args.length == 1)) {
                 targetCommand.execute(player, profiles, args[0]);
