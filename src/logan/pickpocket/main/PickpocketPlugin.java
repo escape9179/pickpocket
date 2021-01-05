@@ -10,7 +10,10 @@ import logan.config.MessageConfiguration;
 import logan.config.PickpocketConfiguration;
 import logan.pickpocket.ColorUtils;
 import logan.pickpocket.commands.*;
-import logan.pickpocket.listeners.*;
+import logan.pickpocket.listeners.InventoryClickListener;
+import logan.pickpocket.listeners.InventoryCloseListener;
+import logan.pickpocket.listeners.PlayerInteractListener;
+import logan.pickpocket.listeners.PlayerJoinListener;
 import logan.pickpocket.user.PickpocketUser;
 import logan.wrapper.APIWrapper;
 import logan.wrapper.APIWrapper1_13;
@@ -31,6 +34,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -176,10 +180,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         new PlayerJoinListener();
 
         server.getPluginManager().registerEvents(this, this);
-        server.getPluginManager().registerEvents(new PlayerMoveListener(), this);
 
         scheduler = server.getScheduler();
 
+        /* Player movement check thread timer */
+        scheduler.runTaskTimer(this, () -> Bukkit.getOnlinePlayers().stream().filter(Objects::nonNull).forEach(MoveCheck::check), 5, 5);
+
+        /* Cool-down timer */
         scheduler.runTaskTimerAsynchronously(this, () -> {
             for (Player player : cooldowns.keySet()) {
                 cooldowns.put(player, cooldowns.get(player) - 1);

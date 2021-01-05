@@ -1,27 +1,19 @@
-package logan.pickpocket.listeners;
+package logan.pickpocket.main;
 
 import logan.config.MessageConfiguration;
-import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerMoveListener implements Listener {
+public class MoveCheck {
 
-    private final Map<UUID, Location> playerLocationMap = new HashMap<>();
+    private static final Map<UUID, Location> playerLocationMap = new HashMap<>();
 
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-
-        Player player = event.getPlayer();
+    public static void check(Player player) {
 
         Location previousLocation = playerLocationMap.get(player.getUniqueId());
         Location currentLocation = player.getLocation();
