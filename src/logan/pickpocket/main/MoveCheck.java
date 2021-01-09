@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import logan.config.MessageConfiguration;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
