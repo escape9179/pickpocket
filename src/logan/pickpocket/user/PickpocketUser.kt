@@ -28,17 +28,20 @@ class PickpocketUser(val uuid: UUID) {
         ProfileConfiguration("${PickpocketPlugin.getInstance().dataFolder}/players/", "$uuid.yml")
 
     fun doPickpocket(victim: PickpocketUser) {
-        if (!WorldGuardUtil.isPickpocketingAllowed(bukkitPlayer!!))
-            bukkitPlayer.sendMessage(MessageConfiguration.getPickpocketRegionDisallowMessage())
-        if (isCoolingDown()) bukkitPlayer.sendMessage(
-            MessageConfiguration.getCooldownNoticeMessage(PickpocketPlugin.getCooldowns()[bukkitPlayer].toString())
-        )
-        else {
-            openRummageInventory = RummageInventory(victim)
-            openRummageInventory?.show(this)
-            isRummaging = true
-            this.victim = victim
-            victim.predator = this
+        when {
+            !WorldGuardUtil.isPickpocketingAllowed(bukkitPlayer!!) -> {
+                bukkitPlayer.sendMessage(MessageConfiguration.getPickpocketRegionDisallowMessage())
+            }
+            isCoolingDown() -> bukkitPlayer.sendMessage(
+                MessageConfiguration.getCooldownNoticeMessage(PickpocketPlugin.getCooldowns()[bukkitPlayer].toString())
+            )
+            else -> {
+                openRummageInventory = RummageInventory(victim)
+                openRummageInventory?.show(this)
+                isRummaging = true
+                this.victim = victim
+                victim.predator = this
+            }
         }
     }
 
