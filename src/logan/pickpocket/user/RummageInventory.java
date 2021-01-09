@@ -1,10 +1,11 @@
 package logan.pickpocket.user;
 
-import logan.config.MessageConfiguration;
-import logan.guiapi.Menu;
-import logan.guiapi.MenuItem;
-import logan.guiapi.fill.UniFill;
+import logan.api.gui.Menu;
+import logan.api.gui.MenuItem;
+import logan.api.gui.fill.UniFill;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -50,7 +51,7 @@ public class RummageInventory {
 
         populateRummageMenu();
         menu.addItem(menu.getBottomRight(), rummageButton);
-        menu.show(predator.getPlayer());
+        menu.show(predator.getBukkitPlayer());
 
         // Start rummage timer
         rummageTimerTask = new BukkitRunnable() {
@@ -59,13 +60,13 @@ public class RummageInventory {
             @Override
             public void run() {
                 if (tickCount.getAndIncrement() >= ticksUntilNoticed) {
-                    victim.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_VICTIM_WARNING_KEY));
+                    victim.sendMessage(MessageConfiguration.getPickpocketVictimWarningMessage());
                     // Close the rummage inventory
                     menu.close();
-                    predator.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_NOTICED_WARNING_KEY));
+                    predator.sendMessage(MessageConfiguration.getPickpocketNoticedWarningMessage());
                     noticeTimerCurrentSlot = 0;
                     if (!predator.getProfileConfiguration().getBypassSectionValue())
-                        PickpocketPlugin.addCooldown(predator.getPlayer());
+                        PickpocketPlugin.addCooldown(predator.getBukkitPlayer());
                     rummageTimerTask.cancel();
                 }
                 int slotsToFill = menu.getSize() / ticksUntilNoticed;
@@ -100,7 +101,10 @@ public class RummageInventory {
                 menu.update();
                 menu.close();
 
-                predator.getMinigameModule().startMinigame(victim, menu.getInventory(), menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
+                if (victim.getBukkitPlayer() == null || !victim.getBukkitPlayer().isOnline())
+                    predator.sendMessage(ChatColor.RED + "Player is no longer available.");
+                Minigame minigame = new Minigame(predator, victim, menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
+                minigame.start(menu.getInventory());
             });
             menu.addItem(randomSlot, menuItem);
         }
@@ -110,8 +114,8 @@ public class RummageInventory {
 
     private List<ItemStack> getRandomItemsFromPlayer() {
         final List<ItemStack> randomItemList = new ArrayList<>();
-        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getPlayer().getInventory());
-        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getPlayer().getInventory()).length;
+        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getBukkitPlayer().getInventory());
+        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getBukkitPlayer().getInventory()).length;
         ItemStack randomItem;
         int randomSlot;
 

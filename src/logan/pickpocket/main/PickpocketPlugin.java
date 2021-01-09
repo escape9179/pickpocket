@@ -5,22 +5,24 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import logan.bstats.Metrics;
-import logan.config.MessageConfiguration;
-import logan.config.PickpocketConfiguration;
-import logan.pickpocket.ColorUtils;
+import logan.api.bstats.Metrics;
+import logan.api.command.BasicCommand;
+import logan.api.command.CommandDispatcher;
+import logan.api.util.UpdateChecker;
+import logan.api.wrapper.APIWrapper;
+import logan.api.wrapper.APIWrapper1_13;
+import logan.api.wrapper.APIWrapper1_8;
 import logan.pickpocket.commands.*;
+import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.config.PickpocketConfiguration;
+import logan.pickpocket.listeners.*;
 import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
 import logan.pickpocket.listeners.PlayerJoinListener;
 import logan.pickpocket.user.PickpocketUser;
-import logan.wrapper.APIWrapper;
-import logan.wrapper.APIWrapper1_13;
-import logan.wrapper.APIWrapper1_8;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,19 +48,18 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private static PickpocketPlugin instance;
 
-    public static final String NAME = "Pickpocket";
-    public static final String PLUGIN_PREFIX = "[" + NAME + "]";
     private Server server = getServer();
     private Logger logger = getLogger();
 
     private static Vector<PickpocketUser> profiles;
     private static Map<Player, Integer> cooldowns;
-    private PickpocketCommand adminCommand;
-    private PickpocketCommand bypassCommand;
-    private PickpocketCommand exemptCommand;
-    private PickpocketCommand toggleCommand;
-    private PickpocketCommand reloadCommand;
-    private PickpocketCommand targetCommand;
+    private BasicCommand<CommandSender> mainCommand;
+    private BasicCommand<Player> adminCommand;
+    private BasicCommand<Player> bypassCommand;
+    private BasicCommand<Player> exemptCommand;
+    private BasicCommand<Player> toggleCommand;
+    private BasicCommand<CommandSender> reloadCommand;
+    private BasicCommand<Player> targetCommand;
 
     public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
@@ -69,7 +70,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     private BukkitScheduler scheduler;
     private static APIWrapper wrapper;
     private static PickpocketConfiguration pickpocketConfiguration;
-    private static MessageConfiguration messageConfiguration;
     private static Economy econ = null;
     private static Essentials essentials;
     private static boolean vaultEnabled;
@@ -100,7 +100,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                 wrapper = new APIWrapper1_13();
                 break;
             default:
-                PickpocketPlugin.log("Unsupported version. Disabling...");
+                getLogger().info("Unsupported version. Disabling...");
                 getServer().getPluginManager().disablePlugin(this);
         }
 
@@ -113,7 +113,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             flagRegistryClass = (Class<FlagRegistry>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
             stateFlagClass = (Class<StateFlag>) Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
         } catch (ClassNotFoundException e) {
-            PickpocketPlugin.log("Error resolving WorldGuard classes. Per-region pick-pocketing won't work.");
+            getLogger().info("Error resolving WorldGuard classes. Per-region pick-pocketing won't work.");
             worldGuardPresent = false;
             return;
         }
@@ -161,18 +161,26 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         pickpocketConfiguration.create();
 
         // Initialize and create message configuration file.
-        messageConfiguration = new MessageConfiguration();
-        messageConfiguration.create();
+        MessageConfiguration.create();
 
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
+        mainCommand = new MainCommand();
         adminCommand = new AdminCommand();
-        bypassCommand = new BypassCommand();
-        exemptCommand = new ExemptCommand();
+        bypassCommand = new AdminBypassCommand();
+        exemptCommand = new AdminExemptCommand();
         toggleCommand = new ToggleCommand();
         reloadCommand = new ReloadCommand();
         targetCommand = new TargetCommand();
+
+        CommandDispatcher.Companion.registerCommand(mainCommand);
+        CommandDispatcher.Companion.registerCommand(adminCommand);
+        CommandDispatcher.Companion.registerCommand(bypassCommand);
+        CommandDispatcher.Companion.registerCommand(exemptCommand);
+        CommandDispatcher.Companion.registerCommand(reloadCommand);
+        CommandDispatcher.Companion.registerCommand(targetCommand);
+        CommandDispatcher.Companion.registerCommand(toggleCommand);
 
         new InventoryClickListener();
         new InventoryCloseListener();
@@ -201,7 +209,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         // Set-up Vault economy
         if (!setupEconomy()) {
-            log("Vault not found. Players won't steal money when pick-pocketing.");
+            getLogger().info("Vault not found. Players won't steal money when pick-pocketing.");
         } else vaultEnabled = true;
 
         /* Set up Essentials */
@@ -245,40 +253,39 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You must be a player to use this command.");
-            return true;
-        }
-        Player player = (Player) sender;
-
-        if (label.equalsIgnoreCase("pickpocket") && (player.isOp() || player.hasPermission(PICKPOCKET_USE))) {
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
-                sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
-                sender.sendMessage(ColorUtils.colorize("/pickpocket admin &7- Toggle admin notifications for yourself."));
-                sender.sendMessage(ColorUtils.colorize("/pickpocket exempt [name] &7- Exempt yourself or another player from being stolen from."));
-                sender.sendMessage(ColorUtils.colorize("/pickpocket bypass [name] &7- Toggle cooldown bypass for yourself or another player."));
-                sender.sendMessage(ColorUtils.colorize("/pickpocket {name} &7- Pick-pocket a player near you."));
-            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
-                adminCommand.execute(player, profiles, args);
-            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
-                if (args.length > 1)
-                    exemptCommand.execute(player, profiles, args[1]);
-                else exemptCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
-                if (args.length > 1)
-                    bypassCommand.execute(player, profiles, args[1]);
-                else bypassCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE)) {
-                toggleCommand.execute(player, profiles);
-            } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
-                reloadCommand.execute(player, profiles);
-            } else if ((args.length == 1)) {
-                targetCommand.execute(player, profiles, args[0]);
-            }
-        }
-
-        return true;
+        return CommandDispatcher.Companion.onCommand(sender, command, label, args);
+//        if (!(sender instanceof Player)) {
+//            sender.sendMessage("You must be a player to use this command.");
+//            return true;
+//        }
+//        Player player = (Player) sender;
+//
+//        if (label.equalsIgnoreCase("pickpocket") && (player.isOp() || player.hasPermission(PICKPOCKET_USE))) {
+//            if (args.length == 0) {
+//                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
+//                sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
+//                sender.sendMessage(ColorUtils.colorize("/pickpocket admin &7- Toggle admin notifications for yourself."));
+//                sender.sendMessage(ColorUtils.colorize("/pickpocket exempt [name] &7- Exempt yourself or another player from being stolen from."));
+//                sender.sendMessage(ColorUtils.colorize("/pickpocket bypass [name] &7- Toggle cooldown bypass for yourself or another player."));
+//                sender.sendMessage(ColorUtils.colorize("/pickpocket {name} &7- Pick-pocket a player near you."));
+//            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
+//                adminCommand.run(player, profiles, args);
+//            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
+//                if (args.length > 1)
+//                    exemptCommand.execute(player, profiles, args[1]);
+//                else exemptCommand.execute(player, profiles);
+//            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
+//                if (args.length > 1)
+//                    bypassCommand.execute(player, profiles, args[1]);
+//                else bypassCommand.execute(player, profiles);
+//            } else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE)) {
+//                toggleCommand.execute(player, profiles);
+//            } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
+//                reloadCommand.execute(player, profiles);
+//            } else if ((args.length == 1)) {
+//                targetCommand.execute(player, profiles, args[0]);
+//            }
+//        }
     }
 
     public static void addProfile(PickpocketUser profile) {
@@ -309,20 +316,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         instance.getServer().getPluginManager().registerEvents(listener, instance);
     }
 
-    public static void log(String message) {
-        System.out.println(PLUGIN_PREFIX + " " + message);
-    }
-
     public static APIWrapper getAPIWrapper() {
         return wrapper;
     }
 
     public static PickpocketConfiguration getPickpocketConfiguration() {
         return pickpocketConfiguration;
-    }
-
-    public static MessageConfiguration getMessageConfiguration() {
-        return messageConfiguration;
     }
 
     public static Economy getEconomy() {
@@ -347,5 +346,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static boolean isEssentialsPresent() {
         return essentials != null;
+    }
+
+    public static String getPluginName() {
+        return instance.getDescription().getName();
+    }
+
+    public static String getPluginVersion() {
+        return instance.getDescription().getVersion();
     }
 }

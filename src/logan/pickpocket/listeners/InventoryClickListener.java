@@ -1,7 +1,7 @@
 package logan.pickpocket.listeners;
 
-import logan.config.MessageConfiguration;
-import logan.guiapi.GUIAPI;
+import logan.api.gui.GUIAPI;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
@@ -46,7 +46,7 @@ public class InventoryClickListener implements Listener {
 
         if (profile.getVictim().getProfileConfiguration().getExemptSectionValue()) {
             event.setCancelled(true);
-            profile.getPlayer().sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PERSON_CANT_BE_STOLEN_FROM_KEY));
+            profile.getBukkitPlayer().sendMessage(MessageConfiguration.getPersonCantBeStolenFromMessage());
         }
     }
 }

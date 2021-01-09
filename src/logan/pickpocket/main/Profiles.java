@@ -8,14 +8,13 @@ import org.bukkit.entity.Player;
  */
 public abstract class Profiles {
     public static PickpocketUser get(Player player) {
-        for (PickpocketUser profile : PickpocketPlugin.getProfiles()) {
-            if (profile.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                profile.setPlayer(player);
-                return profile;
+        for (PickpocketUser user : PickpocketPlugin.getProfiles()) {
+            if (user.getUuid().equals(player.getUniqueId())) {
+                return user;
             }
         }
 
-        PickpocketUser profile = new PickpocketUser(player);
+        PickpocketUser profile = new PickpocketUser(player.getUniqueId());
         PickpocketPlugin.addProfile(profile);
         return profile;
     }

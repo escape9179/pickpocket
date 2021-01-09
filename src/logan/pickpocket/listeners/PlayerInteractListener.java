@@ -3,7 +3,7 @@ package logan.pickpocket.listeners;
 import com.earth2me.essentials.Essentials;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
-import logan.config.MessageConfiguration;
+import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.Profiles;
 import logan.pickpocket.user.PickpocketUser;
@@ -58,13 +58,13 @@ public class PlayerInteractListener implements Listener {
 
             /* Check if the victim is AFK */
             if (essentials.getUser(event.getRightClicked().getUniqueId()).isAfk()) {
-                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_STEAL_FROM_AFK));
+                player.sendMessage(MessageConfiguration.getPlayerStealFromAfkMessage());
                 return;
             }
 
             /* Check if the predator is AFK */
             if (essentials.getUser(event.getPlayer().getUniqueId()).isAfk()) {
-                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PLAYER_STEAL_WHILE_AFK));
+                player.sendMessage(MessageConfiguration.getPlayerStealWhileAfk());
                 return;
             }
         }
@@ -88,16 +88,16 @@ public class PlayerInteractListener implements Listener {
 
         if (!victimUser.isParticipating()) {
             if (PickpocketPlugin.getPickpocketConfiguration().isShowStatusOnInteractEnabled())
-                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_OTHER_KEY));
+                player.sendMessage(MessageConfiguration.getPickpocketDisabledOtherMessage());
             return;
         }
 
         if (!profile.isParticipating()) {
             if (PickpocketPlugin.getPickpocketConfiguration().isShowStatusOnInteractEnabled())
-                player.sendMessage(PickpocketPlugin.getMessageConfiguration().getMessage(MessageConfiguration.PICKPOCKET_DISABLED_KEY));
+                player.sendMessage(MessageConfiguration.getPickpocketDisabledMessage());
             return;
         }
-        profile.performPickpocket(victimUser);
+        profile.doPickpocket(victimUser);
     }
 
     private static boolean isTownMember(Player player) {
