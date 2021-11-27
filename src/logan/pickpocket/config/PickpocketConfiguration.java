@@ -1,9 +1,11 @@
 package logan.pickpocket.config;
 
+import com.google.common.collect.Lists;
 import logan.api.config.CommentedConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class PickpocketConfiguration extends CommentedConfiguration {
         createKeyIfNoneExists(pickpocketToggleKey, true);
         createKeyIfNoneExists(statusOnInteractKey, true);
         createKeyIfNoneExists(statusOnLoginKey, true);
-        createKeyIfNoneExists(disabledItemsKey, Collections.singletonList("cake"));
+        createKeyIfNoneExists(disabledItemsKey, Arrays.asList("cake", "shulker_box", "bundle"));
         createKeyIfNoneExists(foreignTownTheftKey, false);
         createKeyIfNoneExists(sameTownTheftKey, false);
 
