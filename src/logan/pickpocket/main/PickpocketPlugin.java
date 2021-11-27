@@ -97,11 +97,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             case "1.14":
             case "1.15":
             case "1.16":
-                wrapper = new APIWrapper1_13();
-                break;
             default:
-                getLogger().info("Unsupported version. Disabling...");
-                getServer().getPluginManager().disablePlugin(this);
+                wrapper = new APIWrapper1_13();
         }
 
         // Load WorldGuard classes.
