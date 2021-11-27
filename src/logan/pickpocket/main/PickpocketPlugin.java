@@ -32,6 +32,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -128,19 +129,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
                     .newInstance(pickpocketFlagName, true);
             flagRegistryClass.getMethod("register", Flag.class).invoke(flagRegistry, stateFlag);
             PICKPOCKET_FLAG = stateFlag;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            // TODO Add code
-            // This could be a FlagConflictException
             e.printStackTrace();
-        }
+        }// TODO Add code
+// This could be a FlagConflictException
+
     }
 
     public void onEnable() {
@@ -249,40 +242,8 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return econ != null;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         return CommandDispatcher.Companion.onCommand(sender, command, label, args);
-//        if (!(sender instanceof Player)) {
-//            sender.sendMessage("You must be a player to use this command.");
-//            return true;
-//        }
-//        Player player = (Player) sender;
-//
-//        if (label.equalsIgnoreCase("pickpocket") && (player.isOp() || player.hasPermission(PICKPOCKET_USE))) {
-//            if (args.length == 0) {
-//                sender.sendMessage(ChatColor.DARK_GRAY + NAME + " " + getDescription().getVersion());
-//                sender.sendMessage(ColorUtils.colorize("/pickpocket toggle &7- Toggle pick-pocketing for yourself."));
-//                sender.sendMessage(ColorUtils.colorize("/pickpocket admin &7- Toggle admin notifications for yourself."));
-//                sender.sendMessage(ColorUtils.colorize("/pickpocket exempt [name] &7- Exempt yourself or another player from being stolen from."));
-//                sender.sendMessage(ColorUtils.colorize("/pickpocket bypass [name] &7- Toggle cooldown bypass for yourself or another player."));
-//                sender.sendMessage(ColorUtils.colorize("/pickpocket {name} &7- Pick-pocket a player near you."));
-//            } else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(PICKPOCKET_ADMIN)) {
-//                adminCommand.run(player, profiles, args);
-//            } else if (args[0].equalsIgnoreCase("exempt") && player.hasPermission(PICKPOCKET_EXEMPT)) {
-//                if (args.length > 1)
-//                    exemptCommand.execute(player, profiles, args[1]);
-//                else exemptCommand.execute(player, profiles);
-//            } else if (args[0].equalsIgnoreCase("bypass") && player.hasPermission(PICKPOCKET_BYPASS)) {
-//                if (args.length > 1)
-//                    bypassCommand.execute(player, profiles, args[1]);
-//                else bypassCommand.execute(player, profiles);
-//            } else if (args[0].equalsIgnoreCase("toggle") && player.hasPermission(PICKPOCKET_TOGGLE)) {
-//                toggleCommand.execute(player, profiles);
-//            } else if (args[0].equalsIgnoreCase("reload") && player.hasPermission(PICKPOCKET_RELOAD)) {
-//                reloadCommand.execute(player, profiles);
-//            } else if ((args.length == 1)) {
-//                targetCommand.execute(player, profiles, args[0]);
-//            }
-//        }
     }
 
     public static void addProfile(PickpocketUser profile) {

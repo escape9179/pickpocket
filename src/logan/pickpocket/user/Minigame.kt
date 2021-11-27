@@ -86,7 +86,7 @@ class Minigame(val predatorUser: PickpocketUser, val victimUser: PickpocketUser,
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {
             val amountToSteal = getPercentageOfVictimBalance(victimUser.bukkitPlayer!!)
-            doMoneyTransaction(predatorUser.bukkitPlayer!!, victimUser.bukkitPlayer!!, amountToSteal)
+            doMoneyTransaction(predatorUser.bukkitPlayer!!, victimUser.bukkitPlayer, amountToSteal)
         }
     }
 
