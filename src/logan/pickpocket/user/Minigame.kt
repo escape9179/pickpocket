@@ -8,6 +8,7 @@ import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -191,14 +192,14 @@ class Minigame(val predatorUser: PickpocketUser, val victimUser: PickpocketUser,
     }
 
     private fun Player.playItemPickupSound() {
-        playSound(location, PickpocketPlugin.getAPIWrapper().soundEntityItemPickup, 1.0F, 1.0f)
+        playSound(location, Sound.ENTITY_ITEM_PICKUP, 1.0F, 1.0f)
     }
 
     private fun Player.playExperienceOrbPickupSound() {
-        playSound(location, PickpocketPlugin.getAPIWrapper().soundEntityExperienceOrbPickup, 1.0f, 1.0f)
+        playSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
     }
 
     private fun Player.playBassSound() {
-        playSound(location, PickpocketPlugin.getAPIWrapper().soundBlockNoteBlockBass, 1.0f, 1.0f)
+        playSound(location, Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 1.0f)
     }
 }

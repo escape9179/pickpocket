@@ -4,6 +4,7 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Sound
 import java.util.*
 
 class PickpocketUser(val uuid: UUID) {
@@ -58,7 +59,7 @@ class PickpocketUser(val uuid: UUID) {
         with(bukkitPlayer) {
             this?.playSound(
                 location,
-                PickpocketPlugin.getAPIWrapper().soundBlockSnowStep,
+                Sound.BLOCK_SNOW_STEP,
                 1.0f,
                 0.5f
             )

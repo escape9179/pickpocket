@@ -10,12 +10,9 @@ import logan.api.command.BasicCommand;
 import logan.api.command.CommandDispatcher;
 import logan.api.util.UpdateChecker;
 import logan.api.wrapper.APIWrapper;
-import logan.api.wrapper.APIWrapper1_13;
-import logan.api.wrapper.APIWrapper1_8;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.config.PickpocketConfiguration;
-import logan.pickpocket.listeners.*;
 import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
@@ -81,27 +78,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onLoad() {
-        // Create an instance of a wrapper compatible with
-        // the Bukkit version running on the server.
-        String version = Bukkit.getBukkitVersion().split("-")[0];
-        String[] semanticNumbers = version.split("\\.");
-        String majorMinorVersion = String.join(".", semanticNumbers[0], semanticNumbers[1]);
-        switch (majorMinorVersion) {
-            case "1.8":
-            case "1.9":
-            case "1.10":
-            case "1.11":
-            case "1.12":
-                wrapper = new APIWrapper1_8();
-                break;
-            case "1.13":
-            case "1.14":
-            case "1.15":
-            case "1.16":
-            default:
-                wrapper = new APIWrapper1_13();
-        }
-
         // Load WorldGuard classes.
         Class<WorldGuard> worldGuardClass;
         Class<FlagRegistry> flagRegistryClass;
@@ -272,10 +248,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static void registerListener(Listener listener) {
         instance.getServer().getPluginManager().registerEvents(listener, instance);
-    }
-
-    public static APIWrapper getAPIWrapper() {
-        return wrapper;
     }
 
     public static PickpocketConfiguration getPickpocketConfiguration() {

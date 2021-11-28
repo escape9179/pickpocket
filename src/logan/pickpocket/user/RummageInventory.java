@@ -33,8 +33,8 @@ public class RummageInventory {
     public RummageInventory(PickpocketUser victim) {
         this.victim = victim;
 
-        fillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getMaterialWhiteStainedGlassPane());
-        noticeFillerItem = new ItemStack(PickpocketPlugin.getAPIWrapper().getItemStackRedStainedGlassPane());
+        fillerItem = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        noticeFillerItem = new ItemStack(Material.RED_STAINED_GLASS_PANE);
 
         menu = new Menu(menuTitle, 4);
         menu.fill(new UniFill(fillerItem.getType()));
@@ -114,8 +114,8 @@ public class RummageInventory {
 
     private List<ItemStack> getRandomItemsFromPlayer() {
         final List<ItemStack> randomItemList = new ArrayList<>();
-        final ItemStack[] storageContents = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getBukkitPlayer().getInventory());
-        final int inventorySize = PickpocketPlugin.getAPIWrapper().getInventoryStorageContents(victim.getBukkitPlayer().getInventory()).length;
+        final ItemStack[] storageContents = victim.getBukkitPlayer().getInventory().getStorageContents();
+        final int inventorySize = victim.getBukkitPlayer().getInventory().getStorageContents().length;
         ItemStack randomItem;
         int randomSlot;
 
