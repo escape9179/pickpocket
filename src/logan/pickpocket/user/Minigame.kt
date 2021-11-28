@@ -24,7 +24,7 @@ class Minigame(val predatorUser: PickpocketUser, val victimUser: PickpocketUser,
     private val gui = Menu("Pick-pocketing ${victimUser.bukkitPlayer?.name}", inventorySize / 9)
     private val correctClicks = AtomicInteger(0)
     private val timesTried = AtomicInteger(0)
-    private val clickedInTime = AtomicBoolean(false);
+    private val clickedInTime = AtomicBoolean(false)
 
     private fun setupGUI(inventory: Inventory) {
         val menuItemMap = createMinigameMenuItems(inventory)
