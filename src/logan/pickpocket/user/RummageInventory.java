@@ -60,7 +60,7 @@ public class RummageInventory {
             @Override
             public void run() {
                 if (tickCount.getAndIncrement() >= ticksUntilNoticed) {
-                    victim.sendMessage(MessageConfiguration.getPickpocketVictimWarningMessage());
+                    victim.playRummageSound();
                     // Close the rummage inventory
                     menu.close();
                     predator.sendMessage(MessageConfiguration.getPickpocketNoticedWarningMessage());

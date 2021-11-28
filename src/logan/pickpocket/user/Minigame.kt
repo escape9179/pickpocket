@@ -103,6 +103,7 @@ class Minigame(val predatorUser: PickpocketUser, val victimUser: PickpocketUser,
         val predator = predatorUser.bukkitPlayer
         predator?.playBassSound()
         predator?.sendMessage(MessageConfiguration.getPickpocketUnsuccessfulMessage())
+        victimUser.playRummageSound()
         showAdminNotifications(false)
     }
 
