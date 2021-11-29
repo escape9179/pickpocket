@@ -70,7 +70,7 @@ class CommandDispatcher private constructor() {
              */
             if (args.isEmpty()) return foundCommand to args
 
-            return searchForSubCommandRecursively(args[0], args.sliceArray(1..args.lastIndex)) ?: foundCommand to args
+            return searchForSubCommandRecursively(args[0], args.sliceArray(1..args.lastIndex)) ?: (foundCommand to args)
         }
 
         private fun isValidTarget(receivedCommandTarget: SenderTarget, foundCommandTarget: SenderTarget) =
