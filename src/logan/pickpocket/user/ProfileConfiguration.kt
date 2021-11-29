@@ -8,13 +8,13 @@ import java.io.IOException
  * Created by Tre on 1/18/2016.
  */
 class ProfileConfiguration(directory: String, fileName: String) {
-    val adminSection = "admin"
-    val bypassSection = "bypass"
-    val exemptSection = "exempt"
+    private val adminSection = "admin"
+    private val bypassSection = "bypass"
+    private val exemptSection = "exempt"
     private val participatingSection = "participating"
     private val path: String
     private val file: File
-    val yamlConfiguration: YamlConfiguration
+    private val yamlConfiguration: YamlConfiguration
 
     fun createSections() {
         try {
