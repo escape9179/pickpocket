@@ -10,7 +10,6 @@ import logan.api.command.BasicCommand;
 import logan.api.command.CommandDispatcher;
 import logan.api.gui.GUIAPI;
 import logan.api.util.UpdateChecker;
-import logan.api.wrapper.APIWrapper;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.config.PickpocketConfiguration;
@@ -67,7 +66,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
     private BukkitScheduler scheduler;
-    private static APIWrapper wrapper;
     private static PickpocketConfiguration pickpocketConfiguration;
     private static Economy econ = null;
     private static Essentials essentials;
