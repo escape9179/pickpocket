@@ -28,7 +28,7 @@ class AdminExemptCommand : BasicCommand<Player>(
             sender.sendMessage(MessageConfiguration.getExemptStatusChangeMessage(exemptStatus))
         } else {
             val otherPlayer = Bukkit.getPlayer(args[0]) ?: run {
-                sender.sendMessage(MessageConfiguration.getPlayerNotFoundMessage())
+                sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
                 return true
             }
             val profile = Profiles.get(otherPlayer)

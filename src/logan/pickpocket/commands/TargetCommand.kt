@@ -22,13 +22,13 @@ class TargetCommand : BasicCommand<Player>(
 
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val victim = Bukkit.getPlayer(args[0]) ?: run {
-            sender.sendMessage(MessageConfiguration.getPlayerNotFoundMessage())
+            sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
             return true
         }
 
         // Check that the victim can be seen and is at most 4 blocks away from the player
         if (sender.location.distance(victim.location) > 4) {
-            sender.sendMessage(MessageConfiguration.getPlayerNotAccessibleMessage())
+            sender.sendMessage(MessageConfiguration.playerNotAccessibleMessage)
             return true
         }
 
@@ -37,12 +37,12 @@ class TargetCommand : BasicCommand<Player>(
 
         // Make sure both players have pick-pocketing enabled.
         if (!senderProfile.isParticipating) {
-            sender.sendMessage(MessageConfiguration.getPickpocketDisabledMessage())
+            sender.sendMessage(MessageConfiguration.pickpocketDisabledMessage)
             return true
         }
 
         if (!victimProfile.isParticipating) {
-            sender.sendMessage(MessageConfiguration.getPickpocketDisabledOtherMessage())
+            sender.sendMessage(MessageConfiguration.pickpocketDisabledOtherMessage)
             return true
         }
 

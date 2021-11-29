@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 class WorldGuardUtil {
     companion object {
         fun isPickpocketingAllowed(player: Player): Boolean {
-            if (!PickpocketPlugin.isWorldGuardPresent()) return false
+            if (!PickpocketPlugin.isWorldGuardPresent) return false
             val localPlayer = WorldGuardPlugin.inst().wrapPlayer(player)
             val container = WorldGuard.getInstance().platform.regionContainer
             val query = container.createQuery()

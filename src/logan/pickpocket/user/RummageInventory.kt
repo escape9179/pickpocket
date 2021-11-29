@@ -8,6 +8,7 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -35,26 +36,20 @@ class RummageInventory(private val victim: PickpocketUser) {
                     victim.playRummageSound()
                     // Close the rummage inventory
                     menu.close()
-                    predator.sendMessage(MessageConfiguration.getPickpocketNoticedWarningMessage())
-                    noticeTimerCurrentSlot = 0
-                    if (!predator.profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(predator.bukkitPlayer)
+                    predator.sendMessage(MessageConfiguration.pickpocketNoticedWarningMessage)
+                    if (!predator.profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(predator.bukkitPlayer!!)
                     rummageTimerTask!!.cancel()
                 }
-                val slotsToFill = menu.size / ticksUntilNoticed
-                for (i in noticeTimerCurrentSlot until slotsToFill + noticeTimerCurrentSlot) {
-                    if (menu.inventory.getItem(i)!!.type != fillerItem.type) continue
-                    menu.addItem(i, MenuItem(noticeFillerItem))
+                with (predator.bukkitPlayer!!) {
+                    playSound(location, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f)
                 }
-                noticeTimerCurrentSlot += slotsToFill
-                menu.update()
             }
-        }.runTaskTimer(PickpocketPlugin.getInstance(), rummageTimerTickRate.toLong(), rummageTimerTickRate.toLong())
+        }.runTaskTimer(PickpocketPlugin.instance, rummageTimerTickRate.toLong(), rummageTimerTickRate.toLong())
     }
 
     private fun populateRummageMenu() {
         menu.clear()
         val randomItems = randomItemsFromPlayer
-        menu.fill(UniFill(fillerItem.type))
         for (i in 0 until noticeTimerCurrentSlot) {
             menu.addItem(i, MenuItem(noticeFillerItem))
         }
@@ -94,7 +89,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                 if (randomItem == null) continue
 
                 // Check if the item is banned
-                for (disabledItem in PickpocketPlugin.getPickpocketConfiguration().disabledItems) {
+                for (disabledItem in PickpocketPlugin.pickpocketConfiguration.disabledItems) {
                     val disabledItemType = Material.getMaterial(disabledItem.uppercase(Locale.getDefault()))
 
                     // This item is disabled. Skip this random item iteration.

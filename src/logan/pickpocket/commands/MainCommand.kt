@@ -21,7 +21,7 @@ class MainCommand : BasicCommand<CommandSender>(
 
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
 
-        sender.sendColoredMessage("&8Pickpocket ${PickpocketPlugin.getInstance().name} ${PickpocketPlugin.getPluginVersion()}")
+        sender.sendColoredMessage("&8Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}")
         sender.sendColoredMessage("/pickpocket toggle &7- Toggle pick-pocketing for yourself.")
         sender.sendColoredMessage("/pickpocket target &7- Pick-pocket a player near you.")
         sender.sendColoredMessage("&7Admin commands:")

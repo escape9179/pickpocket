@@ -10,12 +10,12 @@ class MoveCheck {
     companion object {
         private val playerLocationMap: MutableMap<UUID, Location> = HashMap()
         fun check(player: Player) {
-            val previousLocation = playerLocationMap[player.uniqueId]
-            val currentLocation = player.location
-            if (previousLocation == null) {
-                playerLocationMap[player.uniqueId] = currentLocation
+            val previousLocation = playerLocationMap[player.uniqueId] ?: run {
+                playerLocationMap[player.uniqueId] = player.location
                 return
             }
+
+            val currentLocation = player.location
 
             // If the player is standing on the same block don't do anything.
             if (previousLocation.blockX == currentLocation.blockX && previousLocation.blockY == currentLocation.blockY && previousLocation.blockZ == currentLocation.blockZ) {
@@ -35,7 +35,7 @@ class MoveCheck {
                     playerProfile.bukkitPlayer!!.closeInventory()
                     playerProfile.isRummaging = false
                 }
-                player.sendMessage(MessageConfiguration.getPickpocketOnMoveWarningMessage())
+                player.sendMessage(MessageConfiguration.pickpocketOnMoveWarningMessage)
                 playerProfile.victim = null
                 victimProfile!!.predator = null
                 return
@@ -51,7 +51,7 @@ class MoveCheck {
                     predatorProfile.bukkitPlayer!!.closeInventory()
                     predatorProfile.isRummaging = false
                 }
-                playerProfile.lastPredator!!.sendMessage(MessageConfiguration.getPickpocketOnMoveOtherWarningMessage())
+                playerProfile.lastPredator!!.sendMessage(MessageConfiguration.pickpocketOnMoveOtherWarningMessage)
                 playerProfile.predator = null
                 predatorProfile.victim = null
             }

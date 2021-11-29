@@ -18,7 +18,7 @@ class InventoryCloseListener : Listener {
         val profile = Profiles.get(player)
         if (profile.isPlayingMinigame) {
             profile.currentMinigame!!.stop()
-            player.sendMessage(MessageConfiguration.getPickpocketUnsuccessfulMessage())
+            player.sendMessage(MessageConfiguration.pickpocketUnsuccessfulMessage)
         }
         if (profile.isRummaging) {
             profile.openRummageInventory!!.close()

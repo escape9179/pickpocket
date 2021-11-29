@@ -28,7 +28,7 @@ class AdminBypassCommand : BasicCommand<Player>(
             sender.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(bypassStatus))
         } else {
             val otherPlayer = Bukkit.getPlayer(args[0]) ?: run {
-                sender.sendMessage(MessageConfiguration.getPlayerNotFoundMessage())
+                sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
                 return true
             }
             val otherPlayerProfile = Profiles.get(otherPlayer)

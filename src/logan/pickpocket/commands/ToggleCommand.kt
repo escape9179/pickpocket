@@ -22,8 +22,8 @@ class ToggleCommand : BasicCommand<Player>(
         profile.isParticipating = !profile.isParticipating
         sender.sendMessage(
             if (profile.isParticipating)
-                MessageConfiguration.getPickpocketToggleOnMessage() else
-                MessageConfiguration.getPickpocketToggleOffMessage()
+                MessageConfiguration.pickpocketToggleOnMessage else
+                MessageConfiguration.pickpocketToggleOffMessage
         )
 
         return true

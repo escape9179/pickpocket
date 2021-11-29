@@ -34,7 +34,7 @@ class InventoryClickListener : Listener {
         }
         if (profile.victim!!.profileConfiguration.exemptSectionValue) {
             event.isCancelled = true
-            profile.bukkitPlayer?.sendMessage(MessageConfiguration.getPersonCantBeStolenFromMessage())
+            profile.bukkitPlayer?.sendMessage(MessageConfiguration.personCantBeStolenFromMessage)
         }
     }
 

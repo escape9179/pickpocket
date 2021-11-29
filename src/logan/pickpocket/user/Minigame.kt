@@ -6,6 +6,7 @@ import logan.api.gui.MenuItemClickEvent
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -68,21 +69,21 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     }
 
     private fun getPercentageOfVictimBalance(victim: Player): Double {
-        val economy = PickpocketPlugin.getEconomy()
-        return economy.getBalance(victim) * PickpocketPlugin.getPickpocketConfiguration().moneyLostPercentage
+        val economy = PickpocketPlugin.economy ?: return 0.0
+        return economy.getBalance(victim) * PickpocketPlugin.pickpocketConfiguration.moneyLostPercentage
     }
 
     private fun doMoneyTransaction(thief: Player, victim: Player, amountStolen: Double) {
-        val economy = PickpocketPlugin.getEconomy()
+        val economy = PickpocketPlugin.economy ?: return
         if (amountStolen > 0) {
             economy.withdrawPlayer(victim, amountStolen)
             economy.depositPlayer(thief, amountStolen)
             thief.sendMessage(MessageConfiguration.getMoneyAmountReceivedMessage(String.format("%.2f", amountStolen)))
-        } else thief.sendMessage(MessageConfiguration.getNoMoneyReceivedMessage())
+        } else thief.sendMessage(MessageConfiguration.noMoneyReceivedMessage)
     }
 
     private fun isMoneyStealEnabled() =
-        PickpocketPlugin.isVaultEnabled() && PickpocketPlugin.getPickpocketConfiguration().isMoneyLostEnabled
+        PickpocketPlugin.isVaultEnabled && PickpocketPlugin.pickpocketConfiguration.isMoneyLostEnabled
 
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {
@@ -96,14 +97,14 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         stealItem(predator, victimUser.bukkitPlayer!!, item)
         stealMoney()
         predator.playItemPickupSound()
-        predator.sendMessage(MessageConfiguration.getPickpocketSuccessfulMessage())
+        predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
     }
 
     private fun doPickpocketFailure() {
         val predator = predatorUser.bukkitPlayer
         predator?.playBassSound()
-        predator?.sendMessage(MessageConfiguration.getPickpocketUnsuccessfulMessage())
+        predator?.sendMessage(MessageConfiguration.pickpocketUnsuccessfulMessage)
         victimUser.playRummageSound()
         showAdminNotifications(false)
     }
@@ -138,10 +139,10 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun resetGameTimerRunnable() {
         val gameTimerRunnable = scheduleNewShuffleRunnable()
-        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.getInstance(), getMinigameRollRate())
+        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.instance, getMinigameRollRate())
     }
 
-    private fun getMinigameRollRate() = PickpocketPlugin.getPickpocketConfiguration().minigameRollRate.toLong()
+    private fun getMinigameRollRate() = PickpocketPlugin.pickpocketConfiguration.minigameRollRate.toLong()
 
     private fun scheduleNewShuffleRunnable() = object : BukkitRunnable() {
         override fun run() {
@@ -179,12 +180,12 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
                 player.sendMessage(
                     if (success)
                         MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(
-                            predatorUser.bukkitPlayer,
-                            victimUser.bukkitPlayer
+                            predatorUser.bukkitPlayer!!,
+                            victimUser.bukkitPlayer!!
                         )
                     else MessageConfiguration.getPickpocketFailureAdminNotification(
-                        predatorUser.bukkitPlayer,
-                        victimUser.bukkitPlayer
+                        predatorUser.bukkitPlayer!!,
+                        victimUser.bukkitPlayer!!
                     )
                 )
             }
