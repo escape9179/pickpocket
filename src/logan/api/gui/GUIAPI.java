@@ -5,6 +5,8 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,6 +27,10 @@ public class GUIAPI
     {
         if (registeredMenus.containsKey(id)) return;
         registeredMenus.put(id, menu);
+    }
+
+    public static void registerListeners(@NotNull JavaPlugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(new InventoryListeners(), plugin);
     }
 
     public static PlaceholderManager getPlaceholderManager()

@@ -21,8 +21,6 @@ public class InventoryCloseListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        GUIAPI.callInventoryCloseEvents(event);
-
         Player player = (Player) event.getPlayer();
         PickpocketUser profile = Profiles.get(player);
 

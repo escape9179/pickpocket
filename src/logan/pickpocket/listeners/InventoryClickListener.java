@@ -21,8 +21,6 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        GUIAPI.callInventoryClickEvents(event);
-
         Player player = (Player) event.getWhoClicked();
         PickpocketUser profile = Profiles.get(player);
         Inventory inventory = event.getClickedInventory();

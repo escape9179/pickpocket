@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import logan.api.bstats.Metrics;
 import logan.api.command.BasicCommand;
 import logan.api.command.CommandDispatcher;
+import logan.api.gui.GUIAPI;
 import logan.api.util.UpdateChecker;
 import logan.api.wrapper.APIWrapper;
 import logan.pickpocket.commands.*;
@@ -152,6 +153,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         new InventoryCloseListener();
         new PlayerInteractListener();
         new PlayerJoinListener();
+        GUIAPI.registerListeners(this);
 
         server.getPluginManager().registerEvents(this, this);
 
