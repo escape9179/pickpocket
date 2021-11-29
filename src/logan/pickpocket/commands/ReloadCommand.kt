@@ -1,4 +1,4 @@
-package logan.pickpocket.commands;
+package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget

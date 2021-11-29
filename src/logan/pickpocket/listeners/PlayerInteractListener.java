@@ -26,7 +26,7 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
 
-        if (!(event.getRightClicked() instanceof Player) ||
+        if (!(event.getRightClicked() instanceof Player victim) ||
                 !event.getPlayer().isSneaking()) return;
 
         // The interact event is fired for both hands. This will prevent it from
@@ -45,7 +45,6 @@ public class PlayerInteractListener implements Listener {
         if (offHand != null && event.getHand() != offHand) return;
 
         Player player = event.getPlayer();
-        Player victim = (Player) event.getRightClicked();
 
         // Nothing will happen to players who don't have the pick-pocket use permission.
         if (!player.hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {

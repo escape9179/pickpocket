@@ -36,5 +36,10 @@
       <option name="name" value="155033d0-955b-46dd-bf4c-1a023382f005" />
       <option name="url" value="http://maven.elmakers.com/repository/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="8b10dda2-d27a-4f2c-b659-dcf4442ad8db" />
+      <option name="name" value="8b10dda2-d27a-4f2c-b659-dcf4442ad8db" />
+      <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
+    </remote-repository>
   </component>
 </project>

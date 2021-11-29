@@ -1,4 +1,4 @@
-package logan.pickpocket.commands;
+package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
@@ -23,7 +23,7 @@ class TargetCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val victim = Bukkit.getPlayer(args[0]) ?: run {
             sender.sendMessage(MessageConfiguration.getPlayerNotFoundMessage())
-            return true;
+            return true
         }
 
         // Check that the victim can be seen and is at most 4 blocks away from the player

@@ -31,8 +31,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
@@ -46,18 +44,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     private static PickpocketPlugin instance;
 
-    private Server server = getServer();
-    private Logger logger = getLogger();
+    private final Server server = getServer();
+    private final Logger logger = getLogger();
 
     private static Vector<PickpocketUser> profiles;
     private static Map<Player, Integer> cooldowns;
-    private BasicCommand<CommandSender> mainCommand;
-    private BasicCommand<Player> adminCommand;
-    private BasicCommand<Player> bypassCommand;
-    private BasicCommand<Player> exemptCommand;
-    private BasicCommand<Player> toggleCommand;
-    private BasicCommand<CommandSender> reloadCommand;
-    private BasicCommand<Player> targetCommand;
 
     public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
     public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
@@ -65,14 +56,12 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
     public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
     public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
-    private BukkitScheduler scheduler;
     private static PickpocketConfiguration pickpocketConfiguration;
     private static Economy econ = null;
     private static Essentials essentials;
     private static boolean vaultEnabled;
     private static boolean worldGuardPresent;
     private static boolean townyPresent;
-    private static String pickpocketFlagName = "pickpocket";
     public static StateFlag PICKPOCKET_FLAG;
 
     @Override
@@ -82,8 +71,11 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         Class<FlagRegistry> flagRegistryClass;
         Class<StateFlag> stateFlagClass;
         try {
+            //noinspection unchecked
             worldGuardClass = (Class<WorldGuard>) Class.forName("com.sk89q.worldguard.WorldGuard");
+            //noinspection unchecked
             flagRegistryClass = (Class<FlagRegistry>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
+            //noinspection unchecked
             stateFlagClass = (Class<StateFlag>) Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
         } catch (ClassNotFoundException e) {
             getLogger().info("Error resolving WorldGuard classes. Per-region pick-pocketing won't work.");
@@ -98,6 +90,7 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
             FlagRegistry flagRegistry;
             WorldGuard worldGuardInstance = (WorldGuard) worldGuardClass.getMethod("getInstance").invoke(null);
             flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getFlagRegistry").invoke(worldGuardInstance);
+            String pickpocketFlagName = "pickpocket";
             StateFlag stateFlag
                     = stateFlagClass
                     .getConstructor(String.class, boolean.class)
@@ -131,13 +124,13 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         profiles = new Vector<>();
         cooldowns = new ConcurrentHashMap<>();
 
-        mainCommand = new MainCommand();
-        adminCommand = new AdminCommand();
-        bypassCommand = new AdminBypassCommand();
-        exemptCommand = new AdminExemptCommand();
-        toggleCommand = new ToggleCommand();
-        reloadCommand = new ReloadCommand();
-        targetCommand = new TargetCommand();
+        BasicCommand<CommandSender> mainCommand = new MainCommand();
+        BasicCommand<Player> adminCommand = new AdminCommand();
+        BasicCommand<Player> bypassCommand = new AdminBypassCommand();
+        BasicCommand<Player> exemptCommand = new AdminExemptCommand();
+        BasicCommand<Player> toggleCommand = new ToggleCommand();
+        BasicCommand<CommandSender> reloadCommand = new ReloadCommand();
+        BasicCommand<Player> targetCommand = new TargetCommand();
 
         CommandDispatcher.Companion.registerCommand(mainCommand);
         CommandDispatcher.Companion.registerCommand(adminCommand);
@@ -155,10 +148,10 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
         server.getPluginManager().registerEvents(this, this);
 
-        scheduler = server.getScheduler();
+        BukkitScheduler scheduler = server.getScheduler();
 
         /* Player movement check thread timer */
-        scheduler.runTaskTimer(this, () -> Bukkit.getOnlinePlayers().stream().filter(Objects::nonNull).forEach(MoveCheck::check), 5, 5);
+        scheduler.runTaskTimer(this, () -> Bukkit.getOnlinePlayers().stream().filter(Objects::nonNull).forEach(MoveCheck.Companion::check), 5, 5);
 
         /* Cool-down timer */
         scheduler.runTaskTimerAsynchronously(this, () -> {
@@ -240,10 +233,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
 
     public static PickpocketPlugin getInstance() {
         return instance;
-    }
-
-    public static File getPluginFolder() {
-        return instance.getDataFolder();
     }
 
     public static void registerListener(Listener listener) {
