@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 private const val maxTries = 5
 private const val inventorySize = 36
 
-class Minigame(val predatorUser: PickpocketUser, val victimUser: PickpocketUser, val item: ItemStack) {
+class Minigame(val predatorUser: PickpocketUser, private val victimUser: PickpocketUser, private val item: ItemStack) {
     private lateinit var gameTimerTask: BukkitTask
     private val gui = Menu("Pick-pocketing ${victimUser.bukkitPlayer?.name}", inventorySize / 9)
     private val correctClicks = AtomicInteger(0)

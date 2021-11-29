@@ -32,7 +32,7 @@ class MoveCheck {
                     playerProfile.currentMinigame!!.stop()
                 }
                 if (playerProfile.isRummaging) {
-                    playerProfile.bukkitPlayer.closeInventory()
+                    playerProfile.bukkitPlayer!!.closeInventory()
                     playerProfile.isRummaging = false
                 }
                 player.sendMessage(MessageConfiguration.getPickpocketOnMoveWarningMessage())
@@ -48,7 +48,7 @@ class MoveCheck {
                     predatorProfile.currentMinigame!!.stop()
                 }
                 if (predatorProfile.isRummaging) {
-                    predatorProfile.bukkitPlayer.closeInventory()
+                    predatorProfile.bukkitPlayer!!.closeInventory()
                     predatorProfile.isRummaging = false
                 }
                 playerProfile.lastPredator!!.sendMessage(MessageConfiguration.getPickpocketOnMoveOtherWarningMessage())

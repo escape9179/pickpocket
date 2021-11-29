@@ -17,7 +17,7 @@ class InventoryClickListener : Listener {
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         val profile = Profiles.get(player)
-        val inventory: Inventory = event.getClickedInventory()
+        val inventory: Inventory? = event.clickedInventory
         if (profile.isRummaging || profile.isPlayingMinigame) {
             event.isCancelled = true
             return
@@ -34,7 +34,7 @@ class InventoryClickListener : Listener {
         }
         if (profile.victim!!.profileConfiguration.exemptSectionValue) {
             event.isCancelled = true
-            profile.bukkitPlayer.sendMessage(MessageConfiguration.getPersonCantBeStolenFromMessage())
+            profile.bukkitPlayer?.sendMessage(MessageConfiguration.getPersonCantBeStolenFromMessage())
         }
     }
 

@@ -16,11 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
     var noticeTimerCurrentSlot = 0
-    val noticeFillerItem: ItemStack
+    val noticeFillerItem: ItemStack = ItemStack(Material.RED_STAINED_GLASS_PANE)
     val fillerItem: ItemStack = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
     private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
-    private val menu: Menu
+    private val menu: Menu = Menu(menuTitle, 4)
     fun show(predator: PickpocketUser) {
         predator.victim = victim
         populateRummageMenu()
@@ -42,7 +42,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                 }
                 val slotsToFill = menu.size / ticksUntilNoticed
                 for (i in noticeTimerCurrentSlot until slotsToFill + noticeTimerCurrentSlot) {
-                    if (menu.inventory.getItem(i).type != fillerItem.type) continue
+                    if (menu.inventory.getItem(i)!!.type != fillerItem.type) continue
                     menu.addItem(i, MenuItem(noticeFillerItem))
                 }
                 noticeTimerCurrentSlot += slotsToFill
@@ -71,7 +71,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                 menu.close()
                 if (victim.bukkitPlayer == null || !victim.bukkitPlayer.isOnline) predator.sendMessage(ChatColor.RED.toString() + "Player is no longer available.")
                 val minigame =
-                    Minigame(predator, victim, menuItemClickEvent.inventoryClickEvent.currentItem)
+                    Minigame(predator, victim, menuItemClickEvent.inventoryClickEvent.currentItem!!)
                 minigame.start(menu.inventory)
             }
             menu.addItem(randomSlot, menuItem)
@@ -82,9 +82,9 @@ class RummageInventory(private val victim: PickpocketUser) {
 
     // Check if the item is banned
     private val randomItemsFromPlayer: List<ItemStack>
-        private get() {
+        get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
-            val storageContents = victim.bukkitPlayer.inventory.storageContents
+            val storageContents = victim.bukkitPlayer!!.inventory.storageContents
             val inventorySize = victim.bukkitPlayer.inventory.storageContents.size
             var randomItem: ItemStack?
             var randomSlot: Int
@@ -118,11 +118,9 @@ class RummageInventory(private val victim: PickpocketUser) {
     }
 
     init {
-        noticeFillerItem = ItemStack(Material.RED_STAINED_GLASS_PANE)
-        menu = Menu(menuTitle, 4)
         menu.fill(UniFill(fillerItem.type))
         rummageButton = MenuItem(rummageButtonText, ItemStack(Material.CHEST))
-        rummageButton.addListener { clickEvent: MenuItemClickEvent? ->
+        rummageButton.addListener {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()

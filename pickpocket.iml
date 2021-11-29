@@ -18,13 +18,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="github.LlmDl.Towny" level="application" />
+    <orderEntry type="library" name="io.papermc.paper.api" level="application" />
     <orderEntry type="library" name="github.MilkBowl.VaultAPI" level="application" />
     <orderEntry type="library" name="jetbrains.annotations" level="application" />
     <orderEntry type="library" name="jetbrains.kotlin.stdlib.jdk8" level="application" />
     <orderEntry type="library" name="net.essentialsx.EssentialsX" level="application" />
     <orderEntry type="library" name="sk89q.worldedit.bukkit" level="application" />
     <orderEntry type="library" name="sk89q.worldguard.bukkit" level="application" />
-    <orderEntry type="library" name="spigotmc.spigot.api" level="application" />
+    <orderEntry type="library" name="github.LlmDl.Towny" level="application" />
   </component>
 </module>

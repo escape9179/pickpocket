@@ -267,10 +267,6 @@ public class PickpocketPlugin extends JavaPlugin implements Listener {
         return essentials != null;
     }
 
-    public static String getPluginName() {
-        return instance.getDescription().getName();
-    }
-
     public static String getPluginVersion() {
         return instance.getDescription().getVersion();
     }
