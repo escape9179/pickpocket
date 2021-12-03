@@ -2,7 +2,6 @@ package logan.pickpocket.user
 
 import logan.api.gui.Menu
 import logan.api.gui.MenuItem
-import logan.api.gui.MenuItemClickEvent
 import logan.api.gui.fill.UniFill
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
@@ -52,7 +51,7 @@ class RummageInventory(private val victim: PickpocketUser) {
         for (randomItem in randomItems) {
             val randomSlot = (Math.random() * (menu.size - 9)).toInt()
             val menuItem = MenuItem(randomItem)
-            menuItem.addListener { menuItemClickEvent: MenuItemClickEvent ->
+            menuItem.addListener { menuItemClickEvent ->
                 val predator = victim.predator
                 predator!!.isRummaging = false
                 rummageTimerTask!!.cancel()
