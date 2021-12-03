@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
     val noticeFillerItem: ItemStack = ItemStack(Material.RED_STAINED_GLASS_PANE)
-    val fillerItem: ItemStack = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
     private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
     private val menu: Menu = Menu(menuTitle, 4)
@@ -57,7 +56,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                 predator!!.isRummaging = false
                 rummageTimerTask!!.cancel()
                 val bottomRightSlot = menu.bottomRight
-                menu.addItem(bottomRightSlot, MenuItem(fillerItem))
+                menu.addItem(bottomRightSlot, MenuItem(ItemStack(Material.AIR)))
                 menu.update()
                 menu.close()
                 if (victim.bukkitPlayer == null || !victim.bukkitPlayer.isOnline) predator.sendMessage(ChatColor.RED.toString() + "Player is no longer available.")
@@ -109,7 +108,7 @@ class RummageInventory(private val victim: PickpocketUser) {
     }
 
     init {
-        menu.fill(UniFill(fillerItem.type))
+        menu.fill(UniFill(Material.AIR))
         rummageButton = MenuItem(rummageButtonText, ItemStack(Material.CHEST))
         rummageButton.addListener {
             val predator = victim.predator
