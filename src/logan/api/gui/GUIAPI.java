@@ -21,8 +21,8 @@ public class GUIAPI
 {
 
     private static Map<Integer, Menu> registeredMenus    = new ConcurrentHashMap<>();
-    private static @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
-    private static @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
+    private static final @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
+    private static final @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
     private static PlaceholderManager placeholderManager = new PlaceholderManager();
 
     public static void registerMenu(int id, Menu menu)
