@@ -6,7 +6,6 @@ import logan.api.gui.MenuItemClickEvent
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
-import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -126,11 +125,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
             for (i in 0 until inventorySize) {
                 if (getItem(i) == null) continue
                 val randomSlot = (Math.random() * inventorySize).toInt()
-                val temp = getItem(randomSlot) ?: run {
-                    setItem(randomSlot, getItem(i))
-                    setItem(i, null)
-                    return@shuffleInventoryItems
-                }
+                val temp = getItem(randomSlot) ?: run { ItemStack(Material.AIR) }
                 setItem(randomSlot, getItem(i))
                 setItem(i, temp)
             }
