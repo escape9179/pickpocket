@@ -17,16 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Tre Logan
  */
-public class GUIAPI
-{
+public class GUIAPI {
 
-    private static Map<Integer, Menu> registeredMenus    = new ConcurrentHashMap<>();
+    private static Map<Integer, Menu> registeredMenus = new ConcurrentHashMap<>();
     private static final @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
     private static final @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
     private static PlaceholderManager placeholderManager = new PlaceholderManager();
 
-    public static void registerMenu(int id, Menu menu)
-    {
+    public static void registerMenu(int id, Menu menu) {
         if (registeredMenus.containsKey(id)) return;
         registeredMenus.put(id, menu);
     }
@@ -43,8 +41,7 @@ public class GUIAPI
         plugin.getServer().getPluginManager().registerEvents(new InventoryListeners(), plugin);
     }
 
-    public static PlaceholderManager getPlaceholderManager()
-    {
+    public static PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
     }
 
@@ -63,11 +60,10 @@ public class GUIAPI
         if (registeredMenus.isEmpty())
             return;
         Iterator<Integer> menuIterator = registeredMenus.keySet().iterator();
-        while (menuIterator.hasNext())
-        {
-            Menu        registeredMenu = registeredMenus.get(menuIterator.next());
-            Inventory   inventory      = event.getInventory();
-            HumanEntity viewer         = inventory.getViewers().get(0);
+        while (menuIterator.hasNext()) {
+            Menu registeredMenu = registeredMenus.get(menuIterator.next());
+            Inventory inventory = event.getInventory();
+            HumanEntity viewer = inventory.getViewers().get(0);
 
             if (registeredMenu.getViewer().equals(viewer)) {
                 registeredMenu.setClosed(true);
@@ -77,12 +73,10 @@ public class GUIAPI
 
         List<Integer> menusToClose = new ArrayList<>();
 
-        registeredMenus.forEach((k, v) ->
-        {
+        registeredMenus.forEach((k, v) -> {
             if (registeredMenus.get(k).isClosed()) menusToClose.add(k);
         });
-        menusToClose.forEach(menuId ->
-        {
+        menusToClose.forEach(menuId -> {
             registeredMenus.remove(menuId);
         });
 
