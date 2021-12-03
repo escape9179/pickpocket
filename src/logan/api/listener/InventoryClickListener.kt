@@ -1,4 +1,4 @@
-package logan.api.gui
+package logan.api.listener
 
 import org.bukkit.event.inventory.InventoryClickEvent
 

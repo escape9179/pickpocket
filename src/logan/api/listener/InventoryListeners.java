@@ -1,5 +1,6 @@
-package logan.api.gui;
+package logan.api.listener;
 
+import logan.api.gui.GUIAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

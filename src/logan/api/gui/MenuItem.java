@@ -1,6 +1,7 @@
 package logan.api.gui;
 
 import com.google.common.collect.Lists;
+import logan.api.listener.MenuItemClickListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

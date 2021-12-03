@@ -4,7 +4,7 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.Profiles
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
-import logan.api.gui.InventoryCloseListener as ApiInventoryCloseListener
+import logan.api.listener.InventoryCloseListener as ApiInventoryCloseListener
 
 /**
  * Created by Tre on 12/28/2015.

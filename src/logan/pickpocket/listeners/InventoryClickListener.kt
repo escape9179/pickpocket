@@ -5,7 +5,7 @@ import logan.pickpocket.main.Profiles
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
-import logan.api.gui.InventoryClickListener as ApiInventoryClickListener
+import logan.api.listener.InventoryClickListener as ApiInventoryClickListener
 
 /**
  * Created by Tre on 12/28/2015.
