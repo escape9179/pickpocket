@@ -1,18 +1,15 @@
 package logan.pickpocket.listeners
 
-import logan.api.gui.InventoryCloseListener
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryCloseEvent
+import logan.api.gui.InventoryCloseListener as ApiInventoryCloseListener
 
 /**
  * Created by Tre on 12/28/2015.
  */
-class InventoryCloseListener : InventoryCloseListener {
+class InventoryCloseListener : ApiInventoryCloseListener {
     override fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player as Player
         val profile = Profiles.get(player)

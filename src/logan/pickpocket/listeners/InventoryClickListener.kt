@@ -1,19 +1,16 @@
 package logan.pickpocket.listeners
 
-import logan.api.gui.InventoryClickListener
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
+import logan.api.gui.InventoryClickListener as ApiInventoryClickListener
 
 /**
  * Created by Tre on 12/28/2015.
  */
-class InventoryClickListener : InventoryClickListener {
+class InventoryClickListener : ApiInventoryClickListener {
     override fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         val profile = Profiles.get(player)
