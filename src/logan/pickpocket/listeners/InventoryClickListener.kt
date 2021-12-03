@@ -1,5 +1,6 @@
 package logan.pickpocket.listeners
 
+import logan.api.gui.InventoryClickListener
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profiles
@@ -12,9 +13,8 @@ import org.bukkit.inventory.Inventory
 /**
  * Created by Tre on 12/28/2015.
  */
-class InventoryClickListener : Listener {
-    @EventHandler
-    fun onInventoryClick(event: InventoryClickEvent) {
+class InventoryClickListener : InventoryClickListener {
+    override fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         val profile = Profiles.get(player)
         val inventory: Inventory? = event.clickedInventory
@@ -36,9 +36,5 @@ class InventoryClickListener : Listener {
             event.isCancelled = true
             profile.bukkitPlayer?.sendMessage(MessageConfiguration.personCantBeStolenFromMessage)
         }
-    }
-
-    init {
-        PickpocketPlugin.registerListener(this)
     }
 }

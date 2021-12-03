@@ -9,11 +9,11 @@ public class InventoryListeners implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        GUIAPI.callInventoryClickEvents(event);
+        GUIAPI.callInventoryClickListeners(event);
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        GUIAPI.callInventoryCloseEvents(event);
+        GUIAPI.callInventoryCloseListeners(event);
     }
 }

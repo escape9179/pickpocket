@@ -96,11 +96,14 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         registerCommand(reloadCommand)
         registerCommand(targetCommand)
         registerCommand(toggleCommand)
-        InventoryClickListener()
+
+        // Register API listeners
+        GUIAPI.registerListeners(this)
+        GUIAPI.registerInventoryClickListener(InventoryClickListener())
+        GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
         InventoryCloseListener()
         PlayerInteractListener()
         PlayerJoinListener()
-        GUIAPI.registerListeners(this)
         server.pluginManager.registerEvents(this, this)
         val scheduler = server.scheduler
 

@@ -21,12 +21,22 @@ public class GUIAPI
 {
 
     private static Map<Integer, Menu> registeredMenus    = new ConcurrentHashMap<>();
+    private static @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
+    private static @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
     private static PlaceholderManager placeholderManager = new PlaceholderManager();
 
     public static void registerMenu(int id, Menu menu)
     {
         if (registeredMenus.containsKey(id)) return;
         registeredMenus.put(id, menu);
+    }
+
+    public static void registerInventoryClickListener(@NotNull InventoryClickListener listener) {
+        inventoryClickListeners.add(listener);
+    }
+
+    public static void registerInventoryCloseListener(@NotNull InventoryCloseListener listener) {
+        inventoryCloseListeners.add(listener);
     }
 
     public static void registerListeners(@NotNull JavaPlugin plugin) {
@@ -38,20 +48,20 @@ public class GUIAPI
         return placeholderManager;
     }
 
-    public static void callInventoryClickEvents(InventoryClickEvent event)
-    {
+    public static void callInventoryClickListeners(InventoryClickEvent event) {
+        // Call all menu related inventory click events before calling listeners by other plugins.
         for (int key : registeredMenus.keySet())
-        {
             registeredMenus.get(key).onInventoryClick(event);
-        }
+
+        // Call general inventory click listeners that can be unrelated to menus.
+        for (InventoryClickListener listener : inventoryClickListeners)
+            listener.onInventoryClick(event);
     }
 
-    public static void callInventoryCloseEvents(InventoryCloseEvent event)
-    {
+    public static void callInventoryCloseListeners(InventoryCloseEvent event) {
+        // Call all menu related inventory close listeners before processing other registered events.
         if (registeredMenus.isEmpty())
-        {
             return;
-        }
         Iterator<Integer> menuIterator = registeredMenus.keySet().iterator();
         while (menuIterator.hasNext())
         {
@@ -59,8 +69,7 @@ public class GUIAPI
             Inventory   inventory      = event.getInventory();
             HumanEntity viewer         = inventory.getViewers().get(0);
 
-            if (registeredMenu.getViewer().equals(viewer))
-            {
+            if (registeredMenu.getViewer().equals(viewer)) {
                 registeredMenu.setClosed(true);
                 break;
             }
@@ -76,5 +85,9 @@ public class GUIAPI
         {
             registeredMenus.remove(menuId);
         });
+
+        // Process other inventory close listeners now.
+        for (InventoryCloseListener listener : inventoryCloseListeners)
+            listener.onInventoryClose(event);
     }
 }
