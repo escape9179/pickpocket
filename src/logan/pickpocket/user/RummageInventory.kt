@@ -47,6 +47,7 @@ class RummageInventory(private val victim: PickpocketUser) {
 
     private fun populateRummageMenu() {
         menu.clear()
+        menu.fill(UniFill(Material.AIR))
         val randomItems = randomItemsFromPlayer
         for (randomItem in randomItems) {
             val randomSlot = (Math.random() * (menu.size - 9)).toInt()

@@ -64,7 +64,7 @@ public final class MenuItem implements MenuItemClickListener {
 
     public final MenuItem setName(String name) {
         setMetaProperty(m -> {
-            m.setDisplayName(ChatColor.WHITE + name);
+            if (m != null ) m.setDisplayName(ChatColor.WHITE + name);
             return m;
         });
         return this;
