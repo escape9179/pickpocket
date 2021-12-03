@@ -16,7 +16,6 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
-    var noticeTimerCurrentSlot = 0
     val noticeFillerItem: ItemStack = ItemStack(Material.RED_STAINED_GLASS_PANE)
     val fillerItem: ItemStack = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
     private var rummageTimerTask: BukkitTask? = null
@@ -50,9 +49,6 @@ class RummageInventory(private val victim: PickpocketUser) {
     private fun populateRummageMenu() {
         menu.clear()
         val randomItems = randomItemsFromPlayer
-        for (i in 0 until noticeTimerCurrentSlot) {
-            menu.addItem(i, MenuItem(noticeFillerItem))
-        }
         for (randomItem in randomItems) {
             val randomSlot = (Math.random() * (menu.size - 9)).toInt()
             val menuItem = MenuItem(randomItem)
