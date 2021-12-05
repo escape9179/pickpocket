@@ -14,9 +14,9 @@ abstract class Profiles {
                     return user
                 }
             }
-            val profile = PickpocketUser(player.uniqueId)
-            PickpocketPlugin.addProfile(profile)
-            return profile
+            val user = PickpocketUser(player.uniqueId)
+            PickpocketPlugin.addProfile(user)
+            return user
         }
     }
 }

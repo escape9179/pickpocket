@@ -10,6 +10,7 @@ import logan.api.command.CommandDispatcher
 import logan.api.command.CommandDispatcher.Companion.registerCommand
 import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
+import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
@@ -150,6 +151,21 @@ class PickpocketPlugin : JavaPlugin(), Listener {
                 logger.info(String.format("Pickpocket %s -> %s", description.version, version))
             }
         }
+
+        // Initialize database.
+        with(pickpocketConfiguration) {
+            if (databaseEnabled) {
+                database = try {
+                    PickpocketDatabase(databaseServer!!, databaseUser!!, databasePassword!!)
+                } catch (e: NullPointerException) {
+                    logger.info("Problem initializing database. Ensure database section in config contains correct values.")
+                    e.printStackTrace()
+                    return@with
+                }
+                this@PickpocketPlugin.logger.info("Finished setting up database.")
+            } else this@PickpocketPlugin.logger.info("Database support disabled in config.")
+        }
+
         logger.info("$name enabled.")
     }
 
@@ -198,6 +214,8 @@ class PickpocketPlugin : JavaPlugin(), Listener {
             private set
         var isTownyPresent = false
             private set
+        var database: PickpocketDatabase? = null
+            private set
         var PICKPOCKET_FLAG: StateFlag? = null
         fun addProfile(profile: PickpocketUser?) {
             profiles.add(profile)
@@ -210,6 +228,8 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         fun getCooldowns(): Map<Player, Int> {
             return cooldowns
         }
+
+        fun log(message: String) = instance.logger.info(message)
 
         fun registerListener(listener: Listener?) {
             instance.server.pluginManager.registerEvents(listener!!, instance)

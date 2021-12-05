@@ -27,6 +27,7 @@ class PickpocketUser(val uuid: UUID) {
     var currentMinigame: Minigame? = null
     val profileConfiguration =
         ProfileConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
+    var steals = 0
 
     fun doPickpocket(victim: PickpocketUser) {
         when {

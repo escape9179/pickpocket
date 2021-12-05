@@ -18,13 +18,14 @@ class PlayerJoinListener : Listener {
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
 
-        val profile = Profiles.get(event.player)
+        val user = Profiles.get(event.player)
+        PickpocketPlugin.database?.addUser(user)
 
         // return without showing status message
         if (!PickpocketPlugin.pickpocketConfiguration.isShowStatusOnLoginEnabled) return
 
         // show status message
-        if (profile.isParticipating)
+        if (user.isParticipating)
             event.player.sendMessage(MessageConfiguration.participatingTrueNotificationMessage)
         else
             event.player.sendMessage(MessageConfiguration.participatingFalseNotificationMessage)

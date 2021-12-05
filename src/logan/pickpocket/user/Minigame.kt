@@ -98,6 +98,8 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         predator.playItemPickupSound()
         predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
+        predatorUser.steals++
+        PickpocketPlugin.database?.updateUser(predatorUser)
     }
 
     private fun doPickpocketFailure() {
