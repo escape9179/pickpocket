@@ -2,6 +2,7 @@ package logan.pickpocket.config
 
 import logan.api.config.CommentedConfiguration
 import logan.pickpocket.main.PickpocketPlugin.Companion.instance
+import org.bukkit.Material
 import java.io.File
 
 class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder, "config.yml")) {
@@ -29,8 +30,13 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getDouble(moneyLost)
     val minigameRollRate: Int
         get() = configuration.getInt(minigameRollRateKey)
-    val disabledItems: List<String>
-        get() = configuration.getStringList(disabledItemsKey)
+    val disabledItems: List<String> by lazy {
+        val finalItems = mutableListOf<String>()
+        val items = configuration.getStringList(disabledItemsKey)
+        if ("*" in items) finalItems.addAll(Material.values().map { it.name.lowercase() })
+        items.filter { it.startsWith('-') }.forEach { finalItems.remove(it) }
+        finalItems
+    }
     val isShowStatusOnInteractEnabled: Boolean
         get() = configuration.getBoolean(statusOnInteractKey)
     val isShowStatusOnLoginEnabled: Boolean
