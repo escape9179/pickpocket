@@ -11,12 +11,21 @@ class ProfileConfiguration(directory: String, fileName: String) {
     private val adminSection = "admin"
     private val bypassSection = "bypass"
     private val exemptSection = "exempt"
+    private val stealsSection = "steals"
     private val participatingSection = "participating"
     private val path: String
     private val file: File
     private val yamlConfiguration: YamlConfiguration
 
-    fun createSections() {
+    init {
+        path = directory + fileName
+        File(directory).mkdirs()
+        file = File(path)
+        yamlConfiguration = YamlConfiguration()
+        createSections()
+    }
+
+    private fun createSections() {
         try {
             if (!file.exists()) {
                 file.createNewFile()
@@ -30,6 +39,7 @@ class ProfileConfiguration(directory: String, fileName: String) {
                     exemptSection
                 )
                 if (!yamlConfiguration.isSet(participatingSection)) yamlConfiguration[participatingSection] = true
+                if (!yamlConfiguration.isSet(stealsSection)) yamlConfiguration[stealsSection] = 0
                 yamlConfiguration.save(file)
             } else {
                 yamlConfiguration.load(file)
@@ -67,6 +77,11 @@ class ProfileConfiguration(directory: String, fileName: String) {
         saveConfiguration()
     }
 
+    fun setSteals(value: Int) {
+        yamlConfiguration[stealsSection] = value
+        saveConfiguration()
+    }
+
     val adminSectionValue: Boolean
         get() = yamlConfiguration.getBoolean(adminSection)
     val bypassSectionValue: Boolean
@@ -75,11 +90,4 @@ class ProfileConfiguration(directory: String, fileName: String) {
         get() = yamlConfiguration.getBoolean(exemptSection)
     val participatingSectionValue: Boolean
         get() = yamlConfiguration.getBoolean(participatingSection)
-
-    init {
-        path = directory + fileName
-        File(directory).mkdirs()
-        file = File(path)
-        yamlConfiguration = YamlConfiguration()
-    }
 }

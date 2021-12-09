@@ -96,6 +96,8 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         stealItem(predator, victimUser.bukkitPlayer!!, item)
         stealMoney()
         predator.playItemPickupSound()
+        predatorUser.steals++
+        predatorUser.profileConfiguration.setSteals(predatorUser.steals)
         predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
     }
