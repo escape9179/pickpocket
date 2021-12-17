@@ -23,13 +23,14 @@ class MainCommand : BasicCommand<CommandSender>(
 
         sender.sendColoredMessage(
             """
-            &8Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}")
-            /pickpocket toggle &7- Toggle pick-pocketing for yourself.
-            /pickpocket target &7- Pick-pocket a player near you.
-            &7Admin commands:
-            /pickpocket admin notify &7- Toggle admin notifications for yourself
-            /pickpocket admin exempt [name] &7- Exempt yourself or another player from being stolen from
-            /pickpocket admin bypass [name] &7- Toggle cooldown bypass for yourself or another player
+            Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
+            /pickpocket toggle - Toggle pick-pocketing for yourself.
+            /pickpocket target - Pick-pocket a player near you.
+            
+            Admin commands:
+            /pickpocket admin notify - Toggle admin notifications for yourself
+            /pickpocket admin exempt [name] - Exempt yourself or another player from being stolen from
+            /pickpocket admin bypass [name] - Toggle cooldown bypass for yourself or another player
     """.trimIndent()
         )
         return true
