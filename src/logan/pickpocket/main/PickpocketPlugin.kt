@@ -82,21 +82,16 @@ class PickpocketPlugin : JavaPlugin(), Listener {
 
         // Initialize and create message configuration file.
         MessageConfiguration.create()
-        profiles = Vector()
-        val mainCommand = MainCommand()
-        val adminCommand = AdminCommand()
-        val bypassCommand = AdminBypassCommand()
-        val exemptCommand = AdminExemptCommand()
-        val toggleCommand = ToggleCommand()
-        val reloadCommand = ReloadCommand()
-        val targetCommand = TargetCommand()
-        registerCommand(mainCommand)
-        registerCommand(adminCommand)
-        registerCommand(bypassCommand)
-        registerCommand(exemptCommand)
-        registerCommand(reloadCommand)
-        registerCommand(targetCommand)
-        registerCommand(toggleCommand)
+        users = Vector()
+
+        registerCommand(MainCommand())
+        registerCommand(AdminCommand())
+        registerCommand(AdminBypassCommand())
+        registerCommand(AdminExemptCommand())
+        registerCommand(ReloadCommand())
+        registerCommand(TargetCommand())
+        registerCommand(ToggleCommand())
+        registerCommand(StatusCommand())
 
         // Register API listeners
         GUIAPI.registerListeners(this)
@@ -192,7 +187,7 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         @JvmStatic
         lateinit var instance: PickpocketPlugin
             private set
-        var profiles = Vector<PickpocketUser>()
+        var users = Vector<PickpocketUser>()
             private set
         private val cooldowns = ConcurrentHashMap<Player, Int>()
         val PICKPOCKET_USE: Permission = Permission("pickpocket.use", "Allow a user to pick-pocket.")
@@ -218,7 +213,7 @@ class PickpocketPlugin : JavaPlugin(), Listener {
             private set
         var PICKPOCKET_FLAG: StateFlag? = null
         fun addProfile(profile: PickpocketUser?) {
-            profiles.add(profile)
+            users.add(profile)
         }
 
         fun addCooldown(player: Player) {

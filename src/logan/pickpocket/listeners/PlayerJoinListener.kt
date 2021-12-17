@@ -2,7 +2,7 @@ package logan.pickpocket.listeners
 
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -18,7 +18,7 @@ class PlayerJoinListener : Listener {
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
 
-        val user = Profiles.get(event.player)
+        val user = PickpocketUser.get(event.player)
         PickpocketPlugin.database?.addUser(user)
 
         // return without showing status message

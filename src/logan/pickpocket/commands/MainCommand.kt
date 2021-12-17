@@ -26,6 +26,7 @@ class MainCommand : BasicCommand<CommandSender>(
             Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
             /pickpocket toggle - Toggle pick-pocketing for yourself.
             /pickpocket target - Pick-pocket a player near you.
+            /pickpocket status - Check status of toggleable values.
             
             Admin commands:
             /pickpocket admin notify - Toggle admin notifications for yourself

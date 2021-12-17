@@ -1,7 +1,7 @@
 package logan.pickpocket.listeners
 
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
@@ -13,7 +13,7 @@ import logan.api.listener.InventoryClickListener as ApiInventoryClickListener
 class InventoryClickListener : ApiInventoryClickListener {
     override fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
-        val profile = Profiles.get(player)
+        val profile = PickpocketUser.get(player)
         val inventory: Inventory? = event.clickedInventory
         if (profile.isRummaging || profile.isPlayingMinigame) {
             event.isCancelled = true

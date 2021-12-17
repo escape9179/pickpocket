@@ -5,6 +5,7 @@ import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import java.util.*
 
 class PickpocketUser(val uuid: UUID) {
@@ -64,6 +65,19 @@ class PickpocketUser(val uuid: UUID) {
                 1.0f,
                 0.5f
             )
+        }
+    }
+
+    companion object {
+        fun get(player: Player): PickpocketUser {
+            for (user in PickpocketPlugin.users) {
+                if (user.uuid == player.uniqueId) {
+                    return user
+                }
+            }
+            val user = PickpocketUser(player.uniqueId)
+            PickpocketPlugin.addProfile(user)
+            return user
         }
     }
 }

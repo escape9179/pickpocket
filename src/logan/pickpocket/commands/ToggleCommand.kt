@@ -3,7 +3,7 @@ package logan.pickpocket.commands
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.entity.Player
 
 class ToggleCommand : BasicCommand<Player>(
@@ -18,7 +18,7 @@ class ToggleCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
 
-        val profile = Profiles.get(sender)
+        val profile = PickpocketUser.get(sender)
         profile.isParticipating = !profile.isParticipating
         sender.sendMessage(
             if (profile.isParticipating)
