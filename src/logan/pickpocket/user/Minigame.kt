@@ -5,7 +5,6 @@ import logan.api.gui.MenuItem
 import logan.api.gui.MenuItemClickEvent
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
-import logan.pickpocket.main.Profiles
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -87,7 +86,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {
             val amountToSteal = getPercentageOfVictimBalance(victimUser.bukkitPlayer!!)
-            doMoneyTransaction(predatorUser.bukkitPlayer!!, victimUser.bukkitPlayer, amountToSteal)
+            doMoneyTransaction(predatorUser.bukkitPlayer!!, victimUser.bukkitPlayer!!, amountToSteal)
         }
     }
 
@@ -100,6 +99,8 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         predatorUser.profileConfiguration.setSteals(predatorUser.steals)
         predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
+        predatorUser.steals++
+        PickpocketPlugin.database?.updateUser(predatorUser)
     }
 
     private fun doPickpocketFailure() {
@@ -172,7 +173,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun showAdminNotifications(success: Boolean) {
         Bukkit.getOnlinePlayers().forEach { player ->
-            val profile = Profiles.get(player)
+            val profile = PickpocketUser.get(player)
             if (profile.profileConfiguration.adminSectionValue) {
                 player.sendMessage(
                     if (success)

@@ -5,10 +5,12 @@ import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
+import org.bukkit.entity.Player
 import java.util.*
 
 class PickpocketUser(val uuid: UUID) {
-    val bukkitPlayer = Bukkit.getPlayer(uuid)
+    val bukkitPlayer
+        get() = Bukkit.getPlayer(uuid)
     var victim: PickpocketUser? = null
     var predator: PickpocketUser? = null
     var lastPredator: PickpocketUser? = null
@@ -27,14 +29,14 @@ class PickpocketUser(val uuid: UUID) {
     var currentMinigame: Minigame? = null
     val profileConfiguration =
         ProfileConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
-    var steals: Int = 0
+    var steals = 0
 
     fun doPickpocket(victim: PickpocketUser) {
         when {
             !WorldGuardUtil.isPickpocketingAllowed(bukkitPlayer!!) -> {
-                bukkitPlayer.sendMessage(MessageConfiguration.pickpocketRegionDisallowMessage)
+                bukkitPlayer!!.sendMessage(MessageConfiguration.pickpocketRegionDisallowMessage)
             }
-            isCoolingDown() -> bukkitPlayer.sendMessage(
+            isCoolingDown() -> bukkitPlayer!!.sendMessage(
                 MessageConfiguration.getCooldownNoticeMessage(PickpocketPlugin.getCooldowns()[bukkitPlayer].toString())
             )
             else -> {
@@ -64,6 +66,19 @@ class PickpocketUser(val uuid: UUID) {
                 1.0f,
                 0.5f
             )
+        }
+    }
+
+    companion object {
+        fun get(player: Player): PickpocketUser {
+            for (user in PickpocketPlugin.users) {
+                if (user.uuid == player.uniqueId) {
+                    return user
+                }
+            }
+            val user = PickpocketUser(player.uniqueId)
+            PickpocketPlugin.addProfile(user)
+            return user
         }
     }
 }

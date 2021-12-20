@@ -59,7 +59,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                 menu.addItem(bottomRightSlot, MenuItem(ItemStack(Material.AIR)))
                 menu.update()
                 menu.close()
-                if (victim.bukkitPlayer == null || !victim.bukkitPlayer.isOnline) predator.sendMessage(ChatColor.RED.toString() + "Player is no longer available.")
+                if (victim.bukkitPlayer == null || !victim.bukkitPlayer!!.isOnline) predator.sendMessage(ChatColor.RED.toString() + "Player is no longer available.")
                 val minigame =
                     Minigame(predator, victim, menuItemClickEvent.inventoryClickEvent.currentItem!!)
                 minigame.start(menu.inventory)
@@ -75,7 +75,7 @@ class RummageInventory(private val victim: PickpocketUser) {
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
             val storageContents = victim.bukkitPlayer!!.inventory.storageContents
-            val inventorySize = victim.bukkitPlayer.inventory.storageContents.size
+            val inventorySize = victim.bukkitPlayer!!.inventory.storageContents.size
             var randomItem: ItemStack?
             var randomSlot: Int
             outer@ for (i in 0 until randomItemCount) {

@@ -21,14 +21,19 @@ class MainCommand : BasicCommand<CommandSender>(
 
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
 
-        sender.sendColoredMessage("&8Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}")
-        sender.sendColoredMessage("/pickpocket toggle &7- Toggle pick-pocketing for yourself.")
-        sender.sendColoredMessage("/pickpocket target &7- Pick-pocket a player near you.")
-        sender.sendColoredMessage("&7Admin commands:")
-        sender.sendColoredMessage("/pickpocket admin notify &7- Toggle admin notifications for yourself.")
-        sender.sendColoredMessage("/pickpocket admin exempt [name] &7- Exempt yourself or another player from being stolen from.")
-        sender.sendColoredMessage("/pickpocket admin bypass [name] &7- Toggle cooldown bypass for yourself or another player.")
-
+        sender.sendColoredMessage(
+            """
+            Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
+            /pickpocket toggle - Toggle pick-pocketing for yourself.
+            /pickpocket target - Pick-pocket a player near you.
+            /pickpocket status - Check status of toggleable values.
+            
+            Admin commands:
+            /pickpocket admin notify - Toggle admin notifications for yourself
+            /pickpocket admin exempt [name] - Exempt yourself or another player from being stolen from
+            /pickpocket admin bypass [name] - Toggle cooldown bypass for yourself or another player
+    """.trimIndent()
+        )
         return true
     }
 }

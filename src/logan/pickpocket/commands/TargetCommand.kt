@@ -3,7 +3,7 @@ package logan.pickpocket.commands
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -32,8 +32,8 @@ class TargetCommand : BasicCommand<Player>(
             return true
         }
 
-        val senderProfile = Profiles.get(sender)
-        val victimProfile = Profiles.get(victim)
+        val senderProfile = PickpocketUser.get(sender)
+        val victimProfile = PickpocketUser.get(victim)
 
         // Make sure both players have pick-pocketing enabled.
         if (!senderProfile.isParticipating) {
