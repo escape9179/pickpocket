@@ -9,7 +9,8 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class PickpocketUser(val uuid: UUID) {
-    val bukkitPlayer = Bukkit.getPlayer(uuid)
+    val bukkitPlayer
+        get() = Bukkit.getPlayer(uuid)
     var victim: PickpocketUser? = null
     var predator: PickpocketUser? = null
     var lastPredator: PickpocketUser? = null
@@ -33,9 +34,9 @@ class PickpocketUser(val uuid: UUID) {
     fun doPickpocket(victim: PickpocketUser) {
         when {
             !WorldGuardUtil.isPickpocketingAllowed(bukkitPlayer!!) -> {
-                bukkitPlayer.sendMessage(MessageConfiguration.pickpocketRegionDisallowMessage)
+                bukkitPlayer!!.sendMessage(MessageConfiguration.pickpocketRegionDisallowMessage)
             }
-            isCoolingDown() -> bukkitPlayer.sendMessage(
+            isCoolingDown() -> bukkitPlayer!!.sendMessage(
                 MessageConfiguration.getCooldownNoticeMessage(PickpocketPlugin.getCooldowns()[bukkitPlayer].toString())
             )
             else -> {
