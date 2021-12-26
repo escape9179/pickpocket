@@ -32,9 +32,13 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getInt(minigameRollRateKey)
     val disabledItems: List<String> by lazy {
         val finalItems = mutableListOf<String>()
-        val items = configuration.getStringList(disabledItemsKey)
-        if ("*" in items) finalItems.addAll(Material.values().map { it.name.lowercase() })
-        items.filter { it.startsWith('-') }.forEach { finalItems.remove(it.drop(1)) }
+        for (item in configuration.getStringList(disabledItemsKey)) {
+            when (item.first()) {
+                '*' -> finalItems.addAll(Material.values().map { it.name.lowercase() })
+                '-' -> finalItems.remove(item.drop(1))
+                else -> finalItems.add(item)
+            }
+        }
         finalItems
     }
     val isShowStatusOnInteractEnabled: Boolean
