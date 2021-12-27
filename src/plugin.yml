@@ -1,5 +1,5 @@
 main: logan.pickpocket.main.PickpocketPlugin
-name: PickPocket
+name: Pickpocket
 version: 2.7.1
 author: escape9179
 api-version: "1.17"

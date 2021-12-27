@@ -10,6 +10,7 @@ import logan.api.command.CommandDispatcher
 import logan.api.command.CommandDispatcher.Companion.registerCommand
 import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
+import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
@@ -81,21 +82,16 @@ class PickpocketPlugin : JavaPlugin(), Listener {
 
         // Initialize and create message configuration file.
         MessageConfiguration.create()
-        profiles = Vector()
-        val mainCommand = MainCommand()
-        val adminCommand = AdminCommand()
-        val bypassCommand = AdminBypassCommand()
-        val exemptCommand = AdminExemptCommand()
-        val toggleCommand = ToggleCommand()
-        val reloadCommand = ReloadCommand()
-        val targetCommand = TargetCommand()
-        registerCommand(mainCommand)
-        registerCommand(adminCommand)
-        registerCommand(bypassCommand)
-        registerCommand(exemptCommand)
-        registerCommand(reloadCommand)
-        registerCommand(targetCommand)
-        registerCommand(toggleCommand)
+        users = Vector()
+
+        registerCommand(MainCommand())
+        registerCommand(AdminCommand())
+        registerCommand(AdminBypassCommand())
+        registerCommand(AdminExemptCommand())
+        registerCommand(ReloadCommand())
+        registerCommand(TargetCommand())
+        registerCommand(ToggleCommand())
+        registerCommand(StatusCommand())
 
         // Register API listeners
         GUIAPI.registerListeners(this)
@@ -150,6 +146,21 @@ class PickpocketPlugin : JavaPlugin(), Listener {
                 logger.info(String.format("Pickpocket %s -> %s", description.version, version))
             }
         }
+
+        // Initialize database.
+        with(pickpocketConfiguration) {
+            if (databaseEnabled) {
+                database = try {
+                    PickpocketDatabase(databaseServer!!, databaseUser!!, databasePassword!!)
+                } catch (e: NullPointerException) {
+                    logger.info("Problem initializing database. Ensure database section in config contains correct values.")
+                    e.printStackTrace()
+                    return@with
+                }
+                this@PickpocketPlugin.logger.info("Finished setting up database.")
+            } else this@PickpocketPlugin.logger.info("Database support disabled in config.")
+        }
+
         logger.info("$name enabled.")
     }
 
@@ -176,7 +187,7 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         @JvmStatic
         lateinit var instance: PickpocketPlugin
             private set
-        var profiles = Vector<PickpocketUser>()
+        var users = Vector<PickpocketUser>()
             private set
         private val cooldowns = ConcurrentHashMap<Player, Int>()
         val PICKPOCKET_USE: Permission = Permission("pickpocket.use", "Allow a user to pick-pocket.")
@@ -198,9 +209,11 @@ class PickpocketPlugin : JavaPlugin(), Listener {
             private set
         var isTownyPresent = false
             private set
+        var database: PickpocketDatabase? = null
+            private set
         var PICKPOCKET_FLAG: StateFlag? = null
         fun addProfile(profile: PickpocketUser?) {
-            profiles.add(profile)
+            users.add(profile)
         }
 
         fun addCooldown(player: Player) {
@@ -210,6 +223,8 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         fun getCooldowns(): Map<Player, Int> {
             return cooldowns
         }
+
+        fun log(message: String) = instance.logger.info(message)
 
         fun registerListener(listener: Listener?) {
             instance.server.pluginManager.registerEvents(listener!!, instance)

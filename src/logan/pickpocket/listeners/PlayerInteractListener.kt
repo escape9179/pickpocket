@@ -4,7 +4,7 @@ import com.earth2me.essentials.Essentials
 import com.palmergames.bukkit.towny.TownyAPI
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -68,8 +68,8 @@ class PlayerInteractListener : Listener {
             }
         }
 
-        val victimUser = Profiles.get(victim)
-        val profile = Profiles.get(event.player)
+        val victimUser = PickpocketUser.get(victim)
+        val profile = PickpocketUser.get(event.player)
 
         if (!victimUser.isParticipating) {
             if (PickpocketPlugin.pickpocketConfiguration.isShowStatusOnInteractEnabled)

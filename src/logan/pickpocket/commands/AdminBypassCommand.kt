@@ -3,7 +3,7 @@ package logan.pickpocket.commands
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -22,7 +22,7 @@ class AdminBypassCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
 
         if (args.isEmpty()) {
-            val profile = Profiles.get(sender)
+            val profile = PickpocketUser.get(sender)
             val bypassStatus = !profile.profileConfiguration.bypassSectionValue
             profile.profileConfiguration.setBypassSection(bypassStatus)
             sender.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(bypassStatus))
@@ -31,7 +31,7 @@ class AdminBypassCommand : BasicCommand<Player>(
                 sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
                 return true
             }
-            val otherPlayerProfile = Profiles.get(otherPlayer)
+            val otherPlayerProfile = PickpocketUser.get(otherPlayer)
             val bypassStatus = !otherPlayerProfile.profileConfiguration.bypassSectionValue
             otherPlayerProfile.profileConfiguration.setBypassSection(bypassStatus)
             sender.sendMessage(MessageConfiguration.getBypassStatusChangeOtherMessage(otherPlayer, bypassStatus))

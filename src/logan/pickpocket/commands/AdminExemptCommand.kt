@@ -3,7 +3,7 @@ package logan.pickpocket.commands
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -22,7 +22,7 @@ class AdminExemptCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
 
         if (args.isEmpty()) {
-            val profile = Profiles.get(sender)
+            val profile = PickpocketUser.get(sender)
             val exemptStatus = !profile.profileConfiguration.exemptSectionValue
             profile.profileConfiguration.setExemptSection(exemptStatus)
             sender.sendMessage(MessageConfiguration.getExemptStatusChangeMessage(exemptStatus))
@@ -31,7 +31,7 @@ class AdminExemptCommand : BasicCommand<Player>(
                 sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
                 return true
             }
-            val profile = Profiles.get(otherPlayer)
+            val profile = PickpocketUser.get(otherPlayer)
             val exemptStatus = !profile.profileConfiguration.exemptSectionValue
             profile.profileConfiguration.setExemptSection(exemptStatus)
             sender.sendMessage(MessageConfiguration.getExemptStatusChangeOtherMessage(otherPlayer, exemptStatus))

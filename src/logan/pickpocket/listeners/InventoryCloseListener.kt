@@ -1,7 +1,7 @@
 package logan.pickpocket.listeners
 
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.main.Profiles
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import logan.api.listener.InventoryCloseListener as ApiInventoryCloseListener
@@ -12,7 +12,7 @@ import logan.api.listener.InventoryCloseListener as ApiInventoryCloseListener
 class InventoryCloseListener : ApiInventoryCloseListener {
     override fun onInventoryClose(event: InventoryCloseEvent) {
         val player = event.player as Player
-        val profile = Profiles.get(player)
+        val profile = PickpocketUser.get(player)
         if (profile.isPlayingMinigame) {
             profile.currentMinigame!!.stop()
             player.sendMessage(MessageConfiguration.pickpocketUnsuccessfulMessage)

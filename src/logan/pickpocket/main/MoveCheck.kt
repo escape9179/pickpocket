@@ -1,6 +1,7 @@
 package logan.pickpocket.main
 
 import logan.pickpocket.config.MessageConfiguration
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
@@ -23,27 +24,27 @@ class MoveCheck {
             } else {
                 playerLocationMap[player.uniqueId] = currentLocation
             }
-            val playerProfile = Profiles.get(player)
+            val user = PickpocketUser.get(player)
 
             // Check if the player is a predator.
-            if (playerProfile.isPredator) {
-                val victimProfile = playerProfile.victim
-                if (playerProfile.isPlayingMinigame) {
-                    playerProfile.currentMinigame!!.stop()
+            if (user.isPredator) {
+                val victimProfile = user.victim
+                if (user.isPlayingMinigame) {
+                    user.currentMinigame!!.stop()
                 }
-                if (playerProfile.isRummaging) {
-                    playerProfile.bukkitPlayer!!.closeInventory()
-                    playerProfile.isRummaging = false
+                if (user.isRummaging) {
+                    user.bukkitPlayer!!.closeInventory()
+                    user.isRummaging = false
                 }
                 player.sendMessage(MessageConfiguration.pickpocketOnMoveWarningMessage)
-                playerProfile.victim = null
+                user.victim = null
                 victimProfile!!.predator = null
                 return
             }
 
             // Check if the player is a victim.
-            if (playerProfile.isVictim) {
-                val predatorProfile = playerProfile.predator
+            if (user.isVictim) {
+                val predatorProfile = user.predator
                 if (predatorProfile!!.isPlayingMinigame) {
                     predatorProfile.currentMinigame!!.stop()
                 }
@@ -51,8 +52,8 @@ class MoveCheck {
                     predatorProfile.bukkitPlayer!!.closeInventory()
                     predatorProfile.isRummaging = false
                 }
-                playerProfile.lastPredator!!.sendMessage(MessageConfiguration.pickpocketOnMoveOtherWarningMessage)
-                playerProfile.predator = null
+                user.lastPredator!!.sendMessage(MessageConfiguration.pickpocketOnMoveOtherWarningMessage)
+                user.predator = null
                 predatorProfile.victim = null
             }
         }
