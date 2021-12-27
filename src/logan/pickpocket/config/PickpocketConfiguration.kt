@@ -14,7 +14,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         createKeyIfNoneExists(pickpocketToggleKey, true)
         createKeyIfNoneExists(statusOnInteractKey, true)
         createKeyIfNoneExists(statusOnLoginKey, true)
-        createKeyIfNoneExists(disabledItemsKey, listOf("cake", "shulker_box", "bundle"))
+        createKeyIfNoneExists(disabledItemsKey, listOf("shulker_box", "bundle"))
         createKeyIfNoneExists(foreignTownTheftKey, false)
         createKeyIfNoneExists(sameTownTheftKey, false)
         createKeyIfNoneExists(databaseEnabledKey, false)
