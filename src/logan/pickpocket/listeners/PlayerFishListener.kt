@@ -19,7 +19,7 @@ class PlayerFishListener : Listener {
         }
         with (event.player) {
             inventory.addItem(randomItem)
-            sendMessage("You pickpocketed ${randomItem.displayName()} from ${event.caught?.name}.")
+            sendMessage("You pickpocketed ${randomItem.i18NDisplayName} from ${event.caught?.name}.")
         }
     }
 }
