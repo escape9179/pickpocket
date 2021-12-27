@@ -15,7 +15,7 @@ class PlayerFishListener : Listener {
         lateinit var randomItem: ItemStack
         with (event.caught) {
             if (this == null || this !is Player) return
-            randomItem = inventory.getItem((Math.random() * inventory.size - 1).toInt()) ?: ItemStack(Material.AIR)
+            randomItem = inventory.getItem(((Math.random() + 9.0 / 31.0) * 31).toInt()) ?: ItemStack(Material.AIR)
             inventory.removeItem(randomItem)
         }
         with (event.player) {
