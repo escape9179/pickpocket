@@ -16,6 +16,7 @@ class PlayerFishListener : Listener {
         with (event.caught) {
             if (this == null || this !is Player) return
             randomItem = inventory.getItem((Math.random() * inventory.size - 1).toInt()) ?: ItemStack(Material.AIR)
+            inventory.removeItem(randomItem)
         }
         with (event.player) {
             inventory.addItem(randomItem)
