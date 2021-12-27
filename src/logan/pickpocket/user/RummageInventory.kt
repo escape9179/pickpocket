@@ -15,7 +15,6 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
-    val noticeFillerItem: ItemStack = ItemStack(Material.RED_STAINED_GLASS_PANE)
     private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
     private val menu: Menu = Menu(menuTitle, 4)
