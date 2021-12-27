@@ -16,7 +16,7 @@ open class CommentedConfiguration(private val file: File) {
         configuration.setIfNotSet(key, value)
     }
 
-    fun reload() {
+    open fun reload() {
         configuration = YamlConfiguration.loadConfiguration(file)
     }
 

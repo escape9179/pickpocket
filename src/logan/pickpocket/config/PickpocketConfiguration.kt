@@ -30,17 +30,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getDouble(moneyLost)
     val minigameRollRate: Int
         get() = configuration.getInt(minigameRollRateKey)
-    val disabledItems: List<String> by lazy {
-        val finalItems = mutableListOf<String>()
-        for (item in configuration.getStringList(disabledItemsKey)) {
-            when (item.first()) {
-                '*' -> finalItems.addAll(Material.values().map { it.name.lowercase() })
-                '-' -> finalItems.remove(item.drop(1))
-                else -> finalItems.add(item)
-            }
-        }
-        finalItems
-    }
+    var disabledItems: List<String> = computeDisabledItems()
     val isShowStatusOnInteractEnabled: Boolean
         get() = configuration.getBoolean(statusOnInteractKey)
     val isShowStatusOnLoginEnabled: Boolean
@@ -59,6 +49,23 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getString(databaseUserKey)
     val databasePassword
         get() = configuration.getString(databasePasswordKey)
+
+    private fun computeDisabledItems(): List<String> {
+        val finalItems = mutableListOf<String>()
+        for (item in configuration.getStringList(disabledItemsKey)) {
+            when (item.first()) {
+                '*' -> finalItems.addAll(Material.values().map { it.name.lowercase() })
+                '-' -> finalItems.remove(item.drop(1))
+                else -> finalItems.add(item)
+            }
+        }
+        return finalItems
+    }
+
+    override fun reload() {
+        super.reload()
+        disabledItems = computeDisabledItems()
+    }
 
     companion object {
         private const val loseMoney = "lose-money-on-pickpocket"
