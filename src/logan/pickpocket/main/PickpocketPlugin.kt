@@ -97,7 +97,6 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         GUIAPI.registerListeners(this)
         GUIAPI.registerInventoryClickListener(InventoryClickListener())
         GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
-        InventoryCloseListener()
         PlayerInteractListener()
         PlayerJoinListener()
         server.pluginManager.registerEvents(this, this)
