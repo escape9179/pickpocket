@@ -1,7 +1,6 @@
 package logan.pickpocket.listeners
 
 import logan.pickpocket.main.PickpocketPlugin
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,7 +14,7 @@ class PlayerFishListener : Listener {
         lateinit var randomItem: ItemStack
         with (event.caught) {
             if (this == null || this !is Player) return
-            randomItem = inventory.getItem(((Math.random() + 9.0 / 31.0) * 31).toInt()) ?: ItemStack(Material.AIR)
+            randomItem = inventory.getItem(((Math.random() + 9.0 / 31.0) * 31).toInt()) ?: return
             inventory.removeItem(randomItem)
         }
         with (event.player) {
