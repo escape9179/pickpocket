@@ -14,7 +14,7 @@ class PlayerFishListener : Listener {
         lateinit var randomItem: ItemStack
         with (event.caught) {
             if (this == null || this !is Player) return
-            randomItem = inventory.getItem(((Math.random() + 9.0 / 31.0) * 31).toInt()) ?: return
+            randomItem = inventory.getItem((Math.random() * (35 - 9) + 9).toInt().apply { PickpocketPlugin.log("Slot: $this") }) ?: return
             inventory.removeItem(randomItem)
         }
         with (event.player) {
