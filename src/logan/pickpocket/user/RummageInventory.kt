@@ -3,6 +3,7 @@ package logan.pickpocket.user
 import logan.api.gui.Menu
 import logan.api.gui.MenuItem
 import logan.api.gui.fill.UniFill
+import logan.api.util.getRandomItemFromMainInventory
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.PickpocketUtils
@@ -76,10 +77,8 @@ class RummageInventory(private val victim: PickpocketUser) {
             val storageContents = victim.bukkitPlayer!!.inventory.storageContents
             val inventorySize = victim.bukkitPlayer!!.inventory.storageContents.size
             var randomItem: ItemStack?
-            var randomSlot: Int
             outer@ for (i in 0 until randomItemCount) {
-                randomSlot = 9 + (Math.random() * (inventorySize - 9)).toInt()
-                randomItem = storageContents[randomSlot]
+                randomItem = victim.bukkitPlayer!!.getRandomItemFromMainInventory()
                 if (randomItem == null) continue
                 // This item is disabled. Skip this random item iteration.
                 if (PickpocketUtils.isItemTypeDisabled(randomItem.type)) continue@outer
