@@ -5,13 +5,13 @@ import logan.api.gui.MenuItem
 import logan.api.gui.fill.UniFill
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
+import logan.pickpocket.main.PickpocketUtils
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
@@ -36,7 +36,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                     if (!predator.profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(predator.bukkitPlayer!!)
                     rummageTimerTask!!.cancel()
                 }
-                with (predator.bukkitPlayer!!) {
+                with(predator.bukkitPlayer!!) {
                     playSound(location, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f)
                 }
             }
@@ -81,14 +81,8 @@ class RummageInventory(private val victim: PickpocketUser) {
                 randomSlot = 9 + (Math.random() * (inventorySize - 9)).toInt()
                 randomItem = storageContents[randomSlot]
                 if (randomItem == null) continue
-
-                // Check if the item is banned
-                for (disabledItem in PickpocketPlugin.pickpocketConfiguration.disabledItems) {
-                    val disabledItemType = Material.getMaterial(disabledItem.uppercase(Locale.getDefault()))
-
-                    // This item is disabled. Skip this random item iteration.
-                    if (randomItem.type == disabledItemType) continue@outer
-                }
+                // This item is disabled. Skip this random item iteration.
+                if (PickpocketUtils.isItemTypeDisabled(randomItem.type)) continue@outer
                 randomItemList.add(randomItem)
             }
             return randomItemList
