@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Created by Tre on 12/14/2015.
  */
-class PickpocketPlugin : JavaPlugin(), Listener {
+class PickpocketPlugin : JavaPlugin() {
     override fun onLoad() {
         // Load WorldGuard classes.
         val worldGuardClass: Class<WorldGuard>
@@ -97,10 +97,8 @@ class PickpocketPlugin : JavaPlugin(), Listener {
         GUIAPI.registerListeners(this)
         GUIAPI.registerInventoryClickListener(InventoryClickListener())
         GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
-        InventoryCloseListener()
         PlayerInteractListener()
         PlayerJoinListener()
-        server.pluginManager.registerEvents(this, this)
         val scheduler = server.scheduler
 
         /* Player movement check thread timer */

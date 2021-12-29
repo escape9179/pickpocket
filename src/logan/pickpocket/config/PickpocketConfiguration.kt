@@ -2,6 +2,7 @@ package logan.pickpocket.config
 
 import logan.api.config.CommentedConfiguration
 import logan.pickpocket.main.PickpocketPlugin.Companion.instance
+import org.bukkit.Material
 import java.io.File
 
 class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder, "config.yml")) {
@@ -13,7 +14,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         createKeyIfNoneExists(pickpocketToggleKey, true)
         createKeyIfNoneExists(statusOnInteractKey, true)
         createKeyIfNoneExists(statusOnLoginKey, true)
-        createKeyIfNoneExists(disabledItemsKey, listOf("cake", "shulker_box", "bundle"))
+        createKeyIfNoneExists(disabledItemsKey, listOf("shulker_box", "bundle"))
         createKeyIfNoneExists(foreignTownTheftKey, false)
         createKeyIfNoneExists(sameTownTheftKey, false)
         createKeyIfNoneExists(databaseEnabledKey, false)
@@ -29,8 +30,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getDouble(moneyLost)
     val minigameRollRate: Int
         get() = configuration.getInt(minigameRollRateKey)
-    val disabledItems: List<String>
-        get() = configuration.getStringList(disabledItemsKey)
+    var disabledItems: List<String> = computeDisabledItems()
     val isShowStatusOnInteractEnabled: Boolean
         get() = configuration.getBoolean(statusOnInteractKey)
     val isShowStatusOnLoginEnabled: Boolean
@@ -49,6 +49,23 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getString(databaseUserKey)
     val databasePassword
         get() = configuration.getString(databasePasswordKey)
+
+    private fun computeDisabledItems(): List<String> {
+        val finalItems = mutableListOf<String>()
+        for (item in configuration.getStringList(disabledItemsKey)) {
+            when (item.first()) {
+                '*' -> finalItems.addAll(Material.values().map { it.name.lowercase() })
+                '-' -> finalItems.remove(item.drop(1))
+                else -> finalItems.add(item)
+            }
+        }
+        return finalItems
+    }
+
+    override fun reload() {
+        super.reload()
+        disabledItems = computeDisabledItems()
+    }
 
     companion object {
         private const val loseMoney = "lose-money-on-pickpocket"
