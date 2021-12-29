@@ -96,7 +96,7 @@ class PickpocketPlugin : JavaPlugin() {
         GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
         PlayerInteractListener()
         PlayerJoinListener()
-        server.pluginManager.registerEvents(PlayerFishListener(), this)
+        server.pluginManager.registerEvents(ProjectileHitListener(), this)
         val scheduler = server.scheduler
 
         /* Player movement check thread timer */
