@@ -1,7 +1,7 @@
 package logan.pickpocket.listeners
 
-import logan.api.util.getRandomItemFromMainInventory
 import logan.pickpocket.main.PickpocketPlugin
+import logan.pickpocket.user.PickpocketUser
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,11 +12,6 @@ class PlayerFishListener : Listener {
     fun onPlayerFish(event: PlayerFishEvent) {
         if (!PickpocketPlugin.pickpocketConfiguration.isFishingRodEnabled) return
         val caught = event.caught as? Player ?: return
-        val item = caught.getRandomItemFromMainInventory() ?: return
-        event.player.run {
-            inventory.addItem(item)
-            sendMessage("You pickpocketed ${item.i18NDisplayName} from ${event.caught?.name}.")
-        }
-        caught.inventory.removeItem(item)
+        PickpocketUser.get(event.player).doPickpocket(PickpocketUser.get(caught))
     }
 }
