@@ -13,10 +13,6 @@ class PickpocketUser(val uuid: UUID) {
         get() = Bukkit.getPlayer(uuid)
     var victim: PickpocketUser? = null
     var predator: PickpocketUser? = null
-        set(value) {
-            field = value
-            if (lastPredator == null) lastPredator = field
-        }
     var lastPredator: PickpocketUser? = null
     val isPredator
         get() = victim != null
@@ -44,11 +40,11 @@ class PickpocketUser(val uuid: UUID) {
                 MessageConfiguration.getCooldownNoticeMessage(PickpocketPlugin.getCooldowns()[bukkitPlayer].toString())
             )
             else -> {
-                this.victim = victim
-                victim.predator = this
                 openRummageInventory = RummageInventory(victim)
                 openRummageInventory?.show(this)
                 isRummaging = true
+                this.victim = victim
+                victim.predator = this
             }
         }
     }

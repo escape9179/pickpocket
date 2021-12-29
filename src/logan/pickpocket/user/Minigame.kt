@@ -63,9 +63,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun stealItem(thief: Player, victim: Player, item: ItemStack) {
         victim.inventory.setItem(victim.inventory.first(item), null)
-        thief.inventory.addItem(item).forEach { entry ->
-            thief.world.dropItemNaturally(thief.location, entry.value)
-        }
+        thief.inventory.addItem(item)
     }
 
     private fun getPercentageOfVictimBalance(victim: Player): Double {
