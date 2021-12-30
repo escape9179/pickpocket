@@ -15,6 +15,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         createKeyIfNoneExists(statusOnInteractKey, true)
         createKeyIfNoneExists(statusOnLoginKey, true)
         createKeyIfNoneExists(disabledItemsKey, listOf("shulker_box", "bundle"))
+        createKeyIfNoneExists(fishingRodEnabledKey, false)
         createKeyIfNoneExists(foreignTownTheftKey, false)
         createKeyIfNoneExists(sameTownTheftKey, false)
         createKeyIfNoneExists(databaseEnabledKey, false)
@@ -37,6 +38,8 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getBoolean(statusOnLoginKey)
     val cooldownTime: Int
         get() = configuration.getInt(cooldownTimeKey)
+    val isFishingRodEnabled: Boolean
+        get() = configuration.getBoolean(fishingRodEnabledKey)
     val isForeignTownTheftEnabled: Boolean
         get() = configuration.getBoolean(foreignTownTheftKey)
     val isSameTownTheftEnabled: Boolean
@@ -77,6 +80,7 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         private const val statusOnLoginKey = "show-status-on-login"
         private const val disabledItemsKey = "disabled-items"
         private const val foreignTownTheftKey = "foreign-town-theft"
+        private const val fishingRodEnabledKey = "fishing-rod-pickpocketing"
         private const val sameTownTheftKey = "same-town-theft"
         private const val databaseEnabledKey = "database.enable"
         private const val databaseServerKey = "database.server"

@@ -14,10 +14,7 @@ import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
-import logan.pickpocket.listeners.InventoryClickListener
-import logan.pickpocket.listeners.InventoryCloseListener
-import logan.pickpocket.listeners.PlayerInteractListener
-import logan.pickpocket.listeners.PlayerJoinListener
+import logan.pickpocket.listeners.*
 import logan.pickpocket.user.PickpocketUser
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
@@ -99,6 +96,7 @@ class PickpocketPlugin : JavaPlugin() {
         GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
         PlayerInteractListener()
         PlayerJoinListener()
+        server.pluginManager.registerEvents(ProjectileHitListener(), this)
         val scheduler = server.scheduler
 
         /* Player movement check thread timer */
