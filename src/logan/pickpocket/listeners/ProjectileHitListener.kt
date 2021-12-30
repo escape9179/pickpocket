@@ -12,8 +12,8 @@ class ProjectileHitListener : Listener {
     @EventHandler
     fun onProjectileHit(event: ProjectileHitEvent) {
         if (!PickpocketPlugin.pickpocketConfiguration.isFishingRodEnabled) return
-        val hook= event.entity as? FishHook ?: return
-        val victim = PickpocketUser.get(hook.hookedEntity as? Player ?: return)
+        val hook = event.entity as? FishHook ?: return
+        val victim = PickpocketUser.get(hook.getNearbyEntities(1.0, 1.0, 1.0).firstOrNull() as? Player ?: return)
         val predator = PickpocketUser.get(hook.shooter as? Player ?: return)
         predator.doPickpocket(victim)
     }
