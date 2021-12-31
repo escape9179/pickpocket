@@ -30,6 +30,9 @@ fun Player.openThiefProfileMenu(name: String) {
     menu.show(this)
 }
 
-class ThiefProfileMenu(private val profileName: String, private val menu: InventoryMenu = PlayerInventoryMenu(profileName, 4)) : InventoryMenu by menu {
+class ThiefProfileMenu(
+    private val profileName: String,
+    private val menu: InventoryMenu = PlayerInventoryMenu(profileName, 4)
+) : InventoryMenu by menu {
 
 }
