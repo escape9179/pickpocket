@@ -15,13 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Tre Logan
  */
-public class Menu
-{
+public class PlayerInventoryMenu implements InventoryMenu {
 
     private static int nextId = 0;
 
-    private final int       id;
-    private       String    title;
+    private final int id;
+    private String title;
     private Inventory inventory;
     private int size;
     private boolean closed;
@@ -30,20 +29,20 @@ public class Menu
 
     private Map<Integer, MenuItem> menuItems = new ConcurrentHashMap<>();
 
-    public Menu(String title, int rows)
-    {
-        id         = nextId;
+    public PlayerInventoryMenu(String title, int rows) {
+        id = nextId;
         this.title = title;
         size = rows * 9;
         nextId++;
         inventory = Bukkit.createInventory(null, size, title);
     }
 
-    public int getId()
-    {
+    @Override
+    public int getId() {
         return id;
     }
 
+    @Override
     public void show(Player player) {
         /* Create inventory and add items */
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
@@ -54,103 +53,106 @@ public class Menu
         player.openInventory(inventory);
     }
 
+    @Override
     public void close() {
         viewer.closeInventory();
         viewer = null;
         closed = true;
     }
 
+    @Override
     public void update() {
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
     }
 
+    @Override
     public void clear() {
         menuItems.clear();
     }
 
+    @Override
     public void setClosed(boolean value) {
         closed = value;
     }
 
-    public boolean isClosed()
-    {
+    @Override
+    public boolean isClosed() {
         return closed;
     }
 
-    public void setRows(int rows)
-    {
+    @Override
+    public void setRows(int rows) {
         this.size = rows * 9;
     }
 
-    public void fill(Filler fillPattern)
-    {
+    @Override
+    public void fill(Filler fillPattern) {
         this.fill(fillPattern, Collections.emptyList(), FillPlacer.FillMode.IGNORE);
     }
 
-    public void fill(Filler fillPattern, Collection<Integer> slots, FillPlacer.FillMode mode)
-    {
+    @Override
+    public void fill(Filler fillPattern, Collection<Integer> slots, FillPlacer.FillMode mode) {
         fillPattern.fill(this, slots, mode);
     }
 
-    public MenuItem addItem(int slot, MenuItem menuItem)
-    {
+    @Override
+    public MenuItem addItem(int slot, MenuItem menuItem) {
         return menuItems.put(slot, menuItem);
     }
 
-    public void removeItem(int slot, MenuItem menuItem)
-    {
+    @Override
+    public void removeItem(int slot, MenuItem menuItem) {
         menuItems.remove(slot);
     }
 
-    public Map<Integer, MenuItem> getMenuItems()
-    {
+    @Override
+    public Map<Integer, MenuItem> getMenuItems() {
         return menuItems;
     }
 
-    public String getTitle()
-    {
+    @Override
+    public String getTitle() {
         return title;
     }
 
-    public Inventory getInventory()
-    {
+    @Override
+    public Inventory getInventory() {
         return inventory;
     }
 
+    @Override
     public int getSize() {
         return size;
     }
 
-    public int getTopLeft()
-    {
+    @Override
+    public int getTopLeft() {
         return 0;
     }
 
-    public int getTopRight()
-    {
+    @Override
+    public int getTopRight() {
         return 8;
     }
 
-    public int getBottomLeft()
-    {
+    @Override
+    public int getBottomLeft() {
         return size - 9;
     }
 
-    public int getBottomRight()
-    {
+    @Override
+    public int getBottomRight() {
         return size - 1;
     }
 
-    public Player getViewer()
-    {
+    @Override
+    public Player getViewer() {
         return viewer;
     }
 
-    public void onInventoryClick(InventoryClickEvent event)
-    {
-
-        if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId()))
-        {
+    @Override
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId())) {
             return;
         }
 

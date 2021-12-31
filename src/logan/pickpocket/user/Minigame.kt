@@ -1,8 +1,8 @@
 package logan.pickpocket.user
 
-import logan.api.gui.Menu
 import logan.api.gui.MenuItem
 import logan.api.gui.MenuItemClickEvent
+import logan.api.gui.PlayerInventoryMenu
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
@@ -21,7 +21,10 @@ private const val inventorySize = 36
 
 class Minigame(val predatorUser: PickpocketUser, private val victimUser: PickpocketUser, private val item: ItemStack) {
     private lateinit var gameTimerTask: BukkitTask
-    private val gui = Menu("Pick-pocketing ${victimUser.bukkitPlayer?.name}", inventorySize / 9)
+    private val gui = PlayerInventoryMenu(
+        "Pick-pocketing ${victimUser.bukkitPlayer?.name}",
+        inventorySize / 9
+    )
     private val correctClicks = AtomicInteger(0)
     private val timesTried = AtomicInteger(0)
     private val clickedInTime = AtomicBoolean(false)

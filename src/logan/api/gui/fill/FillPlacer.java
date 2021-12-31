@@ -1,7 +1,7 @@
 package logan.api.gui.fill;
 
-import logan.api.gui.Menu;
 import logan.api.gui.MenuItem;
+import logan.api.gui.PlayerInventoryMenu;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,7 +28,7 @@ public class FillPlacer {
         itemStack = new ItemStack(material);
     }
 
-    public void placeIntermittently(Menu menu, int start, int spacing, Collection<Integer> slots, FillMode mode) {
+    public void placeIntermittently(PlayerInventoryMenu menu, int start, int spacing, Collection<Integer> slots, FillMode mode) {
 
         int size = menu.getSize();
         double times = ((double) (size - start) / spacing);
@@ -53,12 +53,12 @@ public class FillPlacer {
         }
     }
 
-    private void fillSlot(Menu menu, int position) {
+    private void fillSlot(PlayerInventoryMenu menu, int position) {
         MenuItem fillItem = new MenuItem("", itemStack);
         menu.addItem(position, fillItem);
     }
 
-    public void placeIntermittently(Menu menu, int start, int spacing) {
+    public void placeIntermittently(PlayerInventoryMenu menu, int start, int spacing) {
         this.placeIntermittently(menu, start, spacing, Collections.emptyList(), FillMode.IGNORE);
     }
 
