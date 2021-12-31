@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GUIAPI {
 
-    private static Map<Integer, Menu> registeredMenus = new ConcurrentHashMap<>();
+    private static Map<Integer, PlayerInventoryMenu> registeredMenus = new ConcurrentHashMap<>();
     private static final @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
     private static final @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
     private static PlaceholderManager placeholderManager = new PlaceholderManager();
 
-    public static void registerMenu(int id, Menu menu) {
+    public static void registerMenu(int id, PlayerInventoryMenu menu) {
         if (registeredMenus.containsKey(id)) return;
         registeredMenus.put(id, menu);
     }
@@ -64,7 +64,7 @@ public class GUIAPI {
             return;
         Iterator<Integer> menuIterator = registeredMenus.keySet().iterator();
         while (menuIterator.hasNext()) {
-            Menu registeredMenu = registeredMenus.get(menuIterator.next());
+            PlayerInventoryMenu registeredMenu = registeredMenus.get(menuIterator.next());
             Inventory inventory = event.getInventory();
             HumanEntity viewer = inventory.getViewers().get(0);
 

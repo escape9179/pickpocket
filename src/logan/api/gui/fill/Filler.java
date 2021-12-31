@@ -1,12 +1,12 @@
 package logan.api.gui.fill;
 
-import logan.api.gui.Menu;
+import logan.api.gui.PlayerInventoryMenu;
 
 import java.util.Collection;
 
 public interface Filler {
 
-    void fill(Menu menu);
+    void fill(PlayerInventoryMenu menu);
 
-    void fill(Menu menu, Collection<Integer> slots, FillPlacer.FillMode mode);
+    void fill(PlayerInventoryMenu menu, Collection<Integer> slots, FillPlacer.FillMode mode);
 }

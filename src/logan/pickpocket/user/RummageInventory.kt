@@ -1,7 +1,7 @@
 package logan.pickpocket.user
 
-import logan.api.gui.Menu
 import logan.api.gui.MenuItem
+import logan.api.gui.PlayerInventoryMenu
 import logan.api.gui.fill.UniFill
 import logan.api.util.getRandomItemFromMainInventory
 import logan.pickpocket.config.MessageConfiguration
@@ -18,7 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger
 class RummageInventory(private val victim: PickpocketUser) {
     private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
-    private val menu: Menu = Menu(menuTitle, 4)
+    private val menu: PlayerInventoryMenu =
+        PlayerInventoryMenu(menuTitle, 4)
     fun show(predator: PickpocketUser) {
         predator.victim = victim
         populateRummageMenu()

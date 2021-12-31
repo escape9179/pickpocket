@@ -1,6 +1,6 @@
 package logan.api.gui.fill;
 
-import logan.api.gui.Menu;
+import logan.api.gui.PlayerInventoryMenu;
 import org.bukkit.Material;
 
 import java.util.Collection;
@@ -19,12 +19,12 @@ public class UniFill implements Filler {
     }
 
     @Override
-    public void fill(Menu menu) {
+    public void fill(PlayerInventoryMenu menu) {
         this.fill(menu, Collections.emptyList(), FillPlacer.FillMode.IGNORE);
     }
 
     @Override
-    public void fill(Menu menu, Collection<Integer> slots, FillPlacer.FillMode mode) {
+    public void fill(PlayerInventoryMenu menu, Collection<Integer> slots, FillPlacer.FillMode mode) {
         FillPlacer fillPlacer = new FillPlacer(fillMaterial);
         fillPlacer.placeIntermittently(menu, 0, 1, slots, mode);
     }
