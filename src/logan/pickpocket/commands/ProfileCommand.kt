@@ -4,7 +4,10 @@ import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.api.gui.InventoryMenu
 import logan.api.gui.PlayerInventoryMenu
+import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import java.io.File
 
 class ProfileCommand : BasicCommand<Player>(
     "profile",
@@ -38,10 +41,33 @@ fun Player.openThiefProfileMenu(name: String) {
     menu.show(this)
 }
 
+data class ThiefProfile(
+    var name: String
+)
+
 class ThiefProfileMenu(
     private val profileName: String,
     private val menu: InventoryMenu = PlayerInventoryMenu("Configuring Thief $profileName", 4)
-) : InventoryMenu by menu
+) : InventoryMenu by menu {
+    init {
+        val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles/")
+    }
+
+    private fun extractThiefProfileFromConfigurationSection(section: ConfigurationSection): ThiefProfile {
+        val name = section.getString("name")!!
+        return ThiefProfile(name)
+    }
+
+    private fun loadThiefProfiles(directory: String): List<ThiefProfile> {
+        val config = YamlConfiguration.loadConfiguration(File(directory))
+        val thiefProfiles = mutableListOf<ThiefProfile>()
+        config.getKeys(false).forEach {
+            val section = config.getConfigurationSection(it)!!
+            thiefProfiles.add(extractThiefProfileFromConfigurationSection(section))
+        }
+        return thiefProfiles
+    }
+}
 
 class VictimProfileMenu(
     private val profileName: String,
