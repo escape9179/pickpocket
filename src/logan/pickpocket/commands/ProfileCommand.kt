@@ -50,7 +50,7 @@ class ThiefProfileMenu(
     private val menu: InventoryMenu = PlayerInventoryMenu("Thief profiles", 4)
 ) : InventoryMenu by menu {
     init {
-        val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles/")
+        val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles.yml")
         thiefProfiles.forEach { PickpocketPlugin.log("Loading thief ${it.name}") }
     }
 
@@ -59,8 +59,8 @@ class ThiefProfileMenu(
         return ThiefProfile(name)
     }
 
-    private fun loadThiefProfiles(directory: String): List<ThiefProfile> {
-        val config = YamlConfiguration.loadConfiguration(File(directory))
+    private fun loadThiefProfiles(path: String): List<ThiefProfile> {
+        val config = YamlConfiguration.loadConfiguration(File(path))
         val thiefProfiles = mutableListOf<ThiefProfile>()
         config.getKeys(false).forEach {
             val section = config.getConfigurationSection(it)!!
