@@ -15,13 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Tre Logan
  */
-public class Menu
-{
+public class Menu {
 
     private static int nextId = 0;
 
-    private final int       id;
-    private       String    title;
+    private final int id;
+    private String title;
     private Inventory inventory;
     private int size;
     private boolean closed;
@@ -30,17 +29,15 @@ public class Menu
 
     private Map<Integer, MenuItem> menuItems = new ConcurrentHashMap<>();
 
-    public Menu(String title, int rows)
-    {
-        id         = nextId;
+    public Menu(String title, int rows) {
+        id = nextId;
         this.title = title;
         size = rows * 9;
         nextId++;
         inventory = Bukkit.createInventory(null, size, title);
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
@@ -72,48 +69,39 @@ public class Menu
         closed = value;
     }
 
-    public boolean isClosed()
-    {
+    public boolean isClosed() {
         return closed;
     }
 
-    public void setRows(int rows)
-    {
+    public void setRows(int rows) {
         this.size = rows * 9;
     }
 
-    public void fill(Filler fillPattern)
-    {
+    public void fill(Filler fillPattern) {
         this.fill(fillPattern, Collections.emptyList(), FillPlacer.FillMode.IGNORE);
     }
 
-    public void fill(Filler fillPattern, Collection<Integer> slots, FillPlacer.FillMode mode)
-    {
+    public void fill(Filler fillPattern, Collection<Integer> slots, FillPlacer.FillMode mode) {
         fillPattern.fill(this, slots, mode);
     }
 
-    public MenuItem addItem(int slot, MenuItem menuItem)
-    {
+    public MenuItem addItem(int slot, MenuItem menuItem) {
         return menuItems.put(slot, menuItem);
     }
 
-    public void removeItem(int slot, MenuItem menuItem)
-    {
+    public void removeItem(int slot, MenuItem menuItem) {
         menuItems.remove(slot);
     }
 
-    public Map<Integer, MenuItem> getMenuItems()
-    {
+    public Map<Integer, MenuItem> getMenuItems() {
         return menuItems;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public Inventory getInventory()
-    {
+    public Inventory getInventory() {
         return inventory;
     }
 
@@ -121,36 +109,28 @@ public class Menu
         return size;
     }
 
-    public int getTopLeft()
-    {
+    public int getTopLeft() {
         return 0;
     }
 
-    public int getTopRight()
-    {
+    public int getTopRight() {
         return 8;
     }
 
-    public int getBottomLeft()
-    {
+    public int getBottomLeft() {
         return size - 9;
     }
 
-    public int getBottomRight()
-    {
+    public int getBottomRight() {
         return size - 1;
     }
 
-    public Player getViewer()
-    {
+    public Player getViewer() {
         return viewer;
     }
 
-    public void onInventoryClick(InventoryClickEvent event)
-    {
-
-        if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId()))
-        {
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId())) {
             return;
         }
 
