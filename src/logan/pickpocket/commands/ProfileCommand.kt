@@ -20,7 +20,7 @@ class ProfileCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        sender.openThiefProfileMenu(args[1])
+        sender.openThiefProfileMenu(args[2])
         return true
     }
 }
