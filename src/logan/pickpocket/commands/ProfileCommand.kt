@@ -3,11 +3,14 @@ package logan.pickpocket.commands
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.api.gui.InventoryMenu
+import logan.api.gui.MenuItem
 import logan.api.gui.PlayerInventoryMenu
 import logan.pickpocket.main.PickpocketPlugin
+import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.io.File
 
 class ProfileCommand : BasicCommand<Player>(
@@ -52,6 +55,9 @@ class ThiefProfileMenu(
     init {
         val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles.yml")
         thiefProfiles.forEach { PickpocketPlugin.log("Loading thief ${it.name}") }
+        val createProfileMenuItem = MenuItem("Create thief profile", ItemStack(Material.BOOK))
+        createProfileMenuItem.addListener { PickpocketPlugin.log("Creating new thief profile") }
+        menu.addItem(bottomLeft, createProfileMenuItem)
     }
 
     private fun extractThiefProfileFromConfigurationSection(section: ConfigurationSection): ThiefProfile {
