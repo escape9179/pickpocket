@@ -16,13 +16,21 @@ class ProfileCommand : BasicCommand<Player>(
     """
         Usage:
         /pickpocket profile thief create <name>
-        /pickpocket profile player create <name>
+        /pickpocket profile victim create <name>
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        sender.openThiefProfileMenu(args[2])
+        when (args[0].lowercase()) {
+            "victim" -> sender.openVictimProfileMenu(args[2])
+            "thief" -> sender.openThiefProfileMenu(args[2])
+        }
         return true
     }
+}
+
+fun Player.openVictimProfileMenu(name: String) {
+    val menu = VictimProfileMenu(name)
+    menu.show(this)
 }
 
 fun Player.openThiefProfileMenu(name: String) {
@@ -33,6 +41,9 @@ fun Player.openThiefProfileMenu(name: String) {
 class ThiefProfileMenu(
     private val profileName: String,
     private val menu: InventoryMenu = PlayerInventoryMenu(profileName, 4)
-) : InventoryMenu by menu {
+) : InventoryMenu by menu
 
-}
+class VictimProfileMenu(
+    private val profileName: String,
+    private val menu: InventoryMenu = PlayerInventoryMenu(profileName, 4)
+) : InventoryMenu by menu
