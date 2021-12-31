@@ -56,7 +56,9 @@ class ThiefProfileMenu(
         val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles.yml")
         thiefProfiles.forEach { PickpocketPlugin.log("Loading thief ${it.name}") }
         val createProfileMenuItem = MenuItem("Create thief profile", ItemStack(Material.BOOK))
-        createProfileMenuItem.addListener { PickpocketPlugin.log("Creating new thief profile") }
+        createProfileMenuItem.addListener {
+            File("plugins/Pickpocket/thief_profiles.yml").createNewFile()
+        }
         menu.addItem(bottomLeft, createProfileMenuItem)
     }
 
