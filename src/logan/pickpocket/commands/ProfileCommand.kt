@@ -62,3 +62,7 @@ class ThiefProfile(override val name: String) : Profile {
         "numRummageItems" to 4
     )
 }
+
+class VictimProfile(override val name: String) : Profile {
+    override val properties = mutableMapOf<String, Any>()
+}
