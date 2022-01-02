@@ -19,7 +19,14 @@ class ProfileCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        when (args[0].lowercase()) {
+            "create" -> {
 
+            }
+            "remove" -> { }
+            "edit" -> { }
+            else -> return false
+        }
         return true
     }
 }
