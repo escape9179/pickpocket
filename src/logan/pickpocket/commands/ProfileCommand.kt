@@ -21,7 +21,7 @@ class ProfileCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
             "create" -> {
-
+                val profile = ThiefProfile(args[2])
             }
             "remove" -> { }
             "edit" -> { }
@@ -31,6 +31,25 @@ class ProfileCommand : BasicCommand<Player>(
     }
 }
 
-data class ThiefProfile(
-    var name: String
-)
+fun saveProfile(profile: Profile) {
+    TODO("Implementation")
+}
+
+interface Profile {
+    val name: String
+    val properties: MutableMap<String, out Any>
+    fun save() {
+        TODO("Implementation")
+    }
+}
+
+class ThiefProfile(override val name: String) : Profile {
+    override val properties = mutableMapOf(
+        "cooldown" to 10,
+        "canFishingRod" to false,
+        "minigameRollRate" to 20,
+        "maxRummages" to 5,
+        "rummageDuration" to 3,
+        "numRummageItems" to 4
+    )
+}
