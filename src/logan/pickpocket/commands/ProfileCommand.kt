@@ -17,11 +17,7 @@ class ProfileCommand : BasicCommand<Player>(
         /pickpocket profile remove <thief|victim> <name>
         /pickpocket profile edit <thief|victim> <name> <property> <value>
     """.trimIndent()
-) {
-    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        return false
-    }
-}
+)
 
 class ProfileCreateCommand : BasicCommand<Player>(
     "create",
