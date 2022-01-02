@@ -19,15 +19,24 @@ class ProfileCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        when (args[0].lowercase()) {
-            "create" -> {
-                val profile = ThiefProfile(args[2])
-            }
-            "remove" -> { }
-            "edit" -> { }
-            else -> return false
-        }
-        return true
+        return false
+    }
+}
+
+class ProfileCreateCommand : BasicCommand<Player>(
+    "create",
+    2..2,
+    listOf(String::class, String::class),
+    "profile",
+    SenderTarget.PLAYER,
+    "pickpocket.admin.profile",
+    """
+        Usage:
+        /pickpocket profile create <thief|victim> <name>
+    """.trimIndent()
+) {
+    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        TODO("Not yet implemented")
     }
 }
 
