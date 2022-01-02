@@ -2,6 +2,7 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
+import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.io.File
@@ -46,8 +47,7 @@ interface Profile {
     val name: String
     val type: ProfileType
     val properties: MutableMap<String, out Any>
-    fun save(path: String = "plugins/Pickpocket/profiles.yml") {
-        val file = File(path)
+    fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")) {
         YamlConfiguration.loadConfiguration(file).run {
             properties.forEach { set("${type.friendlyName}.${this@Profile.name}.${it.key}", it.value) }
             save(file)
