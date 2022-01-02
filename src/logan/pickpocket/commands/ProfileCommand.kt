@@ -15,33 +15,33 @@ import java.io.File
 
 class ProfileCommand : BasicCommand<Player>(
     "profile",
-    1..1,
+    3..3,
     listOf(String::class, String::class, String::class),
     "pickpocket",
     SenderTarget.PLAYER,
     "pickpocket.admin.profile",
     """
         Usage:
-        /pickpocket profile thief
-        /pickpocket profile victim
+        /pickpocket profile thief create <name>
+        /pickpocket profile victim create <name>
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
-            "victim" -> sender.openVictimProfileMenu()
-            "thief" -> sender.openThiefProfileMenu()
+            "victim" -> sender.openVictimProfileMenu(args[2])
+            "thief" -> sender.openThiefProfileMenu(args[2])
         }
         return true
     }
 }
 
-fun Player.openVictimProfileMenu() {
-    val menu = VictimProfileMenu()
+fun Player.openVictimProfileMenu(name: String) {
+    val menu = VictimProfileMenu(name)
     menu.show(this)
 }
 
-fun Player.openThiefProfileMenu() {
-    val menu = ThiefProfileMenu()
+fun Player.openThiefProfileMenu(name: String) {
+    val menu = ThiefProfileMenu(name)
     menu.show(this)
 }
 
@@ -50,7 +50,8 @@ data class ThiefProfile(
 )
 
 class ThiefProfileMenu(
-    private val menu: InventoryMenu = PlayerInventoryMenu("Thief profiles", 4)
+    private val profileName: String,
+    private val menu: InventoryMenu = PlayerInventoryMenu("Configuring Thief $profileName", 4)
 ) : InventoryMenu by menu {
     init {
         val thiefProfiles = loadThiefProfiles("plugins/Pickpocket/thief_profiles.yml")
@@ -79,5 +80,6 @@ class ThiefProfileMenu(
 }
 
 class VictimProfileMenu(
-    private val menu: InventoryMenu = PlayerInventoryMenu("Victim profiles", 4)
+    private val profileName: String,
+    private val menu: InventoryMenu = PlayerInventoryMenu("Configuring Victim $profileName", 4)
 ) : InventoryMenu by menu
