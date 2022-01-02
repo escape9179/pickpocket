@@ -25,14 +25,14 @@ class ProfileCreateCommand : BasicCommand<Player>(
     listOf(String::class, String::class),
     "profile",
     SenderTarget.PLAYER,
-    "pickpocket.admin.profile",
+    "pickpocket.admin.profile.create",
     """
         Usage:
         /pickpocket profile create <thief|victim> <name>
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        TODO("Not yet implemented")
+
     }
 }
 
