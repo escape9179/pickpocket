@@ -60,8 +60,9 @@ interface Profile {
     val type: ProfileType
     val properties: MutableMap<String, out Any>
     fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")): Boolean {
-        if (!file.createNewFile()) return false
+        file.createNewFile()
         YamlConfiguration.loadConfiguration(file).run {
+            if (isConfigurationSection(this@Profile.type.friendlyName + "." + this@Profile.name)) return false
             properties.forEach { set("${type.friendlyName}.${this@Profile.name}.${it.key}", it.value) }
             save(file)
         }
