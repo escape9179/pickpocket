@@ -2,7 +2,9 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import java.io.File
 
 class ProfileCommand : BasicCommand<Player>(
     "profile",
@@ -34,7 +36,7 @@ class ProfileCreateCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
             "thief" -> ThiefProfile(args[1]).save().run { sender.sendMessage("Created thief profile ${args[1]}.") }
-            "victim" -> VictimProfile(args[1]).save().run { sender.sendMessage("Created victim profile ${args[1]}.")}
+            "victim" -> VictimProfile(args[1]).save().run { sender.sendMessage("Created victim profile ${args[1]}.") }
         }
         return true
     }
@@ -42,13 +44,24 @@ class ProfileCreateCommand : BasicCommand<Player>(
 
 interface Profile {
     val name: String
+    val type: ProfileType
     val properties: MutableMap<String, out Any>
-    fun save() {
-        TODO("Implementation")
+    fun save(path: String = "plugins/Pickpocket/profiles.yml") {
+        val file = File(path)
+        YamlConfiguration.loadConfiguration(file).run {
+            properties.forEach { set("${type.friendlyName}.${this@Profile.name}.${it.key}", it.value) }
+            save(file)
+        }
     }
 }
 
+enum class ProfileType {
+    THIEF, VICTIM;
+    val friendlyName = name.lowercase()
+}
+
 class ThiefProfile(override val name: String) : Profile {
+    override val type = ProfileType.THIEF
     override val properties = mutableMapOf(
         "cooldown" to 10,
         "canFishingRod" to false,
@@ -60,5 +73,6 @@ class ThiefProfile(override val name: String) : Profile {
 }
 
 class VictimProfile(override val name: String) : Profile {
+    override val type = ProfileType.VICTIM
     override val properties = mutableMapOf<String, Any>()
 }
