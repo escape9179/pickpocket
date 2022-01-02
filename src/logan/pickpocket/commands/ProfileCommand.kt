@@ -36,8 +36,20 @@ class ProfileCreateCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
-            "thief" -> ThiefProfile(args[1]).save().run { sender.sendMessage("Created thief profile ${args[1]}.") }
-            "victim" -> VictimProfile(args[1]).save().run { sender.sendMessage("Created victim profile ${args[1]}.") }
+            "thief" -> {
+                val result = ThiefProfile(args[1]).save()
+                sender.sendMessage(
+                    if (result) "Successfully created thief profile ${args[1]}."
+                    else "Error: Profile ${args[1]} already exists."
+                )
+            }
+            "victim" -> {
+                val result = VictimProfile(args[1]).save()
+                sender.sendMessage(
+                    if (result) "Successfully created victim profile ${args[1]}."
+                    else "Error: Profile ${args[1]} already exists."
+                )
+            }
         }
         return true
     }
@@ -47,16 +59,19 @@ interface Profile {
     val name: String
     val type: ProfileType
     val properties: MutableMap<String, out Any>
-    fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")) {
+    fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")): Boolean {
+        if (!file.createNewFile()) return false
         YamlConfiguration.loadConfiguration(file).run {
             properties.forEach { set("${type.friendlyName}.${this@Profile.name}.${it.key}", it.value) }
             save(file)
         }
+        return true
     }
 }
 
 enum class ProfileType {
     THIEF, VICTIM;
+
     val friendlyName = name.lowercase()
 }
 
