@@ -36,19 +36,44 @@ class ProfileCreateCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
-            "thief" -> {
+            ProfileType.THIEF.friendlyName -> {
                 val result = ThiefProfile(args[1]).save()
                 sender.sendMessage(
                     if (result) "Successfully created thief profile ${args[1]}."
                     else "Error: Profile ${args[1]} already exists."
                 )
             }
-            "victim" -> {
+            ProfileType.VICTIM.friendlyName -> {
                 val result = VictimProfile(args[1]).save()
                 sender.sendMessage(
                     if (result) "Successfully created victim profile ${args[1]}."
                     else "Error: Profile ${args[1]} already exists."
                 )
+            }
+        }
+        return true
+    }
+}
+
+class ProfileEditCommand : BasicCommand<Player>(
+    "edit",
+    4..4,
+    listOf(String::class, String::class, String::class, String::class),
+    "profile",
+    SenderTarget.PLAYER,
+    "pickpocket.admin.profile.edit",
+    """
+        Usage:
+        /pickpocket profile edit <thief|victim> <name> <property> <value>
+    """.trimIndent()
+) {
+    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        when (args[0]) {
+            ProfileType.THIEF.friendlyName -> {
+
+            }
+            ProfileType.VICTIM.friendlyName -> {
+
             }
         }
         return true
