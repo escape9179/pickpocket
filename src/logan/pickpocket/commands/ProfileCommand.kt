@@ -32,7 +32,11 @@ class ProfileCreateCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-
+        when (args[0].lowercase()) {
+            "thief" -> ThiefProfile(args[1]).save().run { sender.sendMessage("Created thief profile ${args[1]}.") }
+            "victim" -> VictimProfile(args[1]).save().run { sender.sendMessage("Created victim profile ${args[1]}.")}
+        }
+        return true
     }
 }
 
