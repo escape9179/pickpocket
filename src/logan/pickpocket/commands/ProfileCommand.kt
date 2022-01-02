@@ -72,7 +72,6 @@ interface Profile {
 
 enum class ProfileType {
     THIEF, VICTIM;
-
     val friendlyName = name.lowercase()
 }
 
