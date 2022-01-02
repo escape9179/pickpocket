@@ -40,10 +40,6 @@ class ProfileCreateCommand : BasicCommand<Player>(
     }
 }
 
-fun saveProfile(profile: Profile) {
-    TODO("Implementation")
-}
-
 interface Profile {
     val name: String
     val properties: MutableMap<String, out Any>
