@@ -182,7 +182,6 @@ class PickpocketPlugin : JavaPlugin() {
     }
 
     companion object {
-        @JvmStatic
         lateinit var instance: PickpocketPlugin
             private set
         var users = Vector<PickpocketUser>()
