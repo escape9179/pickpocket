@@ -16,10 +16,12 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
+    private var rummageCount = 0
     private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
     private val menu: PlayerInventoryMenu =
         PlayerInventoryMenu(menuTitle, 4)
+
     fun show(predator: PickpocketUser) {
         predator.victim = victim
         populateRummageMenu()
@@ -30,12 +32,15 @@ class RummageInventory(private val victim: PickpocketUser) {
         rummageTimerTask = object : BukkitRunnable() {
             val tickCount = AtomicInteger(0)
             override fun run() {
-                if (tickCount.getAndIncrement() >= ticksUntilNoticed) {
+                if (tickCount.getAndIncrement() >= predator.findThiefProfile().rummageDuration) {
                     victim.playRummageSound()
                     // Close the rummage inventory
                     menu.close()
                     predator.sendMessage(MessageConfiguration.pickpocketNoticedWarningMessage)
-                    if (!predator.profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(predator.bukkitPlayer!!, predator.findThiefProfile().cooldown)
+                    if (!predator.profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
+                        predator.bukkitPlayer!!,
+                        predator.findThiefProfile().cooldown
+                    )
                     rummageTimerTask!!.cancel()
                 }
                 with(predator.bukkitPlayer!!) {
@@ -76,7 +81,7 @@ class RummageInventory(private val victim: PickpocketUser) {
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
             var randomItem: ItemStack?
-            outer@ for (i in 0 until randomItemCount) {
+            outer@ for (i in 0 until victim.predator!!.findThiefProfile().numberOfRummageItems) {
                 randomItem = victim.bukkitPlayer!!.getRandomItemFromMainInventory()
                 if (randomItem == null) continue
                 // This item is disabled. Skip this random item iteration.
@@ -93,9 +98,7 @@ class RummageInventory(private val victim: PickpocketUser) {
     companion object {
         private const val menuTitle = "Rummage"
         private const val rummageButtonText = "Keep rummaging..."
-        private const val randomItemCount = 4
         private const val rummageTimerTickRate = 20
-        private const val ticksUntilNoticed = 4
     }
 
     init {
@@ -105,6 +108,7 @@ class RummageInventory(private val victim: PickpocketUser) {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()
+            if (++rummageCount >= predator.findThiefProfile().maxRummageCount) close()
         }
     }
 }
