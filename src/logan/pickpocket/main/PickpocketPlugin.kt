@@ -91,6 +91,7 @@ class PickpocketPlugin : JavaPlugin() {
         registerCommand(StatusCommand())
         registerCommand(ProfileCommand())
         registerCommand(ProfileCreateCommand())
+        registerCommand(ProfileEditCommand())
 
         // Register API listeners
         GUIAPI.registerListeners(this)
