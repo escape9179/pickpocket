@@ -29,7 +29,15 @@ class ProfileConfiguration {
         return profiles
     }
 
-    fun loadThiefProfile(name: String): ThiefProfile {
+    private fun loadThiefProfile(name: String): ThiefProfile {
         TODO()
+    }
+
+    fun removeThiefProfile(name: String): Boolean {
+        return if (config.getConfigurationSection("thiefProfiles")!!.isConfigurationSection(name)) {
+            config.set("thiefProfiles.$name", null)
+            config.save(file)
+            true
+        } else false
     }
 }

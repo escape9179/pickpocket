@@ -14,6 +14,7 @@ import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
+import logan.pickpocket.config.ProfileConfiguration
 import logan.pickpocket.listeners.*
 import logan.pickpocket.user.PickpocketUser
 import net.milkbowl.vault.economy.Economy
@@ -77,6 +78,8 @@ class PickpocketPlugin : JavaPlugin() {
         pickpocketConfiguration = PickpocketConfiguration()
         pickpocketConfiguration.create()
 
+        createConfigurations()
+
         // Initialize and create message configuration file.
         MessageConfiguration.create()
         users = Vector()
@@ -92,6 +95,7 @@ class PickpocketPlugin : JavaPlugin() {
         registerCommand(ProfileCommand())
         registerCommand(ProfileCreateCommand())
         registerCommand(ProfileEditCommand())
+        registerCommand(ProfileRemoveCommand())
 
         // Register API listeners
         GUIAPI.registerListeners(this)
@@ -173,6 +177,10 @@ class PickpocketPlugin : JavaPlugin() {
         TODO("Implementation")
     }
 
+    private fun createConfigurations() {
+        profileConfiguration = ProfileConfiguration()
+    }
+
     private fun setupEconomy(): Boolean {
         if (server.pluginManager.getPlugin("Vault") == null) {
             return false
@@ -203,6 +211,7 @@ class PickpocketPlugin : JavaPlugin() {
         val PICKPOCKET_RELOAD: Permission =
             Permission("pickpocket.reload", "Reload the Pickpocket configuration file.")
         lateinit var pickpocketConfiguration: PickpocketConfiguration
+        lateinit var profileConfiguration: ProfileConfiguration
             private set
         var economy: Economy? = null
             private set
