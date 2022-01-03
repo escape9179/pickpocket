@@ -30,8 +30,11 @@ class ProfileConfiguration {
     }
 
     private fun loadThiefProfile(name: String): ThiefProfile {
-
-        TODO()
+        val thiefProfileSection = config.getConfigurationSection("thiefProfiles.$name") ?: return loadThiefProfile("default")
+        return ThiefProfile(name).apply {
+            for (prop in properties)
+                properties[prop.key] = thiefProfileSection.getString(prop.key)!!
+        }
     }
 
     fun removeThiefProfile(name: String): Boolean {
