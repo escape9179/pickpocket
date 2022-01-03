@@ -2,7 +2,7 @@ package logan.pickpocket.main
 
 class ThiefProfile(override val name: String) : Profile {
     override val type = ProfileType.THIEF
-    override val properties = mutableMapOf(
+    override val properties = mutableMapOf<String, Any>(
         "cooldown" to 10,
         "canUseFishingRod" to false,
         "minigameRollRate" to 20,
@@ -11,16 +11,10 @@ class ThiefProfile(override val name: String) : Profile {
         "rummageDuration" to 3,
     )
 
-    val cooldown
-        get() = properties["cooldown"] as Int
-    val canUseFishingRod
-        get() = properties["canUseFishingRod"] as Boolean
-    val maxRummageCount
-        get() = properties["maxRummageCount"] as Int
-    val minigameRollRate
-        get() = properties["minigameRollRate"] as Long
-    val numberOfRummageItems
-        get() = properties["numberOfRummageItems"] as Int
-    val rummageDuration
-        get() = properties["rummageDuration"] as Int
+    var cooldown: Int by properties
+    var canUseFishingRod: Boolean by properties
+    var maxRummageCount: Int by properties
+    var minigameRollRate: Long by properties
+    var numberOfRummageItems: Int by properties
+    var rummageDuration: Int by properties
 }

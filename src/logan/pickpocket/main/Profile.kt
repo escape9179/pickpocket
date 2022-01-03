@@ -6,7 +6,7 @@ import java.io.File
 interface Profile {
     val name: String
     val type: ProfileType
-    val properties: MutableMap<String, out Any>
+    val properties: MutableMap<String, Any>
 
     fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")): Boolean {
         file.createNewFile()
