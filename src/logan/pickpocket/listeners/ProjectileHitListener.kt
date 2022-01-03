@@ -12,7 +12,11 @@ class ProjectileHitListener : Listener {
     fun onProjectileHit(event: ProjectileHitEvent) {
         val hook = event.entity as? FishHook ?: return
         val predator = PickpocketUser.get(hook.shooter as? Player ?: return)
-        if (!predator.findThiefProfile().canUseFishingRod) return
+        val thiefProfile = predator.findThiefProfile() ?: predator.bukkitPlayer!!.run {
+            sendMessage("You are not allowed to pickpocket.")
+            return
+        }
+        if (!thiefProfile.canUseFishingRod) return
         val victim = PickpocketUser.get(hook.getNearbyEntities(1.0, 1.0, 1.0).firstOrNull() as? Player ?: return)
         predator.doPickpocket(victim)
     }

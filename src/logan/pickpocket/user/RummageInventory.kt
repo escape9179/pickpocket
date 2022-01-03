@@ -24,6 +24,7 @@ class RummageInventory(private val victim: PickpocketUser) {
 
     fun show(predator: PickpocketUser) {
         predator.victim = victim
+        val thiefProfile = predator.findThiefProfile()!!
         populateRummageMenu()
         menu.addItem(menu.bottomRight, rummageButton)
         menu.show(predator.bukkitPlayer)
@@ -32,14 +33,14 @@ class RummageInventory(private val victim: PickpocketUser) {
         rummageTimerTask = object : BukkitRunnable() {
             val tickCount = AtomicInteger(0)
             override fun run() {
-                if (tickCount.getAndIncrement() >= predator.findThiefProfile().rummageDuration) {
+                if (tickCount.getAndIncrement() >= thiefProfile.rummageDuration) {
                     victim.playRummageSound()
                     // Close the rummage inventory
                     menu.close()
                     predator.sendMessage(MessageConfiguration.pickpocketNoticedWarningMessage)
                     if (!predator.playerConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
                         predator.bukkitPlayer!!,
-                        predator.findThiefProfile().cooldown
+                        thiefProfile.cooldown
                     )
                     rummageTimerTask!!.cancel()
                 }
@@ -81,7 +82,7 @@ class RummageInventory(private val victim: PickpocketUser) {
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
             var randomItem: ItemStack?
-            outer@ for (i in 0 until victim.predator!!.findThiefProfile().numberOfRummageItems) {
+            outer@ for (i in 0 until victim.predator!!.findThiefProfile()!!.numberOfRummageItems) {
                 randomItem = victim.bukkitPlayer!!.getRandomItemFromMainInventory()
                 if (randomItem == null) continue
                 // This item is disabled. Skip this random item iteration.
@@ -108,7 +109,7 @@ class RummageInventory(private val victim: PickpocketUser) {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()
-            if (++rummageCount >= predator.findThiefProfile().maxRummageCount) close()
+            if (++rummageCount >= predator.findThiefProfile()!!.maxRummageCount) close()
         }
     }
 }

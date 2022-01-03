@@ -25,6 +25,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -75,7 +76,7 @@ class PickpocketPlugin : JavaPlugin() {
         //
 
         // Initialize main configuration file
-        pickpocketConfiguration = PickpocketConfiguration()
+        pickpocketConfiguration = PickpocketConfiguration(File(dataFolder, "config.yml"))
         pickpocketConfiguration.create()
 
         createConfigurations()

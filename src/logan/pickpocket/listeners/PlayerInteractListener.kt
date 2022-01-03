@@ -71,6 +71,11 @@ class PlayerInteractListener : Listener {
         val victimUser = PickpocketUser.get(victim)
         val profile = PickpocketUser.get(event.player)
 
+        if (profile.findThiefProfile() == null) {
+            event.player.sendMessage("You aren't allowed to pickpocket.")
+            return
+        }
+
         if (!victimUser.isParticipating) {
             if (PickpocketPlugin.pickpocketConfiguration.isShowStatusOnInteractEnabled)
                 event.player.sendMessage(MessageConfiguration.pickpocketDisabledOtherMessage)
@@ -82,6 +87,7 @@ class PlayerInteractListener : Listener {
                 event.player.sendMessage(MessageConfiguration.pickpocketDisabledMessage)
             return
         }
+
         profile.doPickpocket(victimUser)
     }
 
