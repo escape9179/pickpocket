@@ -1,8 +1,8 @@
 package logan.pickpocket.config
 
-import logan.api.config.CommentedConfiguration
-import logan.pickpocket.main.PickpocketPlugin.Companion.instance
+import logan.api.config.BasicConfiguration
 import logan.api.util.ColorUtils
+import logan.pickpocket.main.PickpocketPlugin.Companion.instance
 import org.bukkit.entity.Player
 import java.io.File
 
@@ -40,9 +40,9 @@ object MessageConfiguration {
     const val PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure"
     const val PLAYER_STEAL_FROM_AFK = "player-attempt-steal-from-afk"
     const val PLAYER_STEAL_WHILE_AFK = "player-attempt-steal-while-afk"
-    private var config: CommentedConfiguration? = null
+    private var config: BasicConfiguration? = null
     fun create() {
-        config = CommentedConfiguration(File(instance.dataFolder, "messages.yml"))
+        config = BasicConfiguration(File(instance.dataFolder, "messages.yml"))
         config!!.createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.")
         config!!.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.")
         config!!.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed %player%'s bypass status to %value%.")

@@ -3,20 +3,16 @@ package logan.api.config
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-open class CommentedConfiguration(private val file: File) {
+interface BasicConfiguration {
 
     var configuration: YamlConfiguration
-
-    init {
-        file.createNewFile()
-        configuration = YamlConfiguration.loadConfiguration(file)
-    }
+    var file: File
 
     fun createKeyIfNoneExists(key: String, value: Any? = null) {
         configuration.setIfNotSet(key, value)
     }
 
-    open fun reload() {
+    fun reload() {
         configuration = YamlConfiguration.loadConfiguration(file)
     }
 

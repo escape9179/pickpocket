@@ -1,11 +1,11 @@
 package logan.pickpocket.config
 
-import logan.api.config.CommentedConfiguration
+import logan.api.config.BasicConfiguration
 import logan.pickpocket.main.PickpocketPlugin.Companion.instance
 import org.bukkit.Material
 import java.io.File
 
-class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder, "config.yml")) {
+class PickpocketConfiguration : BasicConfiguration(File(instance.dataFolder, "config.yml")) {
     fun create() {
         createKeyIfNoneExists(loseMoney, false)
         createKeyIfNoneExists(moneyLost, 0.025)
