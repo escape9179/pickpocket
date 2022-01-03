@@ -22,7 +22,7 @@ class ProfileConfiguration {
         }
     }
 
-    fun getThiefProfiles(): List<ThiefProfile> {
+    fun loadThiefProfiles(): List<ThiefProfile> {
         val profiles = mutableListOf<ThiefProfile>()
         val keys = config.getConfigurationSection("thiefProfiles")!!.getKeys(false)
         keys.forEach { profiles.add(loadThiefProfile(it)) }
