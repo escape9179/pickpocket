@@ -1,8 +1,8 @@
 package logan.pickpocket.user
 
-import logan.pickpocket.commands.ThiefProfile
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
+import logan.pickpocket.main.ThiefProfile
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
