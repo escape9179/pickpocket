@@ -75,8 +75,6 @@ class RummageInventory(private val victim: PickpocketUser) {
     private val randomItemsFromPlayer: List<ItemStack>
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
-            val storageContents = victim.bukkitPlayer!!.inventory.storageContents
-            val inventorySize = victim.bukkitPlayer!!.inventory.storageContents.size
             var randomItem: ItemStack?
             outer@ for (i in 0 until randomItemCount) {
                 randomItem = victim.bukkitPlayer!!.getRandomItemFromMainInventory()
