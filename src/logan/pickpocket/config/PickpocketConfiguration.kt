@@ -1,11 +1,12 @@
 package logan.pickpocket.config
 
 import logan.api.config.BasicConfiguration
-import logan.pickpocket.main.PickpocketPlugin.Companion.instance
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class PickpocketConfiguration : BasicConfiguration(File(instance.dataFolder, "config.yml")) {
+class PickpocketConfiguration(override var file: File) : BasicConfiguration {
+    override var configuration: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
     fun create() {
         createKeyIfNoneExists(loseMoney, false)
         createKeyIfNoneExists(moneyLost, 0.025)
