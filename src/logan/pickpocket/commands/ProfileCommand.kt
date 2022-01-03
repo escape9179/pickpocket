@@ -21,7 +21,10 @@ class ProfileCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        val profile = PickpocketUser.get(sender).findThiefProfile()
+        val profile = PickpocketUser.get(sender).findThiefProfile() ?: sender.run {
+            sendMessage("You haven't been assigned a profile.")
+            return true
+        }
         sender.sendMessage("name: ${profile.name}\n${profile.properties.entries.joinToString("\n") { (k, v) -> k.plus(v) }}")
         return true
     }

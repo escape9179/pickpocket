@@ -164,7 +164,7 @@ class PickpocketPlugin : JavaPlugin() {
             } else this@PickpocketPlugin.logger.info("Database support disabled in config.")
         }
 
-        profiles.addAll(profileConfiguration.loadThiefProfiles())
+        thiefProfiles.addAll(profileConfiguration.loadThiefProfiles())
 
         logger.info("$name enabled.")
     }
@@ -197,7 +197,7 @@ class PickpocketPlugin : JavaPlugin() {
             private set
         var users = Vector<PickpocketUser>()
             private set
-        var profiles = mutableListOf<Profile>()
+        var thiefProfiles = mutableListOf<ThiefProfile>()
         private val cooldowns = ConcurrentHashMap<Player, Int>()
         val PICKPOCKET_USE: Permission = Permission("pickpocket.use", "Allow a user to pick-pocket.")
         val PICKPOCKET_EXEMPT: Permission = Permission("pickpocket.exempt", "Exempt a user from being stolen from.")

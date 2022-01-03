@@ -54,16 +54,17 @@ class PickpocketUser(val uuid: UUID) {
         }
     }
 
-    fun findThiefProfile(): ThiefProfile {
-
-        TODO()
+    fun findThiefProfile(): ThiefProfile? {
+        return PickpocketPlugin.thiefProfiles.find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") }
     }
 
-    fun giveCooldown() =
+    fun giveCooldown() {
+        val thiefProfile = findThiefProfile() ?: return
         if (!profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
             bukkitPlayer!!,
-            findThiefProfile().cooldown
+            thiefProfile.cooldown
         ) else Unit
+    }
 
     private fun isCoolingDown() = PickpocketPlugin.getCooldowns().containsKey(bukkitPlayer)
 
