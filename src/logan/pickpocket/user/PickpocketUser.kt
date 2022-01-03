@@ -29,11 +29,11 @@ class PickpocketUser(val uuid: UUID) {
     var isParticipating = true
         set(value) {
             field = value
-            profileConfiguration.setParticipatingSection(value)
+            playerConfiguration.setParticipatingSection(value)
         }
     var currentMinigame: Minigame? = null
-    val profileConfiguration =
-        ProfileConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
+    val playerConfiguration =
+        PlayerConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
     var steals = 0
 
     fun doPickpocket(victim: PickpocketUser) {
@@ -60,7 +60,7 @@ class PickpocketUser(val uuid: UUID) {
 
     fun giveCooldown() {
         val thiefProfile = findThiefProfile() ?: return
-        if (!profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
+        if (!playerConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
             bukkitPlayer!!,
             thiefProfile.cooldown
         ) else Unit

@@ -23,8 +23,8 @@ class AdminExemptCommand : BasicCommand<Player>(
 
         if (args.isEmpty()) {
             val profile = PickpocketUser.get(sender)
-            val exemptStatus = !profile.profileConfiguration.exemptSectionValue
-            profile.profileConfiguration.setExemptSection(exemptStatus)
+            val exemptStatus = !profile.playerConfiguration.exemptSectionValue
+            profile.playerConfiguration.setExemptSection(exemptStatus)
             sender.sendMessage(MessageConfiguration.getExemptStatusChangeMessage(exemptStatus))
         } else {
             val otherPlayer = Bukkit.getPlayer(args[0]) ?: run {
@@ -32,8 +32,8 @@ class AdminExemptCommand : BasicCommand<Player>(
                 return true
             }
             val profile = PickpocketUser.get(otherPlayer)
-            val exemptStatus = !profile.profileConfiguration.exemptSectionValue
-            profile.profileConfiguration.setExemptSection(exemptStatus)
+            val exemptStatus = !profile.playerConfiguration.exemptSectionValue
+            profile.playerConfiguration.setExemptSection(exemptStatus)
             sender.sendMessage(MessageConfiguration.getExemptStatusChangeOtherMessage(otherPlayer, exemptStatus))
             otherPlayer.sendMessage(MessageConfiguration.getExemptStatusChangeMessage(exemptStatus))
         }
