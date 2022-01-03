@@ -55,6 +55,7 @@ class PickpocketUser(val uuid: UUID) {
     }
 
     fun findThiefProfile(): ThiefProfile {
+
         TODO()
     }
 
