@@ -145,7 +145,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.instance, getMinigameRollRate())
     }
 
-    private fun getMinigameRollRate() = PickpocketPlugin.pickpocketConfiguration.minigameRollRate.toLong()
+    private fun getMinigameRollRate() = predatorUser.findThiefProfile().minigameRollRate
 
     private fun scheduleNewShuffleRunnable() = object : BukkitRunnable() {
         override fun run() {

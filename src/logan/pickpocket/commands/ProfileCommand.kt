@@ -109,9 +109,16 @@ class ThiefProfile(override val name: String) : Profile {
         "canFishingRod" to false,
         "minigameRollRate" to 20,
         "maxRummages" to 5,
+        "numRummageItems" to 4,
         "rummageDuration" to 3,
-        "numRummageItems" to 4
     )
+
+    val cooldown
+        get() = properties["cooldown"] as Int
+    val canUseFishingRod
+        get() = properties["canFishingRod"] as Boolean
+    val minigameRollRate
+        get() = properties["minigameRollRate"] as Long
 }
 
 class VictimProfile(override val name: String) : Profile {

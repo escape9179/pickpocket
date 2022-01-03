@@ -220,7 +220,7 @@ class PickpocketPlugin : JavaPlugin() {
             users.add(profile)
         }
 
-        fun addCooldown(player: Player) {
+        fun addCooldown(player: Player, duration: Int) {
             cooldowns[player] = pickpocketConfiguration.cooldownTime
         }
 
