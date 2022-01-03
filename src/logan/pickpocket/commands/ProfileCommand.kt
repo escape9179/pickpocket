@@ -70,13 +70,30 @@ class ProfileEditCommand : BasicCommand<Player>(
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         when (args[0]) {
             ProfileType.THIEF.friendlyName -> {
-
+                TODO()
             }
             ProfileType.VICTIM.friendlyName -> {
-
+                TODO()
             }
         }
         return true
+    }
+}
+
+class ProfileRemoveCommand : BasicCommand<Player>(
+    "remove",
+    2..2,
+    listOf(String::class, String::class),
+    "profile",
+    SenderTarget.PLAYER,
+    "pickpocket.admin.profile.remove",
+    """
+        Usage:
+        /pickpocket profile remove <thief|victim> <name>
+    """.trimIndent()
+) {
+    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        TODO()
     }
 }
 
