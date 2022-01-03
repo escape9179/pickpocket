@@ -25,7 +25,7 @@ class ProfileCommand : BasicCommand<Player>(
             sendMessage("You haven't been assigned a profile.")
             return true
         }
-        sender.sendMessage("name: ${profile.name}\n${profile.properties.entries.joinToString("\n") { (k, v) -> k.plus(v) }}")
+        sender.sendMessage("name: ${profile.name}\n${profile.properties.entries.joinToString("\n") { (k, v) -> "$k: $v" }}")
         return true
     }
 }
