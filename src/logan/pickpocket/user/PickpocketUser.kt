@@ -1,5 +1,6 @@
 package logan.pickpocket.user
 
+import logan.pickpocket.commands.ThiefProfile
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
@@ -51,6 +52,10 @@ class PickpocketUser(val uuid: UUID) {
                 isRummaging = true
             }
         }
+    }
+
+    fun getThiefProfile(): ThiefProfile {
+        TODO("Implementation")
     }
 
     fun giveCooldown() =

@@ -84,6 +84,7 @@ interface Profile {
     val name: String
     val type: ProfileType
     val properties: MutableMap<String, out Any>
+
     fun save(file: File = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")): Boolean {
         file.createNewFile()
         YamlConfiguration.loadConfiguration(file).run {
@@ -97,6 +98,7 @@ interface Profile {
 
 enum class ProfileType {
     THIEF, VICTIM;
+
     val friendlyName = name.lowercase()
 }
 
