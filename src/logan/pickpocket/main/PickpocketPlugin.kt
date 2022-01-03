@@ -164,17 +164,11 @@ class PickpocketPlugin : JavaPlugin() {
             } else this@PickpocketPlugin.logger.info("Database support disabled in config.")
         }
 
-        loadProfiles()
-
         logger.info("$name enabled.")
     }
 
     override fun onDisable() {
         logger.info("$name disabled.")
-    }
-
-    private fun loadProfiles() {
-        TODO("Implementation")
     }
 
     private fun createConfigurations() {
