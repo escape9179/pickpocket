@@ -21,8 +21,6 @@ class ReloadCommand : BasicCommand<CommandSender>(
             pickpocketConfiguration.reload()
             MessageConfiguration.reload()
             profileConfiguration.reload()
-            thiefProfiles.clear()
-            thiefProfiles.addAll(profileConfiguration.loadThiefProfiles())
             sender.sendMessage(MessageConfiguration.reloadNotificationMessage)
         }
         return true
