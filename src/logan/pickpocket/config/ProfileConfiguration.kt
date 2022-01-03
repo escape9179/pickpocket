@@ -7,7 +7,7 @@ import java.io.File
 
 class ProfileConfiguration {
     val file = File(PickpocketPlugin.instance.dataFolder, "profiles.yml")
-    val config = YamlConfiguration.loadConfiguration(file)
+    var config = YamlConfiguration.loadConfiguration(file)
 
     init {
         if (!config.isConfigurationSection("thiefProfiles.default")) {
@@ -35,6 +35,10 @@ class ProfileConfiguration {
             for (prop in properties)
                 properties[prop.key] = thiefProfileSection.getString(prop.key)!!
         }
+    }
+
+    fun reload() {
+        config = YamlConfiguration.loadConfiguration(file)
     }
 
     fun removeThiefProfile(name: String): Boolean {

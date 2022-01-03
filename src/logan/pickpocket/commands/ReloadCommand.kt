@@ -19,6 +19,7 @@ class ReloadCommand : BasicCommand<CommandSender>(
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
         PickpocketPlugin.pickpocketConfiguration.reload()
         MessageConfiguration.reload()
+        PickpocketPlugin.profileConfiguration.reload()
         sender.sendMessage(MessageConfiguration.reloadNotificationMessage)
         return true
     }
