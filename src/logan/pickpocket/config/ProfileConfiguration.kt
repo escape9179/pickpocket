@@ -41,6 +41,17 @@ class ProfileConfiguration {
         config = YamlConfiguration.loadConfiguration(file)
     }
 
+    fun createThiefProfile(name: String): Boolean {
+        lateinit var thiefProfile: ThiefProfile
+        config.run {
+            if (isConfigurationSection( "thiefProfiles.$name")) return false
+            thiefProfile = ThiefProfile(name)
+            thiefProfile.properties.forEach { set("thiefProfiles.$name.${it.key}", it.value) }
+            save(file)
+        }
+        return true
+    }
+
     fun removeThiefProfile(name: String): Boolean {
         return if (config.getConfigurationSection("thiefProfiles")!!.isConfigurationSection(name)) {
             config.set("thiefProfiles.$name", null)
