@@ -29,8 +29,6 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getBoolean(loseMoney)
     val moneyLostPercentage: Double
         get() = configuration.getDouble(moneyLost)
-    val minigameRollRate: Int
-        get() = configuration.getInt(minigameRollRateKey)
     var disabledItems: List<String> = computeDisabledItems()
     val isShowStatusOnInteractEnabled: Boolean
         get() = configuration.getBoolean(statusOnInteractKey)
@@ -38,8 +36,6 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getBoolean(statusOnLoginKey)
     val cooldownTime: Int
         get() = configuration.getInt(cooldownTimeKey)
-    val isFishingRodEnabled: Boolean
-        get() = configuration.getBoolean(fishingRodEnabledKey)
     val isForeignTownTheftEnabled: Boolean
         get() = configuration.getBoolean(foreignTownTheftKey)
     val isSameTownTheftEnabled: Boolean
