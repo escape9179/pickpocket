@@ -22,7 +22,7 @@ class ProfileCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val profile = PickpocketUser.get(sender).findThiefProfile()
-        sender.sendMessage("name: ${profile.name}\n".apply { profile.properties.forEach { (k, v) -> plus("$k:$v\n") } })
+        sender.sendMessage("name: ${profile.name}\n${profile.properties.entries.joinToString("\n") { (k, v) -> k.plus(v) }}")
         return true
     }
 }
