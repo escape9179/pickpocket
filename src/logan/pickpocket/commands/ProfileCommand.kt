@@ -4,14 +4,15 @@ import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.user.PickpocketUser
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class ProfileCommand : BasicCommand<Player>(
+class ProfileCommand : BasicCommand<CommandSender>(
     "profile",
     1..3,
     listOf(String::class, String::class, String::class),
     "pickpocket",
-    SenderTarget.PLAYER,
+    SenderTarget.BOTH,
     "pickpocket.profile.view",
     """
         Usage:

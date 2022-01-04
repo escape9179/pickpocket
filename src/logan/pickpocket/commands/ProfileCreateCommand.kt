@@ -6,21 +6,21 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.ProfileType
 import logan.pickpocket.main.ThiefProfile
 import logan.pickpocket.main.VictimProfile
-import org.bukkit.entity.Player
+import org.bukkit.command.CommandSender
 
-class ProfileCreateCommand : BasicCommand<Player>(
+class ProfileCreateCommand : BasicCommand<CommandSender>(
     "create",
     2..2,
     listOf(String::class, String::class),
     "profile",
-    SenderTarget.PLAYER,
+    SenderTarget.BOTH,
     "pickpocket.profile.create",
     """
         Usage:
         /pickpocket profile create <thief|victim> <name>
     """.trimIndent()
 ) {
-    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+    override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
         when (args[0].lowercase()) {
             ProfileType.THIEF.friendlyName -> {
                 val result = ThiefProfile(args[1]).save()
