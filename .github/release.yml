@@ -1,9 +1,0 @@
-changelog:
-  exclude:
-    labels:
-      - "ignore for release"
-      - "duplicate"
-  categories:
-  - title: Changes
-    labels:
-      - "*"
