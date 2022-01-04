@@ -11,7 +11,7 @@ class ProfileCommand : BasicCommand<Player>(
     listOf(String::class, String::class, String::class),
     "pickpocket",
     SenderTarget.PLAYER,
-    "pickpocket.admin.profile",
+    "pickpocket.profile.view",
     """
         Usage:
         /pickpocket profile view

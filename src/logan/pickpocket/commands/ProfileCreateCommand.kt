@@ -13,7 +13,7 @@ class ProfileCreateCommand : BasicCommand<Player>(
     listOf(String::class, String::class),
     "profile",
     SenderTarget.PLAYER,
-    "pickpocket.admin.profile.create",
+    "pickpocket.profile.create",
     """
         Usage:
         /pickpocket profile create <thief|victim> <name>

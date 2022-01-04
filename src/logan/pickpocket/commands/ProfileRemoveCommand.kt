@@ -11,7 +11,7 @@ class ProfileRemoveCommand : BasicCommand<Player>(
     listOf(String::class, String::class),
     "profile",
     SenderTarget.PLAYER,
-    "pickpocket.admin.profile.remove",
+    "pickpocket.profile.remove",
     """
         Usage:
         /pickpocket profile remove <thief|victim> <name>

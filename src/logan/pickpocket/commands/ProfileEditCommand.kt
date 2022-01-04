@@ -12,7 +12,7 @@ class ProfileEditCommand : BasicCommand<Player>(
     listOf(String::class, String::class, String::class, String::class),
     "profile",
     SenderTarget.PLAYER,
-    "pickpocket.admin.profile.edit",
+    "pickpocket.profile.edit",
     """
         Usage:
         /pickpocket profile edit <thief|victim> <name> <property> <value>
