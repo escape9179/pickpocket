@@ -2,6 +2,7 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
+import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.entity.Player
 
@@ -19,8 +20,8 @@ class ProfileRemoveCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val result = PickpocketPlugin.profileConfiguration.removeThiefProfile(args[1])
-        if (!result) sender.sendMessage("Couldn't find profile ${args[1]}").run { return false }
-        sender.sendMessage("Removed profile ${args[1]}")
+        if (!result) sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[1])).run { return false }
+        sender.sendMessage(MessageConfiguration.getProfileRemovedMessage(args[1]))
         return true
     }
 }

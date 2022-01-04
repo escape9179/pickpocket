@@ -2,6 +2,7 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
+import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.ProfileType
 import logan.pickpocket.main.ThiefProfile
 import logan.pickpocket.main.VictimProfile
@@ -24,15 +25,15 @@ class ProfileCreateCommand : BasicCommand<Player>(
             ProfileType.THIEF.friendlyName -> {
                 val result = ThiefProfile(args[1]).save()
                 sender.sendMessage(
-                    if (result) "Successfully created thief profile ${args[1]}."
-                    else "Error: Profile ${args[1]} already exists."
+                    if (result) MessageConfiguration.getProfileThiefCreateSuccessMessage(args[1])
+                    else MessageConfiguration.getProfileErrorAlreadyExistsMessage(args[1])
                 )
             }
             ProfileType.VICTIM.friendlyName -> {
                 val result = VictimProfile(args[1]).save()
                 sender.sendMessage(
-                    if (result) "Successfully created victim profile ${args[1]}."
-                    else "Error: Profile ${args[1]} already exists."
+                    if (result) MessageConfiguration.getProfileVictimCreateSuccessMessage(args[1])
+                    else MessageConfiguration.getProfileErrorAlreadyExistsMessage(args[1])
                 )
             }
         }

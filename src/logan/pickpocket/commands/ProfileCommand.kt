@@ -2,6 +2,7 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
+import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.user.PickpocketUser
 import org.bukkit.entity.Player
 
@@ -29,7 +30,7 @@ class ProfileViewCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val profile = PickpocketUser.get(sender).findThiefProfile() ?: sender.run {
-            sendMessage("You haven't been assigned a profile.")
+            sendMessage(MessageConfiguration.getProfileNotAssignedMessage())
             return true
         }
         sender.sendMessage("name: ${profile.name}\n${profile.properties.entries.joinToString("\n") { (k, v) -> "$k: $v" }}")

@@ -43,6 +43,13 @@ object MessageConfiguration : BasicConfiguration {
     val PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure"
     val PLAYER_STEAL_FROM_AFK = "player-attempt-steal-from-afk"
     val PLAYER_STEAL_WHILE_AFK = "player-attempt-steal-while-afk"
+    val PROFILE_NOT_ASSIGNED_KEY = "profileNotAssigned"
+    val PROFILE_THIEF_CREATE_SUCCESS_KEY = "profileThiefCreateSuccess"
+    val PROFILE_VICTIM_CREATE_SUCCESS_KEY = "profileVictimCreateSuccess"
+    val PROFILE_ERROR_ALREADY_EXISTS_KEY = "profileErrorAlreadyExists"
+    val PROFILE_NOT_FOUND_KEY = "profileNotFound"
+    val PROFILE_CHANGE_PROPERTY_KEY = "profileChangeProperty"
+    val PROFILE_REMOVED_KEY = "profileRemoved"
     fun create() {
         createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.")
         createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.")
@@ -88,6 +95,13 @@ object MessageConfiguration : BasicConfiguration {
         )
         createKeyIfNoneExists(PLAYER_STEAL_FROM_AFK, "&cThat player is AFK.")
         createKeyIfNoneExists(PLAYER_STEAL_WHILE_AFK, "&cYou cannot pick-pocket while AFK.")
+        createKeyIfNoneExists(PROFILE_NOT_ASSIGNED_KEY, "&cYou haven't been assigned a profile.")
+        createKeyIfNoneExists(PROFILE_THIEF_CREATE_SUCCESS_KEY, "&aSuccessfully created thief profile %value%.")
+        createKeyIfNoneExists(PROFILE_VICTIM_CREATE_SUCCESS_KEY, "&aSuccessfully created victim profile %value%.")
+        createKeyIfNoneExists(PROFILE_ERROR_ALREADY_EXISTS_KEY, "&cProfile %value% already exists.")
+        createKeyIfNoneExists(PROFILE_NOT_FOUND_KEY, "&cCouldn't find profile %value%.")
+        createKeyIfNoneExists(PROFILE_CHANGE_PROPERTY_KEY, "&aChanged property %value% from %value% to %value% in profile %value%.")
+        createKeyIfNoneExists(PROFILE_REMOVED_KEY, "Removed profile %value%.")
         save()
     }
 
@@ -96,10 +110,10 @@ object MessageConfiguration : BasicConfiguration {
         return ColorUtils.colorize(keyValue)
     }
 
-    private fun getMessage(key: String, value: String): String {
-        val keyValue = configuration.getString(key)!!
-        val parsedValue = keyValue.replace("%value%", value)
-        return ColorUtils.colorize(parsedValue)
+    private fun getMessage(key: String, vararg values: String): String {
+        var keyValue = configuration.getString(key)!!
+        values.forEach { keyValue = keyValue.replaceFirst("%value%", it) }
+        return ColorUtils.colorize(keyValue)
     }
 
     private fun getMessage(key: String, player: Player): String {
@@ -176,13 +190,16 @@ object MessageConfiguration : BasicConfiguration {
         get() = getMessage(PICKPOCKET_VICTIM_WARNING_KEY)
     val pickpocketNoticedWarningMessage: String
         get() = getMessage(PICKPOCKET_NOTICED_WARNING_KEY)
+    val playerStealFromAfkMessage: String
+        get() = getMessage(PLAYER_STEAL_FROM_AFK)
+    val playerStealWhileAfk: String
+        get() = getMessage(PLAYER_STEAL_WHILE_AFK)
+    val noMoneyReceivedMessage: String
+        get() = getMessage(NO_MONEY_RECEIVED)
 
     fun getCooldownNoticeMessage(value: Any): String {
         return getMessage(COOLDOWN_NOTICE_KEY, value.toString())
     }
-
-    val noMoneyReceivedMessage: String
-        get() = getMessage(NO_MONEY_RECEIVED)
 
     fun getMoneyAmountReceivedMessage(value: Any): String {
         return getMessage(MONEY_AMOUNT_RECEIVED, value.toString())
@@ -196,8 +213,11 @@ object MessageConfiguration : BasicConfiguration {
         return getMessage(PICKPOCKET_FAILURE_ADMIN_NOTIFICATION, player, victim)
     }
 
-    val playerStealFromAfkMessage: String
-        get() = getMessage(PLAYER_STEAL_FROM_AFK)
-    val playerStealWhileAfk: String
-        get() = getMessage(PLAYER_STEAL_WHILE_AFK)
+    fun getProfileNotAssignedMessage() = getMessage(PROFILE_NOT_ASSIGNED_KEY)
+    fun getProfileThiefCreateSuccessMessage(value: String) = getMessage(PROFILE_THIEF_CREATE_SUCCESS_KEY, value)
+    fun getProfileVictimCreateSuccessMessage(value: String) = getMessage(PROFILE_VICTIM_CREATE_SUCCESS_KEY, value)
+    fun getProfileErrorAlreadyExistsMessage(value: String) = getMessage(PROFILE_ERROR_ALREADY_EXISTS_KEY, value)
+    fun getProfileNotFoundMessage(value: String) = getMessage(PROFILE_NOT_FOUND_KEY, value)
+    fun getProfileChangePropertyMessage(vararg values: String) = getMessage(PROFILE_CHANGE_PROPERTY_KEY, *values)
+    fun getProfileRemovedMessage(value: String) = getMessage(PROFILE_REMOVED_KEY, value)
 }
