@@ -109,7 +109,7 @@ class RummageInventory(private val victim: PickpocketUser) {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()
-            if (++rummageCount >= predator.findThiefProfile()!!.maxRummageCount) close()
+            if (++rummageCount >= predator.findThiefProfile()!!.maxRummageCount) predator.bukkitPlayer!!.closeInventory()
         }
     }
 }
