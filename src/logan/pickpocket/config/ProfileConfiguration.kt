@@ -1,6 +1,8 @@
 package logan.pickpocket.config
 
 import logan.pickpocket.main.PickpocketPlugin
+import logan.pickpocket.main.Profile
+import logan.pickpocket.main.ProfileType
 import logan.pickpocket.main.ThiefProfile
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -25,12 +27,12 @@ class ProfileConfiguration {
     fun loadThiefProfiles(): List<ThiefProfile> {
         val profiles = mutableListOf<ThiefProfile>()
         val keys = config.getConfigurationSection("thiefProfiles")!!.getKeys(false)
-        keys.forEach { profiles.add(loadThiefProfile(it)) }
+        keys.forEach { profiles.add(loadThiefProfile(it) ?: return@forEach) }
         return profiles
     }
 
-    private fun loadThiefProfile(name: String): ThiefProfile {
-        val thiefProfileSection = config.getConfigurationSection("thiefProfiles.$name") ?: return loadThiefProfile("default")
+    fun loadThiefProfile(name: String): ThiefProfile? {
+        val thiefProfileSection = config.getConfigurationSection("thiefProfiles.$name") ?: return null
         return ThiefProfile(name).apply {
             for (prop in properties)
                 properties[prop.key] = thiefProfileSection.getString(prop.key)!!
@@ -55,6 +57,15 @@ class ProfileConfiguration {
     fun removeThiefProfile(name: String): Boolean {
         return if (config.getConfigurationSection("thiefProfiles")!!.isConfigurationSection(name)) {
             config.set("thiefProfiles.$name", null)
+            config.save(file)
+            true
+        } else false
+    }
+
+    fun saveProfile(profile: Profile): Boolean {
+        return if (profile.type == ProfileType.THIEF) {
+            val thiefProfileSection = config.getConfigurationSection("thiefProfiles.${profile.name}") ?: return false
+            profile.properties.forEach { (k, v) -> thiefProfileSection[k] = v }
             config.save(file)
             true
         } else false

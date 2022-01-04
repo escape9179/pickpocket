@@ -6,7 +6,7 @@ interface Profile {
     val properties: MutableMap<String, String>
 
     fun save(): Boolean {
-        PickpocketPlugin.profileConfiguration.createThiefProfile(name)
+        PickpocketPlugin.profileConfiguration.saveProfile(this)
         return true
     }
 }
