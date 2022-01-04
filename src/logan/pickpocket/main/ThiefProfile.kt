@@ -23,7 +23,7 @@ class ThiefProfile(override val name: String) : Profile {
     var minigameRollRate
         get() = properties["minigameRollRate"]!!.toLong()
         set(value) { properties["minigameRollRate"] = value.toString() }
-    var numberOfRummageItems
+    var maxRummageItems
         get() = properties["numberOfRummageItems"]!!.toInt()
         set(value) { properties["numberOfRummageItems"] = value.toString() }
     var rummageDuration

@@ -82,7 +82,7 @@ class RummageInventory(private val victim: PickpocketUser) {
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
             var randomItem: ItemStack?
-            outer@ for (i in 0 until victim.predator!!.findThiefProfile()!!.numberOfRummageItems) {
+            outer@ for (i in 0 until victim.predator!!.findThiefProfile()!!.maxRummageItems) {
                 randomItem = victim.bukkitPlayer!!.getRandomItemFromMainInventory()
                 if (randomItem == null) continue
                 // This item is disabled. Skip this random item iteration.
