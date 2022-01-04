@@ -2,6 +2,7 @@ package logan.pickpocket.user
 
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
+import logan.pickpocket.main.ThiefProfile
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
@@ -28,11 +29,11 @@ class PickpocketUser(val uuid: UUID) {
     var isParticipating = true
         set(value) {
             field = value
-            profileConfiguration.setParticipatingSection(value)
+            playerConfiguration.setParticipatingSection(value)
         }
     var currentMinigame: Minigame? = null
-    val profileConfiguration =
-        ProfileConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
+    val playerConfiguration =
+        PlayerConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
     var steals = 0
 
     fun doPickpocket(victim: PickpocketUser) {
@@ -53,8 +54,17 @@ class PickpocketUser(val uuid: UUID) {
         }
     }
 
-    fun giveCooldown() =
-        if (!profileConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(bukkitPlayer!!) else Unit
+    fun findThiefProfile(): ThiefProfile? {
+        return PickpocketPlugin.profileConfiguration.loadThiefProfiles().find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") }
+    }
+
+    fun giveCooldown() {
+        val thiefProfile = findThiefProfile() ?: return
+        if (!playerConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
+            bukkitPlayer!!,
+            thiefProfile.cooldown
+        ) else Unit
+    }
 
     private fun isCoolingDown() = PickpocketPlugin.getCooldowns().containsKey(bukkitPlayer)
 

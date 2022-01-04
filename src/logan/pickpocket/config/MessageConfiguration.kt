@@ -1,8 +1,9 @@
 package logan.pickpocket.config
 
-import logan.api.config.CommentedConfiguration
-import logan.pickpocket.main.PickpocketPlugin.Companion.instance
+import logan.api.config.BasicConfiguration
 import logan.api.util.ColorUtils
+import logan.pickpocket.main.PickpocketPlugin
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.io.File
 
@@ -10,116 +11,126 @@ import java.io.File
  * Represents a configuration file used
  * for setting message preferences for the plugin.
  */
-object MessageConfiguration {
-    const val ADMIN_STATUS_CHANGE_KEY = "admin-status-change"
-    const val BYPASS_STATUS_CHANGE_KEY = "bypass-status-change"
-    const val BYPASS_STATUS_CHANGE_OTHER_KEY = "bypass-status-other-change"
-    const val EXEMPT_STATUS_CHANGE_KEY = "exempt-status-change"
-    const val EXEMPT_STATUS_CHANGE_OTHER_KEY = "exempt-status-change-other"
-    const val RELOAD_NOTIFICATION_KEY = "reload-notification"
-    const val PLAYER_NOT_FOUND_KEY = "player-not-found"
-    const val PLAYER_NOT_ACCESSIBLE_KEY = "player-not-accessible"
-    const val PICKPOCKET_DISABLED_KEY = "pickpocket-disabled"
-    const val PICKPOCKET_DISABLED_OTHER_KEY = "pickpocket-disabled-other"
-    const val PICKPOCKET_TOGGLE_ON_KEY = "pickpocket-toggle-on"
-    const val PICKPOCKET_TOGGLE_OFF_KEY = "pickpocket-toggle-off"
-    const val PERSON_CANT_BE_STOLEN_FROM_KEY = "person-cant-be-stolen-from"
-    const val PICKPOCKET_REGION_DISALLOW_KEY = "pickpocket-region-disallow"
-    const val PICKPOCKET_UNSUCCESSFUL_KEY = "pickpocket-unsuccessful"
-    const val PICKPOCKET_SUCCESSFUL_KEY = "pickpocket-successful"
-    const val PARTICIPATING_TRUE_NOTIFICATION_KEY = "participating-true-notification"
-    const val PARTICIPATING_FALSE_NOTIFICATION_KEY = "participating-false-notification"
-    const val PICKPOCKET_ON_MOVE_WARNING_KEY = "pickpocket-on-move-warning"
-    const val PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY = "pickpocket-on-move-other-warning"
-    const val PICKPOCKET_VICTIM_WARNING_KEY = "pickpocket-victim-warning"
-    const val PICKPOCKET_NOTICED_WARNING_KEY = "pickpocket-noticed-warning"
-    const val COOLDOWN_NOTICE_KEY = "cooldown-notice"
-    const val NO_MONEY_RECEIVED = "no-money-received"
-    const val MONEY_AMOUNT_RECEIVED = "money-amount-received"
-    const val PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION = "admin-notify-success"
-    const val PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure"
-    const val PLAYER_STEAL_FROM_AFK = "player-attempt-steal-from-afk"
-    const val PLAYER_STEAL_WHILE_AFK = "player-attempt-steal-while-afk"
-    private var config: CommentedConfiguration? = null
+object MessageConfiguration : BasicConfiguration {
+    override var file: File = File(PickpocketPlugin.instance.dataFolder, "messages.yml")
+    override var configuration: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
+    val ADMIN_STATUS_CHANGE_KEY = "admin-status-change"
+    val BYPASS_STATUS_CHANGE_KEY = "bypass-status-change"
+    val BYPASS_STATUS_CHANGE_OTHER_KEY = "bypass-status-other-change"
+    val EXEMPT_STATUS_CHANGE_KEY = "exempt-status-change"
+    val EXEMPT_STATUS_CHANGE_OTHER_KEY = "exempt-status-change-other"
+    val RELOAD_NOTIFICATION_KEY = "reload-notification"
+    val PLAYER_NOT_FOUND_KEY = "player-not-found"
+    val PLAYER_NOT_ACCESSIBLE_KEY = "player-not-accessible"
+    val PICKPOCKET_DISABLED_KEY = "pickpocket-disabled"
+    val PICKPOCKET_DISABLED_OTHER_KEY = "pickpocket-disabled-other"
+    val PICKPOCKET_TOGGLE_ON_KEY = "pickpocket-toggle-on"
+    val PICKPOCKET_TOGGLE_OFF_KEY = "pickpocket-toggle-off"
+    val PERSON_CANT_BE_STOLEN_FROM_KEY = "person-cant-be-stolen-from"
+    val PICKPOCKET_REGION_DISALLOW_KEY = "pickpocket-region-disallow"
+    val PICKPOCKET_UNSUCCESSFUL_KEY = "pickpocket-unsuccessful"
+    val PICKPOCKET_SUCCESSFUL_KEY = "pickpocket-successful"
+    val PARTICIPATING_TRUE_NOTIFICATION_KEY = "participating-true-notification"
+    val PARTICIPATING_FALSE_NOTIFICATION_KEY = "participating-false-notification"
+    val PICKPOCKET_ON_MOVE_WARNING_KEY = "pickpocket-on-move-warning"
+    val PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY = "pickpocket-on-move-other-warning"
+    val PICKPOCKET_VICTIM_WARNING_KEY = "pickpocket-victim-warning"
+    val PICKPOCKET_NOTICED_WARNING_KEY = "pickpocket-noticed-warning"
+    val COOLDOWN_NOTICE_KEY = "cooldown-notice"
+    val NO_MONEY_RECEIVED = "no-money-received"
+    val MONEY_AMOUNT_RECEIVED = "money-amount-received"
+    val PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION = "admin-notify-success"
+    val PICKPOCKET_FAILURE_ADMIN_NOTIFICATION = "admin-notify-failure"
+    val PLAYER_STEAL_FROM_AFK = "player-attempt-steal-from-afk"
+    val PLAYER_STEAL_WHILE_AFK = "player-attempt-steal-while-afk"
+    val PROFILE_NOT_ASSIGNED_KEY = "profileNotAssigned"
+    val PROFILE_THIEF_CREATE_SUCCESS_KEY = "profileThiefCreateSuccess"
+    val PROFILE_VICTIM_CREATE_SUCCESS_KEY = "profileVictimCreateSuccess"
+    val PROFILE_ERROR_ALREADY_EXISTS_KEY = "profileErrorAlreadyExists"
+    val PROFILE_NOT_FOUND_KEY = "profileNotFound"
+    val PROFILE_CHANGE_PROPERTY_KEY = "profileChangeProperty"
+    val PROFILE_REMOVED_KEY = "profileRemoved"
     fun create() {
-        config = CommentedConfiguration(File(instance.dataFolder, "messages.yml"))
-        config!!.createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.")
-        config!!.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.")
-        config!!.createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed %player%'s bypass status to %value%.")
-        config!!.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to %value%.")
-        config!!.createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Changed %player's exempt status to %value%.")
-        config!!.createKeyIfNoneExists(RELOAD_NOTIFICATION_KEY, "&aReloaded Pickpocket configuration.")
-        config!!.createKeyIfNoneExists(PLAYER_NOT_FOUND_KEY, "&cPlayer not found.")
-        config!!.createKeyIfNoneExists(PLAYER_NOT_ACCESSIBLE_KEY, "&cThat player is not accessible.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_DISABLED_KEY, "&cYou have pick-pocketing disabled.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_DISABLED_OTHER_KEY, "&cThat player has pick-pocketing disabled.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_TOGGLE_ON_KEY, "&7Pick-pocketing is now enabled.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_TOGGLE_OFF_KEY, "&7Pick-pocketing is now disabled.")
-        config!!.createKeyIfNoneExists(PERSON_CANT_BE_STOLEN_FROM_KEY, "&7This person cannot be stolen from.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_REGION_DISALLOW_KEY, "&cPick-pocketing is disabled in this region.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_UNSUCCESSFUL_KEY, "&cPickpocket attempt unsuccessful.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_SUCCESSFUL_KEY, "&aPickpocket attempt successful.")
-        config!!.createKeyIfNoneExists(
+        createKeyIfNoneExists(ADMIN_STATUS_CHANGE_KEY, "&7Pickpocket Admin status set to %value%.")
+        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_KEY, "&7Your bypass status has been changed to %value%.")
+        createKeyIfNoneExists(BYPASS_STATUS_CHANGE_OTHER_KEY, "&7Changed %player%'s bypass status to %value%.")
+        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_KEY, "&7Your exempt status has been changed to %value%.")
+        createKeyIfNoneExists(EXEMPT_STATUS_CHANGE_OTHER_KEY, "&7Changed %player's exempt status to %value%.")
+        createKeyIfNoneExists(RELOAD_NOTIFICATION_KEY, "&aReloaded Pickpocket configuration.")
+        createKeyIfNoneExists(PLAYER_NOT_FOUND_KEY, "&cPlayer not found.")
+        createKeyIfNoneExists(PLAYER_NOT_ACCESSIBLE_KEY, "&cThat player is not accessible.")
+        createKeyIfNoneExists(PICKPOCKET_DISABLED_KEY, "&cYou have pick-pocketing disabled.")
+        createKeyIfNoneExists(PICKPOCKET_DISABLED_OTHER_KEY, "&cThat player has pick-pocketing disabled.")
+        createKeyIfNoneExists(PICKPOCKET_TOGGLE_ON_KEY, "&7Pick-pocketing is now enabled.")
+        createKeyIfNoneExists(PICKPOCKET_TOGGLE_OFF_KEY, "&7Pick-pocketing is now disabled.")
+        createKeyIfNoneExists(PERSON_CANT_BE_STOLEN_FROM_KEY, "&7This person cannot be stolen from.")
+        createKeyIfNoneExists(PICKPOCKET_REGION_DISALLOW_KEY, "&cPick-pocketing is disabled in this region.")
+        createKeyIfNoneExists(PICKPOCKET_UNSUCCESSFUL_KEY, "&cPickpocket attempt unsuccessful.")
+        createKeyIfNoneExists(PICKPOCKET_SUCCESSFUL_KEY, "&aPickpocket attempt successful.")
+        createKeyIfNoneExists(
             PARTICIPATING_TRUE_NOTIFICATION_KEY,
             "&7You are currently participating in pick-pocketing."
         )
-        config!!.createKeyIfNoneExists(
+        createKeyIfNoneExists(
             PARTICIPATING_FALSE_NOTIFICATION_KEY,
             "&7You are currently not participating in pick-pocketing."
         )
-        config!!.createKeyIfNoneExists(PICKPOCKET_ON_MOVE_WARNING_KEY, "&cYou cannot move whilst pick-pocketing.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY, "&cThe player moved.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_VICTIM_WARNING_KEY, "&cYou feel something touch your side.")
-        config!!.createKeyIfNoneExists(PICKPOCKET_NOTICED_WARNING_KEY, "&cYou've been noticed.")
-        config!!.createKeyIfNoneExists(
+        createKeyIfNoneExists(PICKPOCKET_ON_MOVE_WARNING_KEY, "&cYou cannot move whilst pick-pocketing.")
+        createKeyIfNoneExists(PICKPOCKET_ON_MOVE_OTHER_WARNING_KEY, "&cThe player moved.")
+        createKeyIfNoneExists(PICKPOCKET_VICTIM_WARNING_KEY, "&cYou feel something touch your side.")
+        createKeyIfNoneExists(PICKPOCKET_NOTICED_WARNING_KEY, "&cYou've been noticed.")
+        createKeyIfNoneExists(
             COOLDOWN_NOTICE_KEY,
             "&cYou must wait %value% seconds before attempting another pickpocket."
         )
-        config!!.createKeyIfNoneExists(NO_MONEY_RECEIVED, "&cYou received no money.")
-        config!!.createKeyIfNoneExists(MONEY_AMOUNT_RECEIVED, "&aYou received $%value%.")
-        config!!.createKeyIfNoneExists(
+        createKeyIfNoneExists(NO_MONEY_RECEIVED, "&cYou received no money.")
+        createKeyIfNoneExists(MONEY_AMOUNT_RECEIVED, "&aYou received $%value%.")
+        createKeyIfNoneExists(
             PICKPOCKET_SUCCESS_ADMIN_NOTIFICATION,
             "&a%player% succeeded in pick-pocketing %victim%."
         )
-        config!!.createKeyIfNoneExists(
+        createKeyIfNoneExists(
             PICKPOCKET_FAILURE_ADMIN_NOTIFICATION,
             "&c%player% failed in pick-pocketing %victim%."
         )
-        config!!.createKeyIfNoneExists(PLAYER_STEAL_FROM_AFK, "&cThat player is AFK.")
-        config!!.createKeyIfNoneExists(PLAYER_STEAL_WHILE_AFK, "&cYou cannot pick-pocket while AFK.")
-        config!!.save()
-    }
-
-    fun reload() {
-        config!!.reload()
+        createKeyIfNoneExists(PLAYER_STEAL_FROM_AFK, "&cThat player is AFK.")
+        createKeyIfNoneExists(PLAYER_STEAL_WHILE_AFK, "&cYou cannot pick-pocket while AFK.")
+        createKeyIfNoneExists(PROFILE_NOT_ASSIGNED_KEY, "&cYou haven't been assigned a profile.")
+        createKeyIfNoneExists(PROFILE_THIEF_CREATE_SUCCESS_KEY, "&aSuccessfully created thief profile %value%.")
+        createKeyIfNoneExists(PROFILE_VICTIM_CREATE_SUCCESS_KEY, "&aSuccessfully created victim profile %value%.")
+        createKeyIfNoneExists(PROFILE_ERROR_ALREADY_EXISTS_KEY, "&cProfile %value% already exists.")
+        createKeyIfNoneExists(PROFILE_NOT_FOUND_KEY, "&cCouldn't find profile %value%.")
+        createKeyIfNoneExists(PROFILE_CHANGE_PROPERTY_KEY, "&aChanged property %value% from %value% to %value% in profile %value%.")
+        createKeyIfNoneExists(PROFILE_REMOVED_KEY, "Removed profile %value%.")
+        save()
     }
 
     private fun getMessage(key: String): String {
-        val keyValue = config!!.configuration.getString(key)!!
+        val keyValue = configuration.getString(key)!!
         return ColorUtils.colorize(keyValue)
     }
 
-    private fun getMessage(key: String, value: String): String {
-        val keyValue = config!!.configuration.getString(key)!!
-        val parsedValue = keyValue.replace("%value%", value)
-        return ColorUtils.colorize(parsedValue)
+    private fun getMessage(key: String, vararg values: String): String {
+        var keyValue = configuration.getString(key)!!
+        values.forEach { keyValue = keyValue.replaceFirst("%value%", it) }
+        return ColorUtils.colorize(keyValue)
     }
 
     private fun getMessage(key: String, player: Player): String {
-        val keyValue = config!!.configuration.getString(key)!!
+        val keyValue = configuration.getString(key)!!
         val parsedValue = keyValue.replace("%player%", player.name)
         return ColorUtils.colorize(parsedValue)
     }
 
     private fun getMessage(key: String, player: Player, value: String): String {
-        val keyValue = config!!.configuration.getString(key)!!
+        val keyValue = configuration.getString(key)!!
         val replacedValue = keyValue.replace("%player%", player.name)
         val replacedPlayer = replacedValue.replace("%value%", value)
         return ColorUtils.colorize(replacedPlayer)
     }
 
     private fun getMessage(key: String, player: Player, victim: Player): String {
-        val keyValue = config!!.configuration.getString(key)!!
+        val keyValue = configuration.getString(key)!!
         val replacedPlayer = keyValue.replace("%player%", player.name)
         val replacedVictim = replacedPlayer.replace("%victim%", victim.name)
         return ColorUtils.colorize(replacedVictim)
@@ -179,13 +190,16 @@ object MessageConfiguration {
         get() = getMessage(PICKPOCKET_VICTIM_WARNING_KEY)
     val pickpocketNoticedWarningMessage: String
         get() = getMessage(PICKPOCKET_NOTICED_WARNING_KEY)
+    val playerStealFromAfkMessage: String
+        get() = getMessage(PLAYER_STEAL_FROM_AFK)
+    val playerStealWhileAfk: String
+        get() = getMessage(PLAYER_STEAL_WHILE_AFK)
+    val noMoneyReceivedMessage: String
+        get() = getMessage(NO_MONEY_RECEIVED)
 
     fun getCooldownNoticeMessage(value: Any): String {
         return getMessage(COOLDOWN_NOTICE_KEY, value.toString())
     }
-
-    val noMoneyReceivedMessage: String
-        get() = getMessage(NO_MONEY_RECEIVED)
 
     fun getMoneyAmountReceivedMessage(value: Any): String {
         return getMessage(MONEY_AMOUNT_RECEIVED, value.toString())
@@ -199,8 +213,11 @@ object MessageConfiguration {
         return getMessage(PICKPOCKET_FAILURE_ADMIN_NOTIFICATION, player, victim)
     }
 
-    val playerStealFromAfkMessage: String
-        get() = getMessage(PLAYER_STEAL_FROM_AFK)
-    val playerStealWhileAfk: String
-        get() = getMessage(PLAYER_STEAL_WHILE_AFK)
+    fun getProfileNotAssignedMessage() = getMessage(PROFILE_NOT_ASSIGNED_KEY)
+    fun getProfileThiefCreateSuccessMessage(value: String) = getMessage(PROFILE_THIEF_CREATE_SUCCESS_KEY, value)
+    fun getProfileVictimCreateSuccessMessage(value: String) = getMessage(PROFILE_VICTIM_CREATE_SUCCESS_KEY, value)
+    fun getProfileErrorAlreadyExistsMessage(value: String) = getMessage(PROFILE_ERROR_ALREADY_EXISTS_KEY, value)
+    fun getProfileNotFoundMessage(value: String) = getMessage(PROFILE_NOT_FOUND_KEY, value)
+    fun getProfileChangePropertyMessage(vararg values: String) = getMessage(PROFILE_CHANGE_PROPERTY_KEY, *values)
+    fun getProfileRemovedMessage(value: String) = getMessage(PROFILE_REMOVED_KEY, value)
 }

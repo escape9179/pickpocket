@@ -19,7 +19,7 @@ class StatusCommand : BasicCommand<Player>(
         val user = PickpocketUser.get(sender)
         sender.sendMessage("""
             Can pickpocket/get pickpocketed: ${user.isParticipating}
-            Can bypass cooldown: ${user.profileConfiguration.bypassSectionValue}
+            Can bypass cooldown: ${user.playerConfiguration.bypassSectionValue}
         """.trimIndent())
         return true
     }

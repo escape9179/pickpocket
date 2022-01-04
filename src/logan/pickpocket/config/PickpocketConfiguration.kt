@@ -1,11 +1,12 @@
 package logan.pickpocket.config
 
-import logan.api.config.CommentedConfiguration
-import logan.pickpocket.main.PickpocketPlugin.Companion.instance
+import logan.api.config.BasicConfiguration
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder, "config.yml")) {
+class PickpocketConfiguration(override var file: File) : BasicConfiguration {
+    override var configuration: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
     fun create() {
         createKeyIfNoneExists(loseMoney, false)
         createKeyIfNoneExists(moneyLost, 0.025)
@@ -29,8 +30,6 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getBoolean(loseMoney)
     val moneyLostPercentage: Double
         get() = configuration.getDouble(moneyLost)
-    val minigameRollRate: Int
-        get() = configuration.getInt(minigameRollRateKey)
     var disabledItems: List<String> = computeDisabledItems()
     val isShowStatusOnInteractEnabled: Boolean
         get() = configuration.getBoolean(statusOnInteractKey)
@@ -38,8 +37,6 @@ class PickpocketConfiguration : CommentedConfiguration(File(instance.dataFolder,
         get() = configuration.getBoolean(statusOnLoginKey)
     val cooldownTime: Int
         get() = configuration.getInt(cooldownTimeKey)
-    val isFishingRodEnabled: Boolean
-        get() = configuration.getBoolean(fishingRodEnabledKey)
     val isForeignTownTheftEnabled: Boolean
         get() = configuration.getBoolean(foreignTownTheftKey)
     val isSameTownTheftEnabled: Boolean

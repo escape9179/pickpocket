@@ -7,7 +7,7 @@ import java.io.IOException
 /**
  * Created by Tre on 1/18/2016.
  */
-class ProfileConfiguration(directory: String, fileName: String) {
+class PlayerConfiguration(directory: String, fileName: String) {
     private val adminSection = "admin"
     private val bypassSection = "bypass"
     private val exemptSection = "exempt"

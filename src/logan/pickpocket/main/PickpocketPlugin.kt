@@ -14,6 +14,7 @@ import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
+import logan.pickpocket.config.ProfileConfiguration
 import logan.pickpocket.listeners.*
 import logan.pickpocket.user.PickpocketUser
 import net.milkbowl.vault.economy.Economy
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,8 +76,10 @@ class PickpocketPlugin : JavaPlugin() {
         //
 
         // Initialize main configuration file
-        pickpocketConfiguration = PickpocketConfiguration()
+        pickpocketConfiguration = PickpocketConfiguration(File(dataFolder, "config.yml"))
         pickpocketConfiguration.create()
+
+        createConfigurations()
 
         // Initialize and create message configuration file.
         MessageConfiguration.create()
@@ -89,6 +93,11 @@ class PickpocketPlugin : JavaPlugin() {
         registerCommand(TargetCommand())
         registerCommand(ToggleCommand())
         registerCommand(StatusCommand())
+        registerCommand(ProfileCommand())
+        registerCommand(ProfileCreateCommand())
+        registerCommand(ProfileEditCommand())
+        registerCommand(ProfileRemoveCommand())
+        registerCommand(ProfileViewCommand())
 
         // Register API listeners
         GUIAPI.registerListeners(this)
@@ -164,6 +173,10 @@ class PickpocketPlugin : JavaPlugin() {
         logger.info("$name disabled.")
     }
 
+    private fun createConfigurations() {
+        profileConfiguration = ProfileConfiguration()
+    }
+
     private fun setupEconomy(): Boolean {
         if (server.pluginManager.getPlugin("Vault") == null) {
             return false
@@ -180,7 +193,6 @@ class PickpocketPlugin : JavaPlugin() {
     }
 
     companion object {
-        @JvmStatic
         lateinit var instance: PickpocketPlugin
             private set
         var users = Vector<PickpocketUser>()
@@ -194,6 +206,7 @@ class PickpocketPlugin : JavaPlugin() {
         val PICKPOCKET_RELOAD: Permission =
             Permission("pickpocket.reload", "Reload the Pickpocket configuration file.")
         lateinit var pickpocketConfiguration: PickpocketConfiguration
+        lateinit var profileConfiguration: ProfileConfiguration
             private set
         var economy: Economy? = null
             private set
@@ -212,7 +225,7 @@ class PickpocketPlugin : JavaPlugin() {
             users.add(profile)
         }
 
-        fun addCooldown(player: Player) {
+        fun addCooldown(player: Player, duration: Int) {
             cooldowns[player] = pickpocketConfiguration.cooldownTime
         }
 

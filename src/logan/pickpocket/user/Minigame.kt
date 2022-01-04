@@ -101,7 +101,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         stealMoney()
         predator.playItemPickupSound()
         predatorUser.steals++
-        predatorUser.profileConfiguration.setSteals(predatorUser.steals)
+        predatorUser.playerConfiguration.setSteals(predatorUser.steals)
         predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
         predatorUser.steals++
@@ -145,7 +145,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.instance, getMinigameRollRate())
     }
 
-    private fun getMinigameRollRate() = PickpocketPlugin.pickpocketConfiguration.minigameRollRate.toLong()
+    private fun getMinigameRollRate() = predatorUser.findThiefProfile()!!.minigameRollRate
 
     private fun scheduleNewShuffleRunnable() = object : BukkitRunnable() {
         override fun run() {
@@ -179,7 +179,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     private fun showAdminNotifications(success: Boolean) {
         Bukkit.getOnlinePlayers().forEach { player ->
             val profile = PickpocketUser.get(player)
-            if (profile.profileConfiguration.adminSectionValue) {
+            if (profile.playerConfiguration.adminSectionValue) {
                 player.sendMessage(
                     if (success)
                         MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(
