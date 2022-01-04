@@ -19,6 +19,13 @@ class ProfileCommand : BasicCommand<Player>(
         /pickpocket profile remove <thief|victim> <name>
         /pickpocket profile edit <thief|victim> <name> <property> <value>
     """.trimIndent()
+)
+
+class ProfileViewCommand : BasicCommand<Player>(
+    "view",
+    parentCommand = "profile",
+    target = SenderTarget.PLAYER,
+    permissionNode = "pickpocket.profile.view"
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val profile = PickpocketUser.get(sender).findThiefProfile() ?: sender.run {
