@@ -22,7 +22,7 @@ class PlayerJoinListener : Listener {
         PickpocketPlugin.database?.addUser(user)
 
         // return without showing status message
-        if (!PickpocketPlugin.pickpocketConfiguration.isShowStatusOnLoginEnabled) return
+        if (!PickpocketPlugin.pickpocketConfiguration.statusOnLogin) return
 
         // show status message
         if (user.isParticipating)
