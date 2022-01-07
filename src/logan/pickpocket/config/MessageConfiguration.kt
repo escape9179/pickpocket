@@ -14,7 +14,6 @@ object MessageConfiguration {
 
     init {
         config["adminStatusChange"] = "&7Pickpocket Admin status set to %value%."
-        config.yamlEditor.write(listOf("Testing write"))
         config["bypassStatusChange"] = "&7Your bypass status has been changed to %value%."
         config["bypassStatusChangeOther"] = "&7Changed %player%'s bypass status to %value%."
         config["exemptStatusChange"] = "&7Your exempt status has been changed to %value%."
