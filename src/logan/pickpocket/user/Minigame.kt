@@ -73,7 +73,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun getPercentageOfVictimBalance(victim: Player): Double {
         val economy = PickpocketPlugin.economy ?: return 0.0
-        return economy.getBalance(victim) * PickpocketPlugin.pickpocketConfiguration.moneyLostPercentage
+        return economy.getBalance(victim) * PickpocketPlugin.pickpocketConfiguration.moneyPercentageToSteal
     }
 
     private fun doMoneyTransaction(thief: Player, victim: Player, amountStolen: Double) {
@@ -86,7 +86,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     }
 
     private fun isMoneyStealEnabled() =
-        PickpocketPlugin.isVaultEnabled && PickpocketPlugin.pickpocketConfiguration.isMoneyLostEnabled
+        PickpocketPlugin.isVaultEnabled && PickpocketPlugin.pickpocketConfiguration.moneyCanBeStolen
 
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {

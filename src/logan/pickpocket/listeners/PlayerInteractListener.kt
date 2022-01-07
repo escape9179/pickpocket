@@ -56,13 +56,13 @@ class PlayerInteractListener : Listener {
 
         /* Foreign town member check */
         if (PickpocketPlugin.isTownyPresent) {
-            if (!isTownMember(event.player) && isTownMember(victim) && !PickpocketPlugin.pickpocketConfiguration.isForeignTownTheftEnabled) {
+            if (!isTownMember(event.player) && isTownMember(victim) && !PickpocketPlugin.pickpocketConfiguration.foreignTownTheft) {
                 event.player.sendMessage("${ChatColor.RED}You cannot steal from players in their own town.")
                 return
             }
 
             /* Same town member check */
-            if (isTownMember(event.player) && isTownMember(victim) && !PickpocketPlugin.pickpocketConfiguration.isSameTownTheftEnabled) {
+            if (isTownMember(event.player) && isTownMember(victim) && !PickpocketPlugin.pickpocketConfiguration.sameTownTheft) {
                 event.player.sendMessage("${ChatColor.RED}You cannot steal from your own town-folk!")
                 return
             }
@@ -77,13 +77,13 @@ class PlayerInteractListener : Listener {
         }
 
         if (!victimUser.isParticipating) {
-            if (PickpocketPlugin.pickpocketConfiguration.isShowStatusOnInteractEnabled)
+            if (PickpocketPlugin.pickpocketConfiguration.statusOnInteract)
                 event.player.sendMessage(MessageConfiguration.pickpocketDisabledOtherMessage)
             return
         }
 
         if (!profile.isParticipating) {
-            if (PickpocketPlugin.pickpocketConfiguration.isShowStatusOnInteractEnabled)
+            if (PickpocketPlugin.pickpocketConfiguration.statusOnInteract)
                 event.player.sendMessage(MessageConfiguration.pickpocketDisabledMessage)
             return
         }

@@ -139,8 +139,4 @@ object MessageConfiguration {
     fun getProfileNotFoundMessage(value: String) = getMessage("profileNotFound", value)
     fun getProfileChangePropertyMessage(vararg values: String) = getMessage("profileChangeProperty", *values)
     fun getProfileRemovedMessage(value: String) = getMessage("profileRemoved", value)
-
-    fun reload() {
-        TODO()
-    }
 }

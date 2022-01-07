@@ -24,7 +24,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -77,10 +76,6 @@ class PickpocketPlugin : JavaPlugin() {
         //
         Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
         Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
-
-        // Initialize main configuration file
-        pickpocketConfiguration = PickpocketConfiguration(File(dataFolder, "config.yml"))
-        pickpocketConfiguration.create()
 
         createConfigurations()
 
@@ -227,7 +222,7 @@ class PickpocketPlugin : JavaPlugin() {
         }
 
         fun addCooldown(player: Player, duration: Int) {
-            cooldowns[player] = pickpocketConfiguration.cooldownTime
+            cooldowns[player] = duration
         }
 
         fun getCooldowns(): Map<Player, Int> {

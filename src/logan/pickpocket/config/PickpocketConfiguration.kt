@@ -8,33 +8,21 @@ object PickpocketConfiguration {
 
     val config = Config("config.yml", PickpocketPlugin.instance.dataFolder.path)
 
-    val isMoneyLostEnabled: Boolean
-        get() = configuration.getBoolean(loseMoney)
-    val moneyLostPercentage: Double
-        get() = configuration.getDouble(moneyLost)
-    var disabledItems: List<String> = computeDisabledItems()
-    val isShowStatusOnInteractEnabled: Boolean
-        get() = configuration.getBoolean(statusOnInteractKey)
-    val isShowStatusOnLoginEnabled: Boolean
-        get() = configuration.getBoolean(statusOnLoginKey)
-    val cooldownTime: Int
-        get() = configuration.getInt(cooldownTimeKey)
-    val isForeignTownTheftEnabled: Boolean
-        get() = configuration.getBoolean(foreignTownTheftKey)
-    val isSameTownTheftEnabled: Boolean
-        get() = configuration.getBoolean(sameTownTheftKey)
-    val databaseEnabled
-        get() = configuration.getBoolean(databaseEnabledKey)
-    val databaseServer
-        get() = configuration.getString(databaseServerKey)
-    val databaseUser
-        get() = configuration.getString(databaseUserKey)
-    val databasePassword
-        get() = configuration.getString(databasePasswordKey)
+    val moneyCanBeStolen = config.getBoolean("money.canBeStolen")
+    val moneyPercentageToSteal = config.getDouble("money.percentageToSteal")
+    var disabledItems = computeDisabledItems()
+    val statusOnInteract = config.getBoolean("statusOnInteract")
+    val isShowStatusOnLoginEnabled = config.getBoolean("statusOnLogin")
+    val foreignTownTheft = config.getBoolean("foreignTownTheft")
+    val sameTownTheft = config.getBoolean("sameTownTheft")
+    val databaseEnabled = config.getBoolean("database.enabled")
+    val databaseServer = config.getString("database.server")
+    val databaseUser = config.getString("database.username")
+    val databasePassword = config.getString("database.password")
 
     private fun computeDisabledItems(): List<String> {
         val finalItems = mutableListOf<String>()
-        for (item in configuration.getStringList(disabledItemsKey)) {
+        for (item in config.getStringList("disabledItems")) {
             when (item.first()) {
                 '*' -> finalItems.addAll(Material.values().map { it.name.lowercase() })
                 '-' -> finalItems.remove(item.drop(1))
@@ -42,10 +30,5 @@ object PickpocketConfiguration {
             }
         }
         return finalItems
-    }
-
-    override fun reload() {
-        super.reload()
-        disabledItems = computeDisabledItems()
     }
 }

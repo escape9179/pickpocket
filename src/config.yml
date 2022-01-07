@@ -22,6 +22,13 @@ statusOnInteract: true
 statusOnLogin: true
 
 # Items that cannot be pickpocketed.
+#
+# Use '*' to disabled every item.
+# Example:
+# disabledItems:
+# - "*"
+# - "-diamond"
+# This will disable every item except for diamonds.
 disabledItems:
   - "shulker_box"
   - "bundle"
@@ -36,11 +43,13 @@ money:
   # persons balance.
   percentageToSteal: 0.025
 
-# Whether players can steal from players in a different town then them.
-foreignTownTheft: true
+# Configuration settings for Towny
+towny:
+  # Whether players can steal from players in a different town then them.
+  foreignTownTheft: true
 
-# Whether players can steal from players in their town.
-sameTownTheft: false
+  # Whether players can steal from players in their town.
+  sameTownTheft: false
 
 # The database keeps track of UUIDs, username's, and the
 # number of times players have picpocketed others successfully.
