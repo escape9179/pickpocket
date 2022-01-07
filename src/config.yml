@@ -1,0 +1,51 @@
+#
+#  _____ _      _                     _        _          ___    ___
+# |  __ (_)    | |                   | |      | |        |__ \  / _ \
+# | |__) |  ___| | ___ __   ___   ___| | _____| |_  __   __ ) || (_) |
+# |  ___/ |/ __| |/ / '_ \ / _ \ / __| |/ / _ \ __| \ \ / // /  > _ <
+# | |   | | (__|   <| |_) | (_) | (__|   <  __/ |_   \ V // /_ | (_) |
+# |_|   |_|\___|_|\_\ .__/ \___/ \___|_|\_\___|\__|   \_/|____(_)___/
+#                   | |
+#                   |_|
+
+# Allows players to toggle pickpocketing on or off.
+# When pickpockoeting is off for an individual player, they
+# cannot pickpocket others, and others cannot pickpocket them.
+pickpocketToggling: true
+
+# Shows players current pickpocket toggle setting
+# when attempting pickpocket another player.
+statusOnInteract: true
+
+# Shows players current pickpocket toggle setting
+# when logging into the server.
+statusOnLogin: true
+
+# Items that cannot be pickpocketed.
+disabledItems:
+  - "shulker_box"
+  - "bundle"
+
+money:
+  # Whether players have a change of stealing money
+  # when pickpocketing.
+  canBeStolen: false
+
+  # The percentage of money to be stolen from the other
+  # plaeyrs balance. Default is 2.5% of the other
+  # persons balance.
+  percentageToSteal: 0.025
+
+# Whether players can steal from players in a different town then them.
+foreignTownTheft: true
+
+# Whether players can steal from players in their town.
+sameTownTheft: false
+
+# The database keeps track of UUIDs, username's, and the
+# number of times players have picpocketed others successfully.
+database:
+  enabled: false
+  server: ""
+  username: ""
+  password: ""

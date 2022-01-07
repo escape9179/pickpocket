@@ -9,6 +9,9 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.6.0/kotlin-stdlib-common-1.6.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.6.0/kotlin-stdlib-jdk7-1.6.0.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+      <element id="library" level="application" name="github.simplix.softworks.SimplixStorage" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/config.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/messages.yml" />
     </root>
   </artifact>
 </component>

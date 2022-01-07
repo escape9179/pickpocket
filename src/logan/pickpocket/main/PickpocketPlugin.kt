@@ -12,7 +12,6 @@ import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
 import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
-import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.config.ProfileConfiguration
 import logan.pickpocket.listeners.*
@@ -26,6 +25,8 @@ import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,6 +75,8 @@ class PickpocketPlugin : JavaPlugin() {
         //
         // Create and initialize configuration files.
         //
+        Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
+        Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
 
         // Initialize main configuration file
         pickpocketConfiguration = PickpocketConfiguration(File(dataFolder, "config.yml"))
@@ -81,8 +84,6 @@ class PickpocketPlugin : JavaPlugin() {
 
         createConfigurations()
 
-        // Initialize and create message configuration file.
-        MessageConfiguration.create()
         users = Vector()
 
         registerCommand(MainCommand())

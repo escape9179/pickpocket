@@ -1,30 +1,12 @@
 package logan.pickpocket.config
 
-import logan.api.config.BasicConfiguration
+import de.leonhard.storage.Config
+import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Material
-import org.bukkit.configuration.file.YamlConfiguration
-import java.io.File
 
-class PickpocketConfiguration(override var file: File) : BasicConfiguration {
-    override var configuration: YamlConfiguration = YamlConfiguration.loadConfiguration(file)
-    fun create() {
-        createKeyIfNoneExists(loseMoney, false)
-        createKeyIfNoneExists(moneyLost, 0.025)
-        createKeyIfNoneExists(minigameRollRateKey, 20)
-        createKeyIfNoneExists(cooldownTimeKey, 10)
-        createKeyIfNoneExists(pickpocketToggleKey, true)
-        createKeyIfNoneExists(statusOnInteractKey, true)
-        createKeyIfNoneExists(statusOnLoginKey, true)
-        createKeyIfNoneExists(disabledItemsKey, listOf("shulker_box", "bundle"))
-        createKeyIfNoneExists(fishingRodEnabledKey, false)
-        createKeyIfNoneExists(foreignTownTheftKey, false)
-        createKeyIfNoneExists(sameTownTheftKey, false)
-        createKeyIfNoneExists(databaseEnabledKey, false)
-        createKeyIfNoneExists(databaseServerKey, "")
-        createKeyIfNoneExists(databaseUserKey, "")
-        createKeyIfNoneExists(databasePasswordKey, "")
-        save()
-    }
+object PickpocketConfiguration {
+
+    val config = Config("config.yml", PickpocketPlugin.instance.dataFolder.path)
 
     val isMoneyLostEnabled: Boolean
         get() = configuration.getBoolean(loseMoney)
@@ -65,23 +47,5 @@ class PickpocketConfiguration(override var file: File) : BasicConfiguration {
     override fun reload() {
         super.reload()
         disabledItems = computeDisabledItems()
-    }
-
-    companion object {
-        private const val loseMoney = "lose-money-on-pickpocket"
-        private const val moneyLost = "pickpocket-money-lost"
-        private const val minigameRollRateKey = "minigame-roll-rate"
-        private const val cooldownTimeKey = "cooldown-time"
-        private const val pickpocketToggleKey = "allow-pickpocket-toggling"
-        private const val statusOnInteractKey = "show-status-on-interact"
-        private const val statusOnLoginKey = "show-status-on-login"
-        private const val disabledItemsKey = "disabled-items"
-        private const val foreignTownTheftKey = "foreign-town-theft"
-        private const val fishingRodEnabledKey = "fishing-rod-pickpocketing"
-        private const val sameTownTheftKey = "same-town-theft"
-        private const val databaseEnabledKey = "database.enable"
-        private const val databaseServerKey = "database.server"
-        private const val databaseUserKey = "database.user"
-        private const val databasePasswordKey = "database.password"
     }
 }
