@@ -24,11 +24,7 @@ statusOnLogin: true
 # Items that cannot be pickpocketed.
 #
 # Use '*' to disabled every item.
-# Example:
-# disabledItems:
-# - "*"
-# - "-diamond"
-# This will disable every item except for diamonds.
+# Use '-' to invert an item e.g. '- "-shulkur_box"'. This will enable the shulkur_box
 disabledItems:
   - "shulker_box"
   - "bundle"
