@@ -149,10 +149,10 @@ class PickpocketPlugin : JavaPlugin() {
         }
 
         // Initialize database.
-        with(pickpocketConfiguration) {
+        with(PickpocketConfiguration) {
             if (databaseEnabled) {
                 database = try {
-                    PickpocketDatabase(databaseServer!!, databaseUser!!, databasePassword!!)
+                    PickpocketDatabase(databaseServer!!, databaseUsername!!, databasePassword!!)
                 } catch (e: NullPointerException) {
                     logger.info("Problem initializing database. Ensure database section in config contains correct values.")
                     e.printStackTrace()

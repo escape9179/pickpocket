@@ -19,7 +19,7 @@ object PickpocketConfiguration {
     val sameTownTheft = config.getBoolean("sameTownTheft")
     val databaseEnabled = config.getBoolean("database.enabled")
     val databaseServer = config.getString("database.server")
-    val databaseUser = config.getString("database.username")
+    val databaseUsername = config.getString("database.username")
     val databasePassword = config.getString("database.password")
 
     private fun computeDisabledItems(): List<String> {
