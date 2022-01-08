@@ -12,7 +12,6 @@ import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
 import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
-import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.config.ProfileConfiguration
 import logan.pickpocket.listeners.*
@@ -25,7 +24,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,15 +74,11 @@ class PickpocketPlugin : JavaPlugin() {
         //
         // Create and initialize configuration files.
         //
-
-        // Initialize main configuration file
-        pickpocketConfiguration = PickpocketConfiguration(File(dataFolder, "config.yml"))
-        pickpocketConfiguration.create()
+        Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
+        Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
 
         createConfigurations()
 
-        // Initialize and create message configuration file.
-        MessageConfiguration.create()
         users = Vector()
 
         registerCommand(MainCommand())
@@ -153,10 +149,10 @@ class PickpocketPlugin : JavaPlugin() {
         }
 
         // Initialize database.
-        with(pickpocketConfiguration) {
+        with(PickpocketConfiguration) {
             if (databaseEnabled) {
                 database = try {
-                    PickpocketDatabase(databaseServer!!, databaseUser!!, databasePassword!!)
+                    PickpocketDatabase(databaseServer!!, databaseUsername!!, databasePassword!!)
                 } catch (e: NullPointerException) {
                     logger.info("Problem initializing database. Ensure database section in config contains correct values.")
                     e.printStackTrace()
@@ -205,7 +201,6 @@ class PickpocketPlugin : JavaPlugin() {
         val PICKPOCKET_TOGGLE: Permission = Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.")
         val PICKPOCKET_RELOAD: Permission =
             Permission("pickpocket.reload", "Reload the Pickpocket configuration file.")
-        lateinit var pickpocketConfiguration: PickpocketConfiguration
         lateinit var profileConfiguration: ProfileConfiguration
             private set
         var economy: Economy? = null
@@ -226,7 +221,7 @@ class PickpocketPlugin : JavaPlugin() {
         }
 
         fun addCooldown(player: Player, duration: Int) {
-            cooldowns[player] = pickpocketConfiguration.cooldownTime
+            cooldowns[player] = duration
         }
 
         fun getCooldowns(): Map<Player, Int> {
