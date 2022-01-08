@@ -1,6 +1,7 @@
 package logan.pickpocket.listeners
 
 import logan.pickpocket.config.MessageConfiguration
+import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.user.PickpocketUser
 import org.bukkit.event.EventHandler
@@ -22,7 +23,7 @@ class PlayerJoinListener : Listener {
         PickpocketPlugin.database?.addUser(user)
 
         // return without showing status message
-        if (!PickpocketPlugin.pickpocketConfiguration.statusOnLogin) return
+        if (!PickpocketConfiguration.statusOnLogin) return
 
         // show status message
         if (user.isParticipating)

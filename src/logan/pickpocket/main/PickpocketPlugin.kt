@@ -201,7 +201,6 @@ class PickpocketPlugin : JavaPlugin() {
         val PICKPOCKET_TOGGLE: Permission = Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.")
         val PICKPOCKET_RELOAD: Permission =
             Permission("pickpocket.reload", "Reload the Pickpocket configuration file.")
-        lateinit var pickpocketConfiguration: PickpocketConfiguration
         lateinit var profileConfiguration: ProfileConfiguration
             private set
         var economy: Economy? = null

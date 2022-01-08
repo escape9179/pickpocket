@@ -1,10 +1,11 @@
 package logan.pickpocket.main
 
+import logan.pickpocket.config.PickpocketConfiguration
 import org.bukkit.Material
 
 class PickpocketUtils {
     companion object {
         fun isItemTypeDisabled(type: Material) =
-            PickpocketPlugin.pickpocketConfiguration.disabledItems.contains(type.name.lowercase())
+            PickpocketConfiguration.disabledItems.contains(type.name.lowercase())
     }
 }

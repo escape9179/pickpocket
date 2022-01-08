@@ -4,6 +4,7 @@ import logan.api.gui.MenuItem
 import logan.api.gui.MenuItemClickEvent
 import logan.api.gui.PlayerInventoryMenu
 import logan.pickpocket.config.MessageConfiguration
+import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -73,7 +74,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun getPercentageOfVictimBalance(victim: Player): Double {
         val economy = PickpocketPlugin.economy ?: return 0.0
-        return economy.getBalance(victim) * PickpocketPlugin.pickpocketConfiguration.moneyPercentageToSteal
+        return economy.getBalance(victim) * PickpocketConfiguration.moneyPercentageToSteal
     }
 
     private fun doMoneyTransaction(thief: Player, victim: Player, amountStolen: Double) {
@@ -86,7 +87,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     }
 
     private fun isMoneyStealEnabled() =
-        PickpocketPlugin.isVaultEnabled && PickpocketPlugin.pickpocketConfiguration.moneyCanBeStolen
+        PickpocketPlugin.isVaultEnabled && PickpocketConfiguration.moneyCanBeStolen
 
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {
