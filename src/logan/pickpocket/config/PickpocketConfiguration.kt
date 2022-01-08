@@ -1,12 +1,14 @@
 package logan.pickpocket.config
 
-import de.leonhard.storage.Config
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Material
+import org.bukkit.configuration.file.YamlConfiguration
+import java.io.File
 
 object PickpocketConfiguration {
 
-    val config = Config("config.yml", PickpocketPlugin.instance.dataFolder.path)
+    val file = File(PickpocketPlugin.instance.dataFolder, "config.yml")
+    var config = YamlConfiguration.loadConfiguration(file)
 
     val moneyCanBeStolen = config.getBoolean("money.canBeStolen")
     val moneyPercentageToSteal = config.getDouble("money.percentageToSteal")
@@ -30,5 +32,9 @@ object PickpocketConfiguration {
             }
         }
         return finalItems
+    }
+
+    fun reload() {
+        config = YamlConfiguration.loadConfiguration(file)
     }
 }

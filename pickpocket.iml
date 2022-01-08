@@ -17,6 +17,5 @@
     <orderEntry type="library" name="jetbrains.kotlin.stdlib" level="application" />
     <orderEntry type="library" name="mysql.connector.java" level="application" />
     <orderEntry type="library" name="jetbrains.exposed.core" level="application" />
-    <orderEntry type="library" name="github.simplix.softworks.SimplixStorage" level="application" />
   </component>
 </module>

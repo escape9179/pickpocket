@@ -1,16 +1,18 @@
 package logan.pickpocket.config
 
-import de.leonhard.storage.Yaml
 import logan.api.util.ColorUtils
 import logan.pickpocket.main.PickpocketPlugin
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import java.io.File
 
 /**
  * Configuration file used for setting message preferences for the plugin.
  */
 object MessageConfiguration {
 
-    private val config = Yaml("messages.yml", PickpocketPlugin.instance.dataFolder.path)
+    val file = File(PickpocketPlugin.instance.dataFolder, "messages.yml")
+    private var config = YamlConfiguration.loadConfiguration(file)
 
     private fun getMessage(key: String): String {
         val keyValue = config.getString(key)!!
@@ -99,4 +101,8 @@ object MessageConfiguration {
     fun getProfileNotFoundMessage(value: String) = getMessage("profileNotFound", value)
     fun getProfileChangePropertyMessage(vararg values: String) = getMessage("profileChangeProperty", *values)
     fun getProfileRemovedMessage(value: String) = getMessage("profileRemoved", value)
+
+    fun reload() {
+        config = YamlConfiguration.loadConfiguration(file)
+    }
 }
