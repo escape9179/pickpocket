@@ -12,45 +12,6 @@ object MessageConfiguration {
 
     private val config = Yaml("messages.yml", PickpocketPlugin.instance.dataFolder.path)
 
-    init {
-        config["adminStatusChange"] = "&7Pickpocket Admin status set to %value%."
-        config["bypassStatusChange"] = "&7Your bypass status has been changed to %value%."
-        config["bypassStatusChangeOther"] = "&7Changed %player%'s bypass status to %value%."
-        config["exemptStatusChange"] = "&7Your exempt status has been changed to %value%."
-        config["exemptStatusChangeOther"] = "&7Changed %player's exempt status to %value%."
-        config["pluginReload"] = "&aReloaded Pickpocket configuration."
-        config["playerNotFound"] = "&cPlayer not found."
-        config["playerNotAccessible"] = "&cThat player is not accessible."
-        config["pickpocketDisabled"] = "&cYou have pick-pocketing disabled."
-        config["pickpocketDisabledOther"] = "&cThat player has pick-pocketing disabled."
-        config["pickpocketToggleOn"] = "&7Pick-pocketing is now enabled."
-        config["pickpocketToggleOff"] = "&7Pick-pocketing is now disabled."
-        config["personCantBeStolenFrom"] = "&7This person cannot be stolen from."
-        config["pickpocketRegionDisallow"] = "&cPick-pocketing is disabled in this region."
-        config["pickpocketUnsuccessful"] = "&cPickpocket attempt unsuccessful."
-        config["pickpocketSuccessful"] = "&aPickpocket attempt successful."
-        config["participatingTrue"] = "&7You are currently participating in pick-pocketing."
-        config["participatingFalse"] = "&7You are currently not participating in pick-pocketing."
-        config["pickpocketOnMoveWarning"] = "&cYou cannot move whilst pick-pocketing."
-        config["pickpocketOnMoveWarningOther"] = "&cThe player moved."
-        config["pickpocketVictimWarning"] = "&cYou feel something touch your side."
-        config["pickpocketNoticedWarning"] = "&cYou've been noticed."
-        config["cooldownNotice"] = "&cYou must wait %value% seconds before attempting another pickpocket."
-        config["noMoneyReceived"] = "&cYou received no money."
-        config["moneyAmountReceived"] = "&aYou received $%value%."
-        config["pickpocketSuccessAdminNotification"] = "&a%player% succeeded in pick-pocketing %victim%."
-        config["pickpocketFailureAdminNotification"] = "&c%player% failed in pick-pocketing %victim%."
-        config["playerAfk"] = "&cThat player is AFK."
-        config["attemptStealWhileAfk"] = "&cYou cannot pick-pocket while AFK."
-        config["profileNotAssigned"] = "&cYou haven't been assigned a profile."
-        config["profileThiefCreate"] = "&aSuccessfully created thief profile %value%."
-        config["profileVictimCreate"] = "&aSuccessfully created victim profile %value%."
-        config["profileAlreadyExists"] = "&cProfile %value% already exists."
-        config["profileNotFound"] = "&cCouldn't find profile %value%."
-        config["profileChangeProperty"] = "&aChanged property %value% from %value% to %value% in profile %value%."
-        config["profileRemoved"] = "Removed profile %value%."
-    }
-
     private fun getMessage(key: String): String {
         val keyValue = config.getString(key)!!
         return ColorUtils.colorize(keyValue)
