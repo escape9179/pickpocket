@@ -24,6 +24,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.permissions.Permission
 import org.bukkit.plugin.java.JavaPlugin
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -77,8 +78,8 @@ class PickpocketPlugin : JavaPlugin() {
         try {
             Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
             Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: FileAlreadyExistsException) {
+            //TODO Don't use exception handling to produce correct functionality
         }
 
         createConfigurations()
