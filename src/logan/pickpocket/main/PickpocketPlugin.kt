@@ -74,8 +74,12 @@ class PickpocketPlugin : JavaPlugin() {
         //
         // Create and initialize configuration files.
         //
-        Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
-        Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
+        try {
+            Files.copy(javaClass.getResourceAsStream("/config.yml")!!, Paths.get(dataFolder.path + "/config.yml"))
+            Files.copy(javaClass.getResourceAsStream("/messages.yml")!!, Paths.get(dataFolder.path + "/messages.yml"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         createConfigurations()
 
