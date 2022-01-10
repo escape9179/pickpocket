@@ -94,6 +94,8 @@ object MessageConfiguration {
     fun getMoneyAmountReceivedMessage(value: Any) = getMessage("moneyAmountReceived", value.toString())
     fun getPickpocketSuccessAdminNotificationMessage(player: Player, victim: Player) = getMessage("pickpocketSuccessAdminNotification", player, victim)
     fun getPickpocketFailureAdminNotification(player: Player, victim: Player) = getMessage("pickpocketFailureAdminNotification", player, victim)
+    fun getProfileAssignSuccessMessage(profile: String, player: Player) = getMessage("profileAssignSuccess", profile, player.name)
+    fun getProfileAssignFailureMessage(profile: String, player: Player) = getMessage("profileAssignFailure", profile, player.name)
     fun getProfileNotAssignedMessage() = getMessage("profileNotAssigned")
     fun getProfileThiefCreateSuccessMessage(value: String) = getMessage("profileThiefCreate", value)
     fun getProfileVictimCreateSuccessMessage(value: String) = getMessage("profileVictimCreate", value)

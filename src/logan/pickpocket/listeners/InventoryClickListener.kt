@@ -29,7 +29,7 @@ class InventoryClickListener : ApiInventoryClickListener {
         if (!profile.isPredator) {
             return
         }
-        if (profile.victim!!.playerConfiguration.exemptSectionValue) {
+        if (profile.victim!!.isExempt) {
             event.isCancelled = true
             profile.bukkitPlayer?.sendMessage(MessageConfiguration.personCantBeStolenFromMessage)
         }

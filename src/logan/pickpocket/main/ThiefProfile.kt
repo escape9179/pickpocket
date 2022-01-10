@@ -29,4 +29,8 @@ class ThiefProfile(override val name: String) : Profile {
     var rummageDuration
         get() = properties["rummageDuration"]!!.toInt()
         set(value) { properties["rummageDuration"] = value.toString() }
+
+    override fun equals(other: Any?): Boolean {
+        return (other as? ThiefProfile)?.name.equals(this.name)
+    }
 }

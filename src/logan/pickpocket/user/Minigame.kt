@@ -102,7 +102,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         stealMoney()
         predator.playItemPickupSound()
         predatorUser.steals++
-        predatorUser.playerConfiguration.setSteals(predatorUser.steals)
+        predatorUser.playerConfiguration.stealCount = predatorUser.steals
         predator.sendMessage(MessageConfiguration.pickpocketSuccessfulMessage)
         showAdminNotifications(true)
         predatorUser.steals++
@@ -180,7 +180,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     private fun showAdminNotifications(success: Boolean) {
         Bukkit.getOnlinePlayers().forEach { player ->
             val profile = PickpocketUser.get(player)
-            if (profile.playerConfiguration.adminSectionValue) {
+            if (profile.playerConfiguration.isAdmin) {
                 player.sendMessage(
                     if (success)
                         MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(

@@ -6,7 +6,6 @@ import java.io.File
 interface BasicConfiguration {
     var file: File
     var configuration: YamlConfiguration
-    val properties: MutableMap<String, String>
 
     fun createKeyIfNoneExists(key: String, value: Any? = null) {
         configuration.setIfNotSet(key, value)
@@ -14,6 +13,10 @@ interface BasicConfiguration {
 
     fun reload() {
         configuration = YamlConfiguration.loadConfiguration(file)
+    }
+
+    operator fun <T> set(key: String, value: T) {
+        configuration.set(key, value)
     }
 
     fun save() = configuration.save(file)

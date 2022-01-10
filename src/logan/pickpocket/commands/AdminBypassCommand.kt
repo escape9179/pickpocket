@@ -23,19 +23,17 @@ class AdminBypassCommand : BasicCommand<Player>(
 
         if (args.isEmpty()) {
             val profile = PickpocketUser.get(sender)
-            val bypassStatus = !profile.playerConfiguration.bypassSectionValue
-            profile.playerConfiguration.setBypassSection(bypassStatus)
-            sender.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(bypassStatus))
+            profile.isBypassing = !profile.isBypassing
+            sender.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(profile.isBypassing))
         } else {
             val otherPlayer = Bukkit.getPlayer(args[0]) ?: run {
                 sender.sendMessage(MessageConfiguration.playerNotFoundMessage)
                 return true
             }
             val otherPlayerProfile = PickpocketUser.get(otherPlayer)
-            val bypassStatus = !otherPlayerProfile.playerConfiguration.bypassSectionValue
-            otherPlayerProfile.playerConfiguration.setBypassSection(bypassStatus)
-            sender.sendMessage(MessageConfiguration.getBypassStatusChangeOtherMessage(otherPlayer, bypassStatus))
-            otherPlayer.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(bypassStatus))
+            otherPlayerProfile.isBypassing = !otherPlayerProfile.isBypassing
+            sender.sendMessage(MessageConfiguration.getBypassStatusChangeOtherMessage(otherPlayer, otherPlayerProfile.isBypassing))
+            otherPlayer.sendMessage(MessageConfiguration.getBypassStatusChangeMessage(otherPlayerProfile.isBypassing))
         }
         return true
     }

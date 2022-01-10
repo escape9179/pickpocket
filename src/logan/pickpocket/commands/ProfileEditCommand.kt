@@ -16,7 +16,7 @@ class ProfileEditCommand : BasicCommand<CommandSender>(
     "pickpocket.profile.edit",
     """
         Usage:
-        /pickpocket profile edit <thief|victim> <name> <property> <value>
+        /pickpocket profile edit <thief|victim> <profile> <property> <value>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {

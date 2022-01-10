@@ -20,10 +20,10 @@ class AdminCommand : BasicCommand<Player>(
     permissionNode = "pickpocket.admin"
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        val profile = PickpocketUser.get(sender)
-        var value = profile.playerConfiguration.adminSectionValue
-        PickpocketUser.get(sender).playerConfiguration.setAdminSection(!value.also { value = it })
-        sender.sendMessage(MessageConfiguration.getAdminStatusChangeMessage(value))
-        return false
+        PickpocketUser.get(sender).run {
+            isAdmin = !isAdmin
+            sender.sendMessage(MessageConfiguration.getAdminStatusChangeMessage(isAdmin))
+            return false
+        }
     }
 }

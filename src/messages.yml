@@ -44,6 +44,8 @@ pickpocketSuccessAdminNotification: "&a%player% succeeded in pick-pocketing %vic
 pickpocketFailureAdminNotification: "&c%player% failed in pick-pocketing %victim%."
 playerAfk: "&cThat player is AFK."
 attemptStealWhileAfk: "&cYou cannot pick-pocket while AFK."
+profileAssignSuccess: "&aSuccessfully assigned profile %value% to player %value%."
+profileAssignFailure: "&cCouldn't assign profile %value% to player %value%.""
 profileNotAssigned: "&cYou haven't been assigned a profile."
 profileThiefCreate: "&aSuccessfully created thief profile %value%."
 profileVictimCreate: "&aSuccessfully created victim profile %value%."

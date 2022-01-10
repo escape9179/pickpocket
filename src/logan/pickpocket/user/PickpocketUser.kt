@@ -26,15 +26,27 @@ class PickpocketUser(val uuid: UUID) {
     var isPlayingMinigame = false
     var isRummaging = false
     var openRummageInventory: RummageInventory? = null
-    var isParticipating = true
-        set(value) {
-            field = value
-            playerConfiguration.setParticipatingSection(value)
-        }
+    var isAdmin
+        get() = playerConfiguration.isAdmin
+        set(value) { playerConfiguration.isAdmin = value }
+    var isBypassing
+        get() = playerConfiguration.isBypassing
+        set(value) { playerConfiguration.isBypassing = value }
+    var isExempt
+        get() = playerConfiguration.isExempt
+        set(value) { playerConfiguration.isExempt = value }
+    var isParticipating
+        get() = playerConfiguration.isParticipating
+        set(value) { playerConfiguration.isParticipating = value }
     var currentMinigame: Minigame? = null
     val playerConfiguration =
         PlayerConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
-    var steals = 0
+    var thiefProfile
+        get() = findThiefProfile()
+        set(value) { playerConfiguration.thiefProfile = value?.name ?: "default" }
+    var steals
+        get() = playerConfiguration.stealCount
+        set(value) { playerConfiguration.stealCount = value }
 
     fun doPickpocket(victim: PickpocketUser) {
         when {
@@ -54,13 +66,21 @@ class PickpocketUser(val uuid: UUID) {
         }
     }
 
-    fun findThiefProfile(): ThiefProfile? {
+    private fun findThiefProfile(): ThiefProfile? {
         return PickpocketPlugin.profileConfiguration.loadThiefProfiles().find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") }
+            ?: PickpocketPlugin.profileConfiguration.loadThiefProfiles().find { thiefProfile?.equals(it) ?: return null }
+    }
+
+    fun assignThiefProfile(name: String): Boolean {
+        PickpocketPlugin.profileConfiguration.loadThiefProfile(name)?.run {
+            thiefProfile = this
+            return true
+        } ?: return false
     }
 
     fun giveCooldown() {
         val thiefProfile = findThiefProfile() ?: return
-        if (!playerConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
+        if (!playerConfiguration.isBypassing) PickpocketPlugin.addCooldown(
             bukkitPlayer!!,
             thiefProfile.cooldown
         ) else Unit

@@ -17,7 +17,7 @@ class ProfileCreateCommand : BasicCommand<CommandSender>(
     "pickpocket.profile.create",
     """
         Usage:
-        /pickpocket profile create <thief|victim> <name>
+        /pickpocket profile create <thief|victim> <profile>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {

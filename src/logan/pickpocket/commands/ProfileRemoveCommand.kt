@@ -15,7 +15,7 @@ class ProfileRemoveCommand : BasicCommand<CommandSender>(
     "pickpocket.profile.remove",
     """
         Usage:
-        /pickpocket profile remove <thief|victim> <name>
+        /pickpocket profile remove <thief|victim> <profile>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {

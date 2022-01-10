@@ -38,7 +38,7 @@ class RummageInventory(private val victim: PickpocketUser) {
                     // Close the rummage inventory
                     menu.close()
                     predator.sendMessage(MessageConfiguration.pickpocketNoticedWarningMessage)
-                    if (!predator.playerConfiguration.bypassSectionValue) PickpocketPlugin.addCooldown(
+                    if (!predator.isBypassing) PickpocketPlugin.addCooldown(
                         predator.bukkitPlayer!!,
                         thiefProfile.cooldown
                     )
