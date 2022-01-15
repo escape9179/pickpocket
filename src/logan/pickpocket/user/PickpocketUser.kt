@@ -68,8 +68,8 @@ class PickpocketUser(val uuid: UUID) {
 
     @Deprecated("For private usage only.")
     fun findThiefProfile(): ThiefProfile? {
-        return PickpocketPlugin.profileConfiguration.loadThiefProfiles().find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") }
-            ?: PickpocketPlugin.profileConfiguration.loadThiefProfiles().find { thiefProfile?.equals(it) ?: return null }
+        val thiefProfiles = PickpocketPlugin.profileConfiguration.loadThiefProfiles()
+        return thiefProfiles.find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") || thiefProfile?.equals(it) ?: false }
     }
 
     fun assignThiefProfile(name: String): Boolean {
