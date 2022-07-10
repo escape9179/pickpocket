@@ -20,6 +20,7 @@ class AdminCommand : BasicCommand<Player>(
     permissionNode = "pickpocket.admin"
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        //TODO Create separate notify command
         PickpocketUser.get(sender).run {
             isAdmin = !isAdmin
             sender.sendMessage(MessageConfiguration.getAdminStatusChangeMessage(isAdmin))

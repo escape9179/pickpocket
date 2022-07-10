@@ -18,10 +18,11 @@ class ToggleCommand : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
 
-        val profile = PickpocketUser.get(sender)
-        profile.isParticipating = !profile.isParticipating
+        val user = PickpocketUser.get(sender)
+        user.isParticipating = !user.isParticipating
+        user.save()
         sender.sendMessage(
-            if (profile.isParticipating)
+            if (user.isParticipating)
                 MessageConfiguration.pickpocketToggleOnMessage else
                 MessageConfiguration.pickpocketToggleOffMessage
         )

@@ -89,6 +89,8 @@ class PickpocketUser(val uuid: UUID) {
 
     private fun isCoolingDown() = PickpocketPlugin.getCooldowns().containsKey(bukkitPlayer)
 
+    fun save() = playerConfiguration.save()
+
     fun sendMessage(message: String, vararg args: Any) {
         bukkitPlayer?.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(message, args)))
     }

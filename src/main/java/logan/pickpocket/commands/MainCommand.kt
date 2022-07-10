@@ -2,7 +2,6 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
-import logan.api.util.sendColoredMessage
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.command.CommandSender
 
@@ -21,7 +20,7 @@ class MainCommand : BasicCommand<CommandSender>(
 
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
 
-        sender.sendColoredMessage(
+        sender.sendMessage(
             """
             Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
             /pickpocket toggle - Toggle pick-pocketing for yourself.

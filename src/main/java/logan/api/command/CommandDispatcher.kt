@@ -1,7 +1,7 @@
 package logan.api.command
 
 import logan.api.util.hasNoPermission
-import logan.api.util.sendColoredMessage
+import logan.api.util.sendMessage
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -27,7 +27,7 @@ class CommandDispatcher private constructor() {
             val foundCommand = searchForSubCommandRecursively(label, args) ?: return true
 
             if (sender.hasNoPermission(foundCommand.first.permissionNode)) {
-                sender.sendColoredMessage("&cNo permission.")
+                sender.sendMessage("&cNo permission.", true)
                 return true
             }
 

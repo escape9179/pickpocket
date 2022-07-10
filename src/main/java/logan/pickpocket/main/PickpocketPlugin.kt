@@ -86,6 +86,8 @@ class PickpocketPlugin : JavaPlugin() {
         users = Vector()
 
         registerCommand(MainCommand())
+        registerCommand(DeveloperCommand())
+        registerCommand(DeveloperGiveRandom())
         registerCommand(AdminCommand())
         registerCommand(AdminBypassCommand())
         registerCommand(AdminExemptCommand())
