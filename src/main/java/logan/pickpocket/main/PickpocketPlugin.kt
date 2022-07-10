@@ -10,7 +10,6 @@ import logan.api.command.CommandDispatcher
 import logan.api.command.CommandDispatcher.Companion.registerCommand
 import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
-import logan.pickpocket.PickpocketDatabase
 import logan.pickpocket.commands.*
 import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.config.ProfileConfiguration
@@ -154,20 +153,6 @@ class PickpocketPlugin : JavaPlugin() {
             }
         }
 
-        // Initialize database.
-        with(PickpocketConfiguration) {
-            if (databaseEnabled) {
-                database = try {
-                    PickpocketDatabase(databaseServer!!, databaseUsername!!, databasePassword!!)
-                } catch (e: NullPointerException) {
-                    logger.info("Problem initializing database. Ensure database section in config contains correct values.")
-                    e.printStackTrace()
-                    return@with
-                }
-                this@PickpocketPlugin.logger.info("Finished setting up database.")
-            } else this@PickpocketPlugin.logger.info("Database support disabled in config.")
-        }
-
         logger.info("$name enabled.")
     }
 
@@ -218,8 +203,6 @@ class PickpocketPlugin : JavaPlugin() {
         var isWorldGuardPresent = false
             private set
         var isTownyPresent = false
-            private set
-        var database: PickpocketDatabase? = null
             private set
         var PICKPOCKET_FLAG: StateFlag? = null
         fun addProfile(profile: PickpocketUser?) {

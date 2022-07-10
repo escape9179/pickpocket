@@ -51,11 +51,3 @@ towny:
 
   # Whether players can steal from players in their town.
   sameTownTheft: false
-
-# The database keeps track of UUIDs, username's, and the
-# number of times players have picpocketed others successfully.
-database:
-  enabled: false
-  server: ""
-  username: ""
-  password: ""

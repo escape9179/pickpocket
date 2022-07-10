@@ -20,7 +20,6 @@ class PlayerJoinListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
 
         val user = PickpocketUser.get(event.player)
-        PickpocketPlugin.database?.addUser(user)
 
         // return without showing status message
         if (!PickpocketConfiguration.statusOnLogin) return
