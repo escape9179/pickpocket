@@ -59,6 +59,8 @@ object MessageConfiguration {
         get() = getMessage("pickpocketToggleOn")
     val pickpocketToggleOffMessage: String
         get() = getMessage("pickpocketToggleOff")
+    val participationTogglingDisabled: String
+        get() = getMessage("participationTogglingDisabled")
     val personCantBeStolenFromMessage: String
         get() = getMessage("personCantBeStolenFrom")
     val pickpocketRegionDisallowMessage: String

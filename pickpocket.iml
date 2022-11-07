@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
+<module version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>PAPER</platformType>
+          <platformType>ADVENTURE</platformType>
+        </autoDetectTypes>
+      </configuration>
+    </facet>
+    <facet type="kotlin-language" name="Kotlin">
+      <configuration version="5" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false">
+        <compilerSettings />
+        <compilerArguments>
+          <stringArguments>
+            <stringArg name="jvmTarget" arg="1.8" />
+            <stringArg name="apiVersion" arg="1.7" />
+            <stringArg name="languageVersion" arg="1.7" />
+          </stringArguments>
+          <arrayArguments>
+            <arrayArg name="pluginClasspaths" />
+            <arrayArg name="pluginOptions" />
+          </arrayArguments>
+        </compilerArguments>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
     </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="io.papermc.paper.api" level="application" />
-    <orderEntry type="library" name="github.MilkBowl.VaultAPI" level="application" />
-    <orderEntry type="library" name="jetbrains.annotations" level="application" />
-    <orderEntry type="library" name="net.essentialsx.EssentialsX" level="application" />
-    <orderEntry type="library" name="sk89q.worldedit.bukkit" level="application" />
-    <orderEntry type="library" name="sk89q.worldguard.bukkit" level="application" />
-    <orderEntry type="library" name="github.LlmDl.Towny" level="application" />
-    <orderEntry type="library" name="jetbrains.kotlin.stdlib" level="application" />
-    <orderEntry type="library" name="mysql.connector.java" level="application" />
-    <orderEntry type="library" name="jetbrains.exposed.core" level="application" />
   </component>
 </module>

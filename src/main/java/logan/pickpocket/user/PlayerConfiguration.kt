@@ -2,6 +2,7 @@ package logan.pickpocket.user
 
 import logan.api.config.BasicConfiguration
 import logan.api.config.setIfNotSet
+import logan.pickpocket.config.PickpocketConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
@@ -33,11 +34,14 @@ class PlayerConfiguration(directory: String, fileName: String) : BasicConfigurat
         set(value) { configuration.set("thiefProfile", value) }
 
     init {
+        // We set these incase the users configuration doesn't contain
+        // one of these keys (due to an error, or upgrading of the plugin where
+        // the configuration file already exists causing the absence of new keys).
         configuration.setIfNotSet("admin", false)
         configuration.setIfNotSet("bypass", false)
         configuration.setIfNotSet("exempt", false)
         configuration.setIfNotSet("steals", 0)
-        configuration.setIfNotSet("participating", false)
+        configuration.setIfNotSet("participating", true)
         configuration.setIfNotSet("thiefProfile", "default")
         save()
     }

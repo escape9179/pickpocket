@@ -10,6 +10,7 @@ object PickpocketConfiguration {
     val file = File(PickpocketPlugin.instance.dataFolder, "config.yml")
     var config = YamlConfiguration.loadConfiguration(file)
 
+    val isParticipationTogglingEnabled = config.getBoolean("pickpocketToggling")
     val moneyCanBeStolen = config.getBoolean("money.canBeStolen")
     val moneyPercentageToSteal = config.getDouble("money.percentageToSteal")
     var disabledItems = computeDisabledItems()
