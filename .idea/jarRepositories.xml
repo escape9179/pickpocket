@@ -3,28 +3,13 @@
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
       <option name="id" value="central" />
-      <option name="name" value="Maven Central repository" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="2898fd53-faac-4dac-a914-f0813ebede0a" />
-      <option name="name" value="2898fd53-faac-4dac-a914-f0813ebede0a" />
-      <option name="url" value="https://repo.essentialsx.net/releases/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="189f2f65-3a2a-4862-9c8f-f2729e7117ec" />
-      <option name="name" value="189f2f65-3a2a-4862-9c8f-f2729e7117ec" />
+      <option name="id" value="jitpack.io" />
+      <option name="name" value="jitpack.io" />
       <option name="url" value="https://jitpack.io" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="fce01789-59e7-4f77-9b73-4e713ac38211" />
-      <option name="name" value="fce01789-59e7-4f77-9b73-4e713ac38211" />
-      <option name="url" value="https://maven.enginehub.org/repo/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="a9a9312d-c057-49c9-9408-08c2f0e66f35" />
@@ -32,14 +17,59 @@
       <option name="url" value="https://papermc.io/repo/repository/maven-public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="155033d0-955b-46dd-bf4c-1a023382f005" />
-      <option name="name" value="155033d0-955b-46dd-bf4c-1a023382f005" />
-      <option name="url" value="http://maven.elmakers.com/repository/" />
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="189f2f65-3a2a-4862-9c8f-f2729e7117ec" />
+      <option name="name" value="189f2f65-3a2a-4862-9c8f-f2729e7117ec" />
+      <option name="url" value="https://jitpack.io" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="papermc" />
+      <option name="name" value="papermc" />
+      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="sk89q-repo" />
+      <option name="name" value="sk89q-repo" />
+      <option name="url" value="https://maven.enginehub.org/repo/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="2898fd53-faac-4dac-a914-f0813ebede0a" />
+      <option name="name" value="2898fd53-faac-4dac-a914-f0813ebede0a" />
+      <option name="url" value="https://repo.essentialsx.net/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="essentials-releases" />
+      <option name="name" value="essentials-releases" />
+      <option name="url" value="https://repo.essentialsx.net/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spigot-repo" />
+      <option name="name" value="spigot-repo" />
+      <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="fce01789-59e7-4f77-9b73-4e713ac38211" />
+      <option name="name" value="fce01789-59e7-4f77-9b73-4e713ac38211" />
+      <option name="url" value="https://maven.enginehub.org/repo/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="8b10dda2-d27a-4f2c-b659-dcf4442ad8db" />
       <option name="name" value="8b10dda2-d27a-4f2c-b659-dcf4442ad8db" />
       <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="155033d0-955b-46dd-bf4c-1a023382f005" />
+      <option name="name" value="155033d0-955b-46dd-bf4c-1a023382f005" />
+      <option name="url" value="http://maven.elmakers.com/repository/" />
     </remote-repository>
   </component>
 </project>

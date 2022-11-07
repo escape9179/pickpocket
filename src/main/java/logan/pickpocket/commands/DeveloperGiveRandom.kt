@@ -22,7 +22,7 @@ class DeveloperGiveRandom : BasicCommand<Player>(
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val maxMaterials = Material.values().size
-        for (i in 0..args[1].toInt()) {
+        for (i in 0..args[0].toInt()) {
             val material = Material.values()[Random().nextInt(maxMaterials - 1)]
             sender.inventory.addItem(ItemStack(material, (Math.random() * material.maxStackSize - 1).toInt()))
         }
