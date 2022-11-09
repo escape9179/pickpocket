@@ -14,7 +14,8 @@ class InventoryClickListener : ApiInventoryClickListener {
     override fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         val profile = PickpocketUser.get(player)
-        val inventory: Inventory? = event.clickedInventory
+//        val inventory: Inventory? = event.clickedInventory
+        val inventory: Inventory? = event.inventory
         if (profile.isRummaging || profile.isPlayingMinigame) {
             event.isCancelled = true
             return

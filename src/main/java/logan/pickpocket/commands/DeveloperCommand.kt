@@ -6,14 +6,16 @@ import org.bukkit.entity.Player
 
 class DeveloperCommand : BasicCommand<Player>(
     "developer",
+    "pickpocket.developer",
     1..1,
-    listOf(String::class),
     target = SenderTarget.PLAYER,
-    permissionNode = "pickpocket.developer",
-    usage = """
+        usage = """
         /pickpocket developer giverandom
     """.trimIndent(),
     aliases = arrayOf("dev"),
     parentCommand = "pickpocket"
 ) {
+    override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
+        TODO("Not yet implemented")
+    }
 }

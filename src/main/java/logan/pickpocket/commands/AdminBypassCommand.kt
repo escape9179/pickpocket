@@ -9,11 +9,12 @@ import org.bukkit.entity.Player
 
 class AdminBypassCommand : BasicCommand<Player>(
     "bypass",
-    0..1,
-    listOf(String::class),
-    "admin",
+    "pickpocket.admin.bypass", //0..1,
+    0..1, //listOf(String::class),
+    arrayOf("admin"),
     SenderTarget.PLAYER,
-    "pickpocket.admin.bypass",
+    "admin",
+    listOf(String::class),
     """
         /pickpocket admin bypass - Enable cooldown delay bypass for yourself.
         /pickpocket admin bypass [name] - Enable cooldown delay bypass for another person.
