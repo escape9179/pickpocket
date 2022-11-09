@@ -5,6 +5,8 @@
       <configuration>
         <autoDetectTypes>
           <platformType>PAPER</platformType>
+          <platformType>SPIGOT</platformType>
+          <platformType>BUKKIT</platformType>
           <platformType>ADVENTURE</platformType>
         </autoDetectTypes>
       </configuration>

@@ -31,7 +31,7 @@ statusOnLogin: true
 # Use '*' to disabled every item.
 # Use '-' to invert an item e.g. '- "-shulkur_box"'. This will enable the shulkur_box
 disabledItems:
-  - "shulker_box"
+  - "shulkur_box"
   - "bundle"
 
 money:
