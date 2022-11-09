@@ -10,12 +10,12 @@ import org.bukkit.command.CommandSender
 
 class ProfileCreateCommand : BasicCommand<CommandSender>(
     "create",
-    2..2,
-    listOf(String::class, String::class),
-    "profile",
-    SenderTarget.BOTH,
     "pickpocket.profile.create",
-    """
+    2..2,
+    target = SenderTarget.BOTH,
+    argTypes = listOf(String::class, String::class),
+    parentCommand = "profile",
+    usage = """
         Usage:
         /pickpocket profile create <thief|victim> <profile>
     """.trimIndent()

@@ -9,12 +9,12 @@ import org.bukkit.command.CommandSender
 
 class ProfileEditCommand : BasicCommand<CommandSender>(
     "edit",
-    4..4,
-    listOf(String::class, String::class, String::class, String::class),
-    "profile",
-    SenderTarget.BOTH,
-    "pickpocket.profile.edit",
-    """
+    argRange = 4..4,
+    argTypes = listOf(String::class, String::class, String::class, String::class),
+    parentCommand = "profile",
+    target = SenderTarget.BOTH,
+    permissionNode = "pickpocket.profile.edit",
+    usage = """
         Usage:
         /pickpocket profile edit <thief|victim> <profile> <property> <value>
     """.trimIndent()

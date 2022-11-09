@@ -8,12 +8,12 @@ import org.bukkit.command.CommandSender
 
 class ProfileRemoveCommand : BasicCommand<CommandSender>(
     "remove",
-    2..2,
-    listOf(String::class, String::class),
-    "profile",
-    SenderTarget.BOTH,
-    "pickpocket.profile.remove",
-    """
+    argRange = 2..2,
+    argTypes = listOf(String::class, String::class),
+    parentCommand = "profile",
+    target = SenderTarget.BOTH,
+    permissionNode = "pickpocket.profile.remove",
+    usage = """
         Usage:
         /pickpocket profile remove <thief|victim> <profile>
     """.trimIndent()

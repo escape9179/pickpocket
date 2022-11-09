@@ -10,12 +10,12 @@ import org.bukkit.entity.Player
 
 class ProfileCommand : BasicCommand<CommandSender>(
     "profile",
-    1..3,
-    listOf(String::class, String::class, String::class),
-    "pickpocket",
-    SenderTarget.BOTH,
-    "pickpocket.profile.view",
-    """
+    "pickpocket.profile.view", //1..3,
+    1..3, //listOf(String::class, String::class, String::class),
+//    "pickpocket",
+    target = SenderTarget.BOTH,
+    usage =
+        """
         Usage:
         /pickpocket profile view
         /pickpocket profile create <thief|victim> <profile>
@@ -23,7 +23,11 @@ class ProfileCommand : BasicCommand<CommandSender>(
         /pickpocket profile edit <thief|victim> <profile> <property> <value>
         /pickpocket profile assign <thief|victim> <profile> <player>
     """.trimIndent()
-)
+) {
+    override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
+        return true
+    }
+}
 
 class ProfileViewCommand : BasicCommand<Player>(
     "view",
@@ -43,12 +47,12 @@ class ProfileViewCommand : BasicCommand<Player>(
 
 class ProfileAssignCommand : BasicCommand<CommandSender>(
     "assign",
-    2..2,
-    listOf(String::class, String::class),
-    "profile",
-    SenderTarget.BOTH,
     "pickpocket.profile.assign",
-    """
+    2..2,
+    argTypes = listOf(String::class, String::class),
+    parentCommand = "profile",
+    target = SenderTarget.BOTH,
+    usage = """
         Usage:
         /pickpocket profile assign <profile> <player>
     """.trimIndent()

@@ -10,15 +10,15 @@ import java.util.Random
 
 class DeveloperGiveRandom : BasicCommand<Player>(
     "giverandom",
-    1..1,
-    listOf(String::class),
-    parentCommand = "developer",
-    SenderTarget.PLAYER,
-    permissionNode = "pickpocket.developer.giverandom",
+    "pickpocket.developer.giverandom",    //1..1,
+    1..1,//listOf(String::class),
+    arrayOf("gr"),
+    target = SenderTarget.PLAYER,
+    argTypes = listOf(String::class),
     usage = """
         /pickpocket developer giverandom <amount>
     """.trimIndent(),
-    aliases = arrayOf("gr")
+    parentCommand = "developer"
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
         val maxMaterials = Material.values().size

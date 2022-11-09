@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 class TargetCommand : BasicCommand<Player>(
     name = "target",
     argRange = 1..1,
-    listOf(String::class),
+    argTypes =     listOf(String::class),
     parentCommand = "pickpocket",
     target = SenderTarget.PLAYER,
     permissionNode = "pickpocket.target",
