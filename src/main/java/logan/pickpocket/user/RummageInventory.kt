@@ -2,7 +2,6 @@ package logan.pickpocket.user
 
 import logan.api.gui.MenuItem
 import logan.api.gui.PlayerInventoryMenu
-import logan.api.gui.fill.UniFill
 import logan.api.util.getRandomItemFromMainInventory
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
@@ -53,7 +52,6 @@ class RummageInventory(private val victim: PickpocketUser) {
 
     private fun populateRummageMenu() {
         menu.clear()
-        menu.fill(UniFill(Material.AIR))
         val randomItems = randomItemsFromPlayer
         for (randomItem in randomItems) {
             val randomSlot = (Math.random() * (menu.size - 9)).toInt()
@@ -103,7 +101,6 @@ class RummageInventory(private val victim: PickpocketUser) {
     }
 
     init {
-        menu.fill(UniFill(Material.AIR))
         rummageButton = MenuItem(rummageButtonText, ItemStack(Material.CHEST))
         rummageButton.addListener {
             val predator = victim.predator

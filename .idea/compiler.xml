@@ -9,8 +9,5 @@
         <module name="pickpocket" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="pickpocket" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
