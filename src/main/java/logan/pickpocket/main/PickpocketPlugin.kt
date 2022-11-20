@@ -17,6 +17,7 @@ import logan.pickpocket.listeners.*
 import logan.pickpocket.user.PickpocketUser
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -28,6 +29,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.logging.Level
 
 /**
  * Created by Tre on 12/14/2015.
@@ -150,16 +152,16 @@ class PickpocketPlugin : JavaPlugin() {
             if (description.version.equals(version, ignoreCase = true)) {
                 logger.info("There is not a new update available.")
             } else {
-                logger.info("There is a new update available from https://www.spigotmc.org/resources/pickpocket.16273/.")
-                logger.info(String.format("Pickpocket %s -> %s", description.version, version))
+                server.consoleSender.sendMessage("${ChatColor.YELLOW}There is a new update available from https://www.spigotmc.org/resources/pickpocket.16273/.")
+                server.consoleSender.sendMessage(String.format("${ChatColor.YELLOW}Pickpocket %s -> %s", description.version, version))
             }
         }
 
-        logger.info("$name enabled.")
+        server.consoleSender.sendMessage("${ChatColor.GREEN}$name enabled.")
     }
 
     override fun onDisable() {
-        logger.info("$name disabled.")
+        server.consoleSender.sendMessage("${ChatColor.RED}$name disabled.")
     }
 
     private fun createConfigurations() {
