@@ -21,7 +21,7 @@ class PlayerJoinListener : Listener {
         val user = PickpocketUser.get(event.player)
         validateUserToggleStatus(user)
 
-        if (PickpocketConfiguration.statusOnLogin)
+        if (PickpocketConfiguration.showStatusOnLogin)
             showStatusMessage(user)
     }
 
