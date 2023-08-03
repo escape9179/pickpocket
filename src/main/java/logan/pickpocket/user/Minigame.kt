@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val maxTries = 5
+private const val requiredClicks = 3
 private const val inventorySize = 36
 
 class Minigame(val predatorUser: PickpocketUser, private val victimUser: PickpocketUser, private val item: ItemStack) {
@@ -118,8 +118,8 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun doGameLoop() {
         shuffleInventoryItems()
-        if (timesTried.incrementAndGet() >= maxTries) {
-            if (correctClicks.get() >= maxTries) doPickpocketSuccess() else doPickpocketFailure()
+        if (timesTried.incrementAndGet() >= requiredClicks) {
+            if (correctClicks.get() >= requiredClicks) doPickpocketSuccess() else doPickpocketFailure()
             stop()
             predatorUser.giveCooldown()
         } else {
