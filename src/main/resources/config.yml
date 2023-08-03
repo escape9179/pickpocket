@@ -50,4 +50,4 @@ towny:
   foreignTownTheft: true
 
   # Whether players can steal from players in their town.
-  sameTownTheft: false
+  sameTownTheft: true
