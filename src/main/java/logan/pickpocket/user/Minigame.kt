@@ -172,8 +172,14 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
             correctClicks.incrementAndGet()
             clickedInTime.set(true)
             event.player.playExperienceOrbPickupSound()
+            playRummageSoundForVictim()
         } else event.player.playBassSound()
         doGameLoop()
+    }
+
+    private fun playRummageSoundForVictim() {
+        val victimLocation = victimUser.bukkitPlayer.location
+        victimUser.bukkitPlayer.playSound(victimLocation, Sound.BLOCK_SNOW_STEP, 1.0f, 1.0f)
     }
 
     private fun showAdminNotifications(success: Boolean) {
