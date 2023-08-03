@@ -4,6 +4,7 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.user.PickpocketUser
+import org.apache.logging.log4j.message.Message
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -32,9 +33,8 @@ class PlayerJoinListener : Listener {
     }
 
     private fun showStatusMessage(user: PickpocketUser) {
-        if (user.isParticipating)
-            user.bukkitPlayer.sendMessage(MessageConfiguration.participatingTrueNotificationMessage)
-        else
-            user.bukkitPlayer.sendMessage(MessageConfiguration.participatingFalseNotificationMessage)
+        val message =
+            if (user.isParticipating) MessageConfiguration.participatingTrueNotificationMessage else MessageConfiguration.participatingFalseNotificationMessage
+        user.bukkitPlayer.sendMessage(message)
     }
 }
