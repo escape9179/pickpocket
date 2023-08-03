@@ -18,16 +18,23 @@ class PlayerJoinListener : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-
         val user = PickpocketUser.get(event.player)
+        validateUserToggleStatus(user)
 
-        // return without showing status message
-        if (!PickpocketConfiguration.statusOnLogin) return
+        if (PickpocketConfiguration.statusOnLogin)
+            showStatusMessage(user)
+    }
 
-        // show status message
+    private fun validateUserToggleStatus(user: PickpocketUser) {
+        if (!PickpocketConfiguration.isParticipationTogglingEnabled) {
+            user.isParticipating = true
+        }
+    }
+
+    private fun showStatusMessage(user: PickpocketUser) {
         if (user.isParticipating)
-            event.player.sendMessage(MessageConfiguration.participatingTrueNotificationMessage)
+            user.bukkitPlayer.sendMessage(MessageConfiguration.participatingTrueNotificationMessage)
         else
-            event.player.sendMessage(MessageConfiguration.participatingFalseNotificationMessage)
+            user.bukkitPlayer.sendMessage(MessageConfiguration.participatingFalseNotificationMessage)
     }
 }
