@@ -80,7 +80,7 @@ object MessageConfiguration {
     val pickpocketVictimWarningMessage: String
         get() = getMessage("pickpocketVictimWarning")
     val pickpocketNoticedWarningMessage: String
-        get() = getMessage("pickpocketNoticeWarning")
+        get() = getMessage("pickpocketNoticedWarning")
     val playerStealFromAfkMessage: String
         get() = getMessage("playerAfk")
     val playerStealWhileAfk: String
