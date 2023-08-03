@@ -73,9 +73,8 @@ class RummageInventory(private val victim: PickpocketUser) {
         }
         menu.addItem(menu.bottomRight, rummageButton)
         menu.update()
-    }// This item is disabled. Skip this random item iteration.
+    }
 
-    // Check if the item is banned
     private val randomItemsFromPlayer: List<ItemStack>
         get() {
             val randomItemList: MutableList<ItemStack> = ArrayList()
