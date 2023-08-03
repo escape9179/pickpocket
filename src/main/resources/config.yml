@@ -40,7 +40,7 @@ money:
   canBeStolen: false
 
   # The percentage of money to be stolen from the other
-  # plaeyrs balance. Default is 2.5% of the other
+  # players balance. Default is 2.5% of the other
   # persons balance.
   percentageToSteal: 0.025
 
