@@ -16,7 +16,7 @@
 # Allows players to toggle pickpocketing on or off.
 # When pickpockoeting is off for an individual player, they
 # cannot pickpocket others, and others cannot pickpocket them.
-pickpocketToggling: true
+pickpocketToggling: false
 
 # Shows players current pickpocket toggle setting
 # when attempting pickpocket another player.
