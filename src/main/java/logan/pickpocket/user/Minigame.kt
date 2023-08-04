@@ -111,7 +111,10 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun doGameLoop() {
         shuffleInventoryItems()
-        if (correctClicks.get() >= requiredClicks) doPickpocketSuccess()
+        if (correctClicks.get() >= requiredClicks) {
+            doPickpocketSuccess()
+            stop()
+        }
     }
 
     private fun shuffleInventoryItems() {
