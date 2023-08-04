@@ -15,7 +15,6 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
-    private var rummageCount = 0
     private val rummageButton: MenuItem
     private val menu: PlayerInventoryMenu =
         PlayerInventoryMenu(menuTitle, 4)
@@ -69,7 +68,6 @@ class RummageInventory(private val victim: PickpocketUser) {
     companion object {
         private const val menuTitle = "Rummage"
         private const val rummageButtonText = "Keep rummaging..."
-        private const val rummageTimerTickRate = 20
     }
 
     init {
