@@ -15,8 +15,6 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.atomic.AtomicInteger
 
 class RummageInventory(private val victim: PickpocketUser) {
-    private var rummageCount = 0
-    private var rummageTimerTask: BukkitTask? = null
     private val rummageButton: MenuItem
     private val menu: PlayerInventoryMenu =
         PlayerInventoryMenu(menuTitle, 4)
@@ -27,27 +25,6 @@ class RummageInventory(private val victim: PickpocketUser) {
         populateRummageMenu()
         menu.addItem(menu.bottomRight, rummageButton)
         menu.show(predator.bukkitPlayer)
-
-        // Start rummage timer
-        rummageTimerTask = object : BukkitRunnable() {
-            val tickCount = AtomicInteger(0)
-            override fun run() {
-                if (tickCount.getAndIncrement() >= thiefProfile.rummageDuration) {
-                    victim.playRummageSound()
-                    // Close the rummage inventory
-                    menu.close()
-                    predator.sendMessage(MessageConfiguration.pickpocketNoticedWarningMessage)
-                    if (!predator.isBypassing) PickpocketPlugin.addCooldown(
-                        predator.bukkitPlayer!!,
-                        thiefProfile.cooldown
-                    )
-                    rummageTimerTask!!.cancel()
-                }
-                with(predator.bukkitPlayer!!) {
-                    playSound(location, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f)
-                }
-            }
-        }.runTaskTimer(PickpocketPlugin.instance, rummageTimerTickRate.toLong(), rummageTimerTickRate.toLong())
     }
 
     private fun populateRummageMenu() {
@@ -59,7 +36,6 @@ class RummageInventory(private val victim: PickpocketUser) {
             menuItem.addListener { menuItemClickEvent ->
                 val predator = victim.predator
                 predator!!.isRummaging = false
-                rummageTimerTask!!.cancel()
                 val bottomRightSlot = menu.bottomRight
                 menu.addItem(bottomRightSlot, MenuItem(ItemStack(Material.AIR)))
                 menu.update()
@@ -89,14 +65,9 @@ class RummageInventory(private val victim: PickpocketUser) {
             return randomItemList
         }
 
-    fun close() {
-        rummageTimerTask!!.cancel()
-    }
-
     companion object {
         private const val menuTitle = "Rummage"
         private const val rummageButtonText = "Keep rummaging..."
-        private const val rummageTimerTickRate = 20
     }
 
     init {
@@ -105,13 +76,7 @@ class RummageInventory(private val victim: PickpocketUser) {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()
-
-            val thiefProfile = predator.findThiefProfile()!!
-            if (++rummageCount >= thiefProfile.maxRummageCount)
-                predator.bukkitPlayer!!.run {
-                    closeInventory()
-                    sendMessage("You may only rummage a maximum of ${thiefProfile.maxRummageCount} times.")
-                }
+            victim.playRummageSound()
         }
     }
 }

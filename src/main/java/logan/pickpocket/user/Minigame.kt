@@ -17,18 +17,14 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val requiredClicks = 3
 private const val inventorySize = 36
 
 class Minigame(val predatorUser: PickpocketUser, private val victimUser: PickpocketUser, private val item: ItemStack) {
-    private lateinit var gameTimerTask: BukkitTask
     private val gui = PlayerInventoryMenu(
         "Pick-pocketing ${victimUser.bukkitPlayer?.name}",
         inventorySize / 9
     )
     private val correctClicks = AtomicInteger(0)
-    private val timesTried = AtomicInteger(0)
-    private val clickedInTime = AtomicBoolean(false)
 
     private fun setupGUI(inventory: Inventory) {
         val menuItemMap = createMinigameMenuItems(inventory)
@@ -46,11 +42,9 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         showGUI()
         predatorUser.isPlayingMinigame = true
         predatorUser.currentMinigame = this
-        resetGameTimerRunnable()
     }
 
     fun stop() {
-        gameTimerTask.cancel()
         reset()
         predatorUser.isPlayingMinigame = false
         predatorUser.bukkitPlayer?.closeInventory()
@@ -61,8 +55,6 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun reset() {
         correctClicks.set(0)
-        timesTried.set(0)
-        clickedInTime.set(false)
     }
 
     private fun stealItem(thief: Player, victim: Player, item: ItemStack) {
@@ -118,13 +110,9 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun doGameLoop() {
         shuffleInventoryItems()
-        if (timesTried.incrementAndGet() >= requiredClicks) {
-            if (correctClicks.get() >= requiredClicks) doPickpocketSuccess() else doPickpocketFailure()
+        if (correctClicks.get() >= PickpocketConfiguration.requiredClicksToPickpocket) {
+            doPickpocketSuccess()
             stop()
-            predatorUser.giveCooldown()
-        } else {
-            resetGameTimerRunnable()
-            clickedInTime.set(false)
         }
     }
 
@@ -140,22 +128,6 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         }
     }
 
-    private fun resetGameTimerRunnable() {
-        val gameTimerRunnable = scheduleNewShuffleRunnable()
-        gameTimerTask = gameTimerRunnable.runTaskLater(PickpocketPlugin.instance, getMinigameRollRate())
-    }
-
-    private fun getMinigameRollRate() = predatorUser.findThiefProfile()!!.minigameRollRate
-
-    private fun scheduleNewShuffleRunnable() = object : BukkitRunnable() {
-        override fun run() {
-            if (!clickedInTime.get()) {
-                doGameLoop()
-                predatorUser.bukkitPlayer?.playBassSound()
-            }
-        }
-    }
-
     private fun createMinigameMenuItems(inventory: Inventory): Map<Int, MenuItem> {
         val menuItemMap = HashMap<Int, MenuItem>()
         for (i in 0 until inventorySize) {
@@ -167,10 +139,8 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     }
 
     private fun onMenuItemClick(event: MenuItemClickEvent) {
-        gameTimerTask.cancel()
         if (event.menuItem != null && event.menuItem.itemStack.type == item.type) {
             correctClicks.incrementAndGet()
-            clickedInTime.set(true)
             event.player.playExperienceOrbPickupSound()
             playRummageSoundForVictim()
         } else event.player.playBassSound()

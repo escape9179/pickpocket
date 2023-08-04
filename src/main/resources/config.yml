@@ -34,6 +34,10 @@ disabledItems:
   - "shulkur_box"
   - "bundle"
 
+# The number of times the player must click an item in another players
+# inventory before the pickpocket is deemed successful.
+requiredClicksToPickpocket: 8
+
 money:
   # Whether players have a change of stealing money
   # when pickpocketing.
