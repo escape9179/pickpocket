@@ -34,7 +34,7 @@ disabledItems:
   - "shulkur_box"
   - "bundle"
 
-requiredClicksToPickpcoket: 8
+requiredClicksToPickpocket: 8
 
 money:
   # Whether players have a change of stealing money
