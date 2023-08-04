@@ -24,7 +24,7 @@ statusOnInteract: true
 
 # Shows players current pickpocket toggle setting
 # when logging into the server.
-statusOnLogin: true
+showStatusOnLogin: true
 
 # Items that cannot be pickpocketed.
 #

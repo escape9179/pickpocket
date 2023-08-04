@@ -4,6 +4,7 @@ import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.user.PickpocketUser
+import org.apache.logging.log4j.message.Message
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -18,16 +19,22 @@ class PlayerJoinListener : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-
         val user = PickpocketUser.get(event.player)
+        validateUserToggleStatus(user)
 
-        // return without showing status message
-        if (!PickpocketConfiguration.statusOnLogin) return
+        if (PickpocketConfiguration.showStatusOnLogin)
+            showStatusMessage(user)
+    }
 
-        // show status message
-        if (user.isParticipating)
-            event.player.sendMessage(MessageConfiguration.participatingTrueNotificationMessage)
-        else
-            event.player.sendMessage(MessageConfiguration.participatingFalseNotificationMessage)
+    private fun validateUserToggleStatus(user: PickpocketUser) {
+        if (!PickpocketConfiguration.isParticipationTogglingEnabled) {
+            user.isParticipating = true
+        }
+    }
+
+    private fun showStatusMessage(user: PickpocketUser) {
+        val message =
+            if (user.isParticipating) MessageConfiguration.participatingTrueNotificationMessage else MessageConfiguration.participatingFalseNotificationMessage
+        user.bukkitPlayer.sendMessage(message)
     }
 }
