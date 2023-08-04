@@ -18,7 +18,6 @@ class InventoryCloseListener : ApiInventoryCloseListener {
             player.sendMessage(MessageConfiguration.pickpocketUnsuccessfulMessage)
         }
         if (profile.isRummaging) {
-            profile.openRummageInventory!!.close()
             profile.isRummaging = false
             profile.victim!!.predator = null
             profile.victim = null
