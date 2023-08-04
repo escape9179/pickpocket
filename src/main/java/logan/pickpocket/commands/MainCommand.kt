@@ -19,12 +19,10 @@ class MainCommand : BasicCommand<CommandSender>(
 ) {
 
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
-
         sender.sendMessage(
             """
             Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
             /pickpocket toggle - Toggle pick-pocketing for yourself.
-            /pickpocket target - Pick-pocket a player near you.
             /pickpocket status - Check status of toggleable values.
             
             Admin commands:
