@@ -14,6 +14,7 @@ object PickpocketConfiguration {
     val moneyCanBeStolen = config.getBoolean("money.canBeStolen")
     val moneyPercentageToSteal = config.getDouble("money.percentageToSteal")
     var disabledItems = computeDisabledItems()
+    var requiredClicksToPickpocket = config.getInt("requiredClicksToPickpocket")
     val statusOnInteract = config.getBoolean("statusOnInteract")
     val showStatusOnLogin = config.getBoolean("showStatusOnLogin")
     val foreignTownTheft = config.getBoolean("foreignTownTheft")
