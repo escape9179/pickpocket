@@ -62,6 +62,7 @@ public class PlayerInventoryMenu implements InventoryMenu {
 
     @Override
     public void update() {
+        inventory.clear();
         menuItems.forEach((s, mi) -> inventory.setItem(s, mi.getItemStack()));
     }
 
