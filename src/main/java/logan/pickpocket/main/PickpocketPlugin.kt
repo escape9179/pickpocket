@@ -94,7 +94,6 @@ class PickpocketPlugin : JavaPlugin() {
         registerCommand(AdminBypassCommand())
         registerCommand(AdminExemptCommand())
         registerCommand(ReloadCommand())
-        registerCommand(TargetCommand())
         registerCommand(ToggleCommand())
         registerCommand(StatusCommand())
         registerCommand(ProfileCommand())
