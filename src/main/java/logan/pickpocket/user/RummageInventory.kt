@@ -76,6 +76,7 @@ class RummageInventory(private val victim: PickpocketUser) {
             val predator = victim.predator
             populateRummageMenu()
             predator!!.playRummageSound()
+            victim.playRummageSound()
         }
     }
 }
