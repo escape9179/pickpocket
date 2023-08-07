@@ -10,26 +10,39 @@ commands:
     description: Display help information for PickPocket.
     permission: pickpocket.use
 permissions:
-  pickpocket.admin:
-    description: Access to administrative commands.
-    children:
-      pickpocket.admin.bypass: false
-      pickpocket.admin.exempt: false
-      pickpocket.admin.toggle: false
-  pickpocket.developer:
-    description: Access to developer commands.
-    children:
-      pickpocket.developer.giverandom: false
   pickpocket.use:
     description: Basic access to plugin features.
     default: true
+  pickpocket.admin:
+    description: Access to administrative commands.
+    children:
+      pickpocket.admin.bypass: true
+      pickpocket.admin.exempt: true
+      pickpocket.admin.toggle: true
+  pickpocket.admin.bypass:
+    description: Ability to bypass pickpocketing cooldown.
+  pickpocket.admin.exempt:
+    description: Exempt yourself from getting pickpocketed.
+  pickpocket.admin.toggle:
+    description: Toggle pickpocketing on or off for the server.
+  pickpocket.developer:
+    description: Access to developer commands.
+    children:
+      pickpocket.developer.giverandom: true
+  pickpocket.profile:
+    description: Access to profile commands.
+    children:
+      pickpocket.profile.view: true
+      pickpocket.profile.create: true
+      pickpocket.profile.edit: true
+      pickpocket.profile.remove: true
   pickpocket.profile.view:
-    description: Access to the command for viewing profiles.
+    description: View the properties and values of a configured profile.
   pickpocket.profile.create:
-    description: Access to the command for creating profiles.
+    description: Permission to create configuration profiles.
   pickpocket.profile.edit:
-    description: Access to the command for editing already existing profiles.
+    description: Permission to edit configuration profiles.
   pickpocket.profile.remove:
-    description: Access to the command for removing profiles.
+    description: Permission to remove configuration profiles.
   pickpocket.reload:
     description: Access to the plugin reload command.
