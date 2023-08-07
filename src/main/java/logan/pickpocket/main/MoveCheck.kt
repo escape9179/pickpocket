@@ -52,7 +52,6 @@ class MoveCheck {
                     predatorProfile.bukkitPlayer!!.closeInventory()
                     predatorProfile.isRummaging = false
                 }
-                user.lastPredator!!.sendMessage(MessageConfiguration.pickpocketOnMoveOtherWarningMessage)
                 user.predator = null
                 predatorProfile.victim = null
             }

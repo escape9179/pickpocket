@@ -1,7 +1,6 @@
 package logan.pickpocket.main
 
 class Profile(val name: String) {
-    val type = ProfileType.THIEF
     val properties = mutableMapOf(
         "cooldown" to "10",
         "canUseFishingRod" to "false",
