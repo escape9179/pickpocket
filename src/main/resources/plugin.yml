@@ -9,3 +9,28 @@ commands:
     aliases: pp
     description: Display help information for PickPocket.
     permission: pickpocket.use
+permissions:
+  pickpocket.admin:
+    description: Access to administrative commands.
+    children:
+      pickpocket.admin.bypass: false
+      pickpocket.admin.exempt: false
+  pickpocket.developer:
+    description: Access to developer commands.
+    children:
+      pickpocket.developer.giverandom: false
+  pickpocket.use:
+    description: Basic access to plugin features.
+    default: true
+  pickpocket.profile.view:
+    description: Access to the command for viewing profiles.
+  pickpocket.profile.create:
+    description: Access to the command for creating profiles.
+  pickpocket.profile.edit:
+    description: Access to the command for editing already existing profiles.
+  pickpocket.profile.remove:
+    description: Access to the command for removing profiles.
+  pickpocket.reload:
+    description: Access to the plugin reload command.
+  pickpocket.toggle:
+    description: Access to the command for toggling pickpocketing on or off.
