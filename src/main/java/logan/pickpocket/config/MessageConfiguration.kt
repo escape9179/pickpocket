@@ -65,8 +65,6 @@ object MessageConfiguration {
         get() = getMessage("pickpocketSuccessful")
     val pickpocketOnMoveWarningMessage: String
         get() = getMessage("pickpocketOnMoveWarning")
-    val pickpocketOnMoveOtherWarningMessage: String
-        get() = getMessage("pickpocketOnMoveWarningOther")
     val playerStealFromAfkMessage: String
         get() = getMessage("playerAfk")
     val playerStealWhileAfk: String
