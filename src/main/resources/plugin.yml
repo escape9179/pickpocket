@@ -1,6 +1,6 @@
 main: logan.pickpocket.main.PickpocketPlugin
 name: Pickpocket
-version: 2.8-SNAPSHOT
+version: 2.8
 author: escape9179
 api-version: "1.17"
 softdepend: [ Vault, WorldGuard, WorldEdit, Essentials, Towny ]
