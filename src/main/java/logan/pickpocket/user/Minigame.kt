@@ -4,7 +4,7 @@ import logan.api.gui.MenuItem
 import logan.api.gui.MenuItemClickEvent
 import logan.api.gui.PlayerInventoryMenu
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.config.PickpocketConfiguration
+import logan.pickpocket.config.Config
 import logan.pickpocket.main.PickpocketPlugin
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -12,9 +12,6 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scheduler.BukkitTask
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val inventorySize = 36
@@ -66,7 +63,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun getPercentageOfVictimBalance(victim: Player): Double {
         val economy = PickpocketPlugin.economy ?: return 0.0
-        return economy.getBalance(victim) * PickpocketConfiguration.moneyPercentageToSteal
+        return economy.getBalance(victim) * Config.moneyPercentageToSteal
     }
 
     private fun doMoneyTransaction(thief: Player, victim: Player, amountStolen: Double) {
@@ -79,7 +76,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
     }
 
     private fun isMoneyStealEnabled() =
-        PickpocketPlugin.isVaultEnabled && PickpocketConfiguration.moneyCanBeStolen
+        PickpocketPlugin.isVaultEnabled && Config.moneyCanBeStolen
 
     private fun stealMoney() {
         if (isMoneyStealEnabled()) {
@@ -110,7 +107,7 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
 
     private fun doGameLoop() {
         shuffleInventoryItems()
-        if (correctClicks.get() >= PickpocketConfiguration.requiredClicksToPickpocket) {
+        if (correctClicks.get() >= Config.requiredClicksToPickpocket) {
             doPickpocketSuccess()
             stop()
         }

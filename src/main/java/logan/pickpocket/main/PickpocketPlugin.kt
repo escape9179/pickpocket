@@ -11,7 +11,6 @@ import logan.api.command.CommandDispatcher.Companion.registerCommand
 import logan.api.gui.GUIAPI
 import logan.api.util.UpdateChecker
 import logan.pickpocket.commands.*
-import logan.pickpocket.config.PickpocketConfiguration
 import logan.pickpocket.config.ProfileConfiguration
 import logan.pickpocket.listeners.*
 import logan.pickpocket.user.PickpocketUser
@@ -29,7 +28,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.logging.Level
 
 /**
  * Created by Tre on 12/14/2015.
@@ -108,7 +106,6 @@ class PickpocketPlugin : JavaPlugin() {
         GUIAPI.registerInventoryClickListener(InventoryClickListener())
         GUIAPI.registerInventoryCloseListener(InventoryCloseListener())
         PlayerInteractListener()
-        PlayerJoinListener()
         server.pluginManager.registerEvents(ProjectileHitListener(), this)
         val scheduler = server.scheduler
 

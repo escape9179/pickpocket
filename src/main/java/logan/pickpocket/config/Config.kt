@@ -5,18 +5,19 @@ import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
-object PickpocketConfiguration {
+object Config {
 
     val file = File(PickpocketPlugin.instance.dataFolder, "config.yml")
     var config = YamlConfiguration.loadConfiguration(file)
 
-    val isParticipationTogglingEnabled = config.getBoolean("pickpocketToggling")
+    var isPickpocketingEnabled
+        get() = config.getBoolean("pickpocketingEnabled")
+        set(value) = config.set("pickpocketingEnabled", value)
     val moneyCanBeStolen = config.getBoolean("money.canBeStolen")
     val moneyPercentageToSteal = config.getDouble("money.percentageToSteal")
     var disabledItems = computeDisabledItems()
     var requiredClicksToPickpocket = config.getInt("requiredClicksToPickpocket")
     val statusOnInteract = config.getBoolean("statusOnInteract")
-    val showStatusOnLogin = config.getBoolean("showStatusOnLogin")
     val foreignTownTheft = config.getBoolean("foreignTownTheft")
     val sameTownTheft = config.getBoolean("sameTownTheft")
     val databaseEnabled = config.getBoolean("database.enabled")

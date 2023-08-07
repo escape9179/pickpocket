@@ -2,7 +2,6 @@ package logan.pickpocket.user
 
 import logan.api.config.BasicConfiguration
 import logan.api.config.setIfNotSet
-import logan.pickpocket.config.PickpocketConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
@@ -26,9 +25,6 @@ class PlayerConfiguration(directory: String, fileName: String) : BasicConfigurat
     var stealCount
         get() = configuration.getInt("steals")
         set(value) = configuration.set("steals", value)
-    var isParticipating
-        get() = configuration.getBoolean("participating")
-        set(value) = configuration.set("participating", value)
     var thiefProfile
         get() = configuration.getString("thiefProfile")
         set(value) { configuration.set("thiefProfile", value) }
@@ -41,7 +37,6 @@ class PlayerConfiguration(directory: String, fileName: String) : BasicConfigurat
         configuration.setIfNotSet("bypass", false)
         configuration.setIfNotSet("exempt", false)
         configuration.setIfNotSet("steals", 0)
-        configuration.setIfNotSet("participating", true)
         configuration.setIfNotSet("thiefProfile", "default")
         save()
     }
