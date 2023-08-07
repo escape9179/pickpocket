@@ -142,17 +142,14 @@ class Minigame(val predatorUser: PickpocketUser, private val victimUser: Pickpoc
         if (event.menuItem != null && event.menuItem.itemStack.type == item.type) {
             correctClicks.incrementAndGet()
             event.player.playExperienceOrbPickupSound()
-            playSoundForVictim(Sound.BLOCK_SNOW_STEP)
-        } else {
-            event.player.playBassSound()
-            playSoundForVictim(Sound.BLOCK_SNOW_STEP)
-        }
+            playRummageSoundForVictim()
+        } else event.player.playBassSound()
         doGameLoop()
     }
 
-    private fun playSoundForVictim(sound: Sound) {
+    private fun playRummageSoundForVictim() {
         val victimLocation = victimUser.bukkitPlayer.location
-        victimUser.bukkitPlayer.playSound(victimLocation, sound, 1.0f, 1.0f)
+        victimUser.bukkitPlayer.playSound(victimLocation, Sound.BLOCK_SNOW_STEP, 1.0f, 1.0f)
     }
 
     private fun showAdminNotifications(success: Boolean) {
