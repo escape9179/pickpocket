@@ -2,25 +2,22 @@ package logan.pickpocket.commands
 
 import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
-import logan.pickpocket.user.PickpocketUser
+import logan.pickpocket.config.Config
 import org.bukkit.entity.Player
 
 class StatusCommand : BasicCommand<Player>(
     "status",
+    parentCommand = "admin",
     target = SenderTarget.PLAYER,
-    permissionNode = "pickpocket.use",
+    permissionNode = "pickpocket.admin.status",
     usage = """
         Usage:
-        /pickpocket status (no args)"
+        /pickpocket admin status (no args)"
     """.trimIndent()
 ) {
 
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-        val user = PickpocketUser.get(sender)
-        sender.sendMessage("""
-            Can pickpocket/get pickpocketed: ${user.isParticipating}
-            Can bypass cooldown: ${user.isBypassing}
-        """.trimIndent())
+        sender.sendMessage("Pickpocketing is ${Config.isPickpocketingEnabled}.")
         return true
     }
 }

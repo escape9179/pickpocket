@@ -3,7 +3,7 @@ package logan.pickpocket.listeners
 import com.earth2me.essentials.Essentials
 import com.palmergames.bukkit.towny.TownyAPI
 import logan.pickpocket.config.MessageConfiguration
-import logan.pickpocket.config.PickpocketConfiguration
+import logan.pickpocket.config.Config
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.user.PickpocketUser
 import org.bukkit.ChatColor
@@ -57,13 +57,13 @@ class PlayerInteractListener : Listener {
 
         /* Foreign town member check */
         if (PickpocketPlugin.isTownyPresent) {
-            if (!isTownMember(event.player) && isTownMember(victim) && !PickpocketConfiguration.foreignTownTheft) {
+            if (!isTownMember(event.player) && isTownMember(victim) && !Config.foreignTownTheft) {
                 event.player.sendMessage("${ChatColor.RED}You cannot steal from players in their own town.")
                 return
             }
 
             /* Same town member check */
-            if (isTownMember(event.player) && isTownMember(victim) && !PickpocketConfiguration.sameTownTheft) {
+            if (isTownMember(event.player) && isTownMember(victim) && !Config.sameTownTheft) {
                 event.player.sendMessage("${ChatColor.RED}You cannot steal from your own town-folk!")
                 return
             }
@@ -77,15 +77,9 @@ class PlayerInteractListener : Listener {
             return
         }
 
-        if (!victimUser.isParticipating) {
-            if (PickpocketConfiguration.statusOnInteract)
+        if (!Config.isPickpocketingEnabled) {
+            if (Config.statusOnInteract)
                 event.player.sendMessage(MessageConfiguration.pickpocketDisabledOtherMessage)
-            return
-        }
-
-        if (!profile.isParticipating) {
-            if (PickpocketConfiguration.statusOnInteract)
-                event.player.sendMessage(MessageConfiguration.pickpocketDisabledMessage)
             return
         }
 

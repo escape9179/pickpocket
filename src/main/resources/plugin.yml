@@ -15,6 +15,7 @@ permissions:
     children:
       pickpocket.admin.bypass: false
       pickpocket.admin.exempt: false
+      pickpocket.admin.toggle: false
   pickpocket.developer:
     description: Access to developer commands.
     children:
@@ -32,5 +33,3 @@ permissions:
     description: Access to the command for removing profiles.
   pickpocket.reload:
     description: Access to the plugin reload command.
-  pickpocket.toggle:
-    description: Access to the command for toggling pickpocketing on or off.

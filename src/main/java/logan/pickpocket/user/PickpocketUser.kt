@@ -35,9 +35,6 @@ class PickpocketUser(val uuid: UUID) {
     var isExempt
         get() = playerConfiguration.isExempt
         set(value) { playerConfiguration.isExempt = value }
-    var isParticipating
-        get() = playerConfiguration.isParticipating
-        set(value) { playerConfiguration.isParticipating = value }
     var currentMinigame: Minigame? = null
     val playerConfiguration =
         PlayerConfiguration("${PickpocketPlugin.instance.dataFolder}/players/", "$uuid.yml")
