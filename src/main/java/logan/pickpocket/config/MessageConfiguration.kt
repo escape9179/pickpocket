@@ -49,12 +49,12 @@ object MessageConfiguration {
         get() = getMessage("pluginReload")
     val playerNotFoundMessage: String
         get() = getMessage("playerNotFound")
-    val pickpocketDisabledOtherMessage: String
-        get() = getMessage("pickpocketDisabledOther")
     val pickpocketToggleOnMessage: String
         get() = getMessage("pickpocketToggleOn")
     val pickpocketToggleOffMessage: String
         get() = getMessage("pickpocketToggleOff")
+    val pickpocketDisabledMessage: String
+        get() = getMessage("pickpocketDisabled")
     val personCantBeStolenFromMessage: String
         get() = getMessage("personCantBeStolenFrom")
     val pickpocketRegionDisallowMessage: String

@@ -79,7 +79,7 @@ class PlayerInteractListener : Listener {
 
         if (!Config.isPickpocketingEnabled) {
             if (Config.statusOnInteract)
-                event.player.sendMessage(MessageConfiguration.pickpocketDisabledOtherMessage)
+                event.player.sendMessage(MessageConfiguration.pickpocketDisabledMessage)
             return
         }
 
