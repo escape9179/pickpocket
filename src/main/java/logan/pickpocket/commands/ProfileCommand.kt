@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 
 class ProfileCommand : BasicCommand<CommandSender>(
     "profile",
-    "pickpocket.profile.view", //1..3,
+    "pickpocket.profile", //1..3,
     1..3, //listOf(String::class, String::class, String::class),
 //    "pickpocket",
     target = SenderTarget.BOTH,
@@ -18,10 +18,10 @@ class ProfileCommand : BasicCommand<CommandSender>(
         """
         Usage:
         /pickpocket profile view
-        /pickpocket profile create <thief|victim> <profile>
-        /pickpocket profile remove <thief|victim> <profile>
-        /pickpocket profile edit <thief|victim> <profile> <property> <value>
-        /pickpocket profile assign <thief|victim> <profile> <player>
+        /pickpocket profile create <name>
+        /pickpocket profile remove <name>
+        /pickpocket profile edit <name> <property> <value>
+        /pickpocket profile assign <name> <player>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {

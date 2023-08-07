@@ -2,8 +2,6 @@ package logan.pickpocket.config
 
 import logan.pickpocket.main.PickpocketPlugin
 import logan.pickpocket.main.Profile
-import logan.pickpocket.main.ProfileType
-import logan.pickpocket.main.ThiefProfile
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
@@ -12,30 +10,30 @@ class ProfileConfiguration {
     var config = YamlConfiguration.loadConfiguration(file)
 
     init {
-        if (!config.isConfigurationSection("thiefProfiles.default")) {
-            config.createSection("thiefProfiles.default")
-            config["thiefProfiles.default.cooldown"] = 10
-            config["thiefProfiles.default.canUseFishingRod"] = false
-            config["thiefProfiles.default.minigameRollRate"] = 20
-            config["thiefProfiles.default.maxRummageCount"] = 5
-            config["thiefProfiles.default.numberOfRummageItems"] = 4
-            config["thiefProfiles.default.rummageDuration"] = 3
+        if (!config.isConfigurationSection("profiles.default")) {
+            config.createSection("profiles.default")
+            config["profiles.default.cooldown"] = 10
+            config["profiles.default.canUseFishingRod"] = false
+            config["profiles.default.minigameRollRate"] = 20
+            config["profiles.default.maxRummageCount"] = 5
+            config["profiles.default.numberOfRummageItems"] = 4
+            config["profiles.default.rummageDuration"] = 3
             config.save(file)
         }
     }
 
-    fun loadThiefProfiles(): List<ThiefProfile> {
-        val profiles = mutableListOf<ThiefProfile>()
-        val keys = config.getConfigurationSection("thiefProfiles")!!.getKeys(false)
-        keys.forEach { profiles.add(loadThiefProfile(it) ?: return@forEach) }
+    fun loadProfiles(): List<Profile> {
+        val profiles = mutableListOf<Profile>()
+        val keys = config.getConfigurationSection("profiles")!!.getKeys(false)
+        keys.forEach { profiles.add(loadProfile(it) ?: return@forEach) }
         return profiles
     }
 
-    fun loadThiefProfile(name: String): ThiefProfile? {
-        val thiefProfileSection = config.getConfigurationSection("thiefProfiles.$name") ?: return null
-        return ThiefProfile(name).apply {
+    fun loadProfile(name: String): Profile? {
+        val profileSection = config.getConfigurationSection("profiles.$name") ?: return null
+        return Profile(name).apply {
             for (prop in properties)
-                properties[prop.key] = thiefProfileSection.getString(prop.key)!!
+                properties[prop.key] = profileSection.getString(prop.key)!!
         }
     }
 
@@ -43,31 +41,29 @@ class ProfileConfiguration {
         config = YamlConfiguration.loadConfiguration(file)
     }
 
-    fun createThiefProfile(name: String): Boolean {
-        lateinit var thiefProfile: ThiefProfile
+    fun createProfile(name: String): Boolean {
+        lateinit var profile: Profile
         config.run {
-            if (isConfigurationSection( "thiefProfiles.$name")) return false
-            thiefProfile = ThiefProfile(name)
-            thiefProfile.properties.forEach { set("thiefProfiles.$name.${it.key}", it.value) }
+            if (isConfigurationSection( "profiles.$name")) return false
+            profile = Profile(name)
+            profile.properties.forEach { set("profiles.$name.${it.key}", it.value) }
             save(file)
         }
         return true
     }
 
-    fun removeThiefProfile(name: String): Boolean {
-        return if (config.getConfigurationSection("thiefProfiles")!!.isConfigurationSection(name)) {
-            config.set("thiefProfiles.$name", null)
+    fun removeProfile(name: String): Boolean {
+        return if (config.getConfigurationSection("profiles")!!.isConfigurationSection(name)) {
+            config.set("profiles.$name", null)
             config.save(file)
             true
         } else false
     }
 
     fun saveProfile(profile: Profile): Boolean {
-        return if (profile.type == ProfileType.THIEF) {
-            val thiefProfileSection = config.getConfigurationSection("thiefProfiles.${profile.name}") ?: return false
-            profile.properties.forEach { (k, v) -> thiefProfileSection[k] = v }
-            config.save(file)
-            true
-        } else false
+        val profileSection = config.getConfigurationSection("profiles.${profile.name}") ?: return false
+        profile.properties.forEach { (k, v) -> profileSection[k] = v }
+        config.save(file)
+        return true
     }
 }

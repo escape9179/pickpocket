@@ -20,7 +20,6 @@ class AdminExemptCommand : BasicCommand<Player>(
     """.trimIndent()
 ) {
     override fun run(sender: Player, args: Array<out String>, data: Any?): Boolean {
-
         if (args.isEmpty()) {
             val profile = PickpocketUser.get(sender)
             profile.isExempt = !profile.isExempt

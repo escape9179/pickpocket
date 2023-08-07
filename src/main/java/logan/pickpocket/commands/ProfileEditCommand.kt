@@ -4,38 +4,37 @@ import logan.api.command.BasicCommand
 import logan.api.command.SenderTarget
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
-import logan.pickpocket.main.ProfileType
 import org.bukkit.command.CommandSender
 
 class ProfileEditCommand : BasicCommand<CommandSender>(
     "edit",
-    argRange = 4..4,
+    argRange = 3..3,
     argTypes = listOf(String::class, String::class, String::class, String::class),
     parentCommand = "profile",
     target = SenderTarget.BOTH,
     permissionNode = "pickpocket.profile.edit",
     usage = """
         Usage:
-        /pickpocket profile edit <thief|victim> <profile> <property> <value>
+        /pickpocket profile edit <profile> <property> <value>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
-        when (args[0]) {
-            ProfileType.THIEF.friendlyName -> {
-                val profile = PickpocketPlugin.profileConfiguration.loadThiefProfile(args[1]) ?: run {
-                    sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[1]))
-                    return true
-                }
-                if (profile.properties.containsKey(args[2])) {
-                    val previousValue = profile.properties[args[2]]
-                    profile.properties[args[2]] = args[3]
-                    sender.sendMessage(MessageConfiguration.getProfileChangePropertyMessage(args[2], previousValue.toString(), args[3], profile.name))
-                    profile.save()
-                }
-            }
-            ProfileType.VICTIM.friendlyName -> {
-                TODO()
-            }
+        val profile = PickpocketPlugin.profileConfiguration.loadProfile(args[0]) ?: run {
+            sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[0]))
+            return true
+        }
+        if (profile.properties.containsKey(args[1])) {
+            val previousValue = profile.properties[args[1]]
+            profile.properties[args[1]] = args[2]
+            sender.sendMessage(
+                MessageConfiguration.getProfileChangePropertyMessage(
+                    args[1],
+                    previousValue.toString(),
+                    args[2],
+                    profile.name
+                )
+            )
+            profile.save()
         }
         return true
     }

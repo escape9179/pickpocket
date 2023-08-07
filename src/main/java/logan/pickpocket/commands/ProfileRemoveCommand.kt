@@ -8,20 +8,20 @@ import org.bukkit.command.CommandSender
 
 class ProfileRemoveCommand : BasicCommand<CommandSender>(
     "remove",
-    argRange = 2..2,
+    argRange = 1..1,
     argTypes = listOf(String::class, String::class),
     parentCommand = "profile",
     target = SenderTarget.BOTH,
     permissionNode = "pickpocket.profile.remove",
     usage = """
         Usage:
-        /pickpocket profile remove <thief|victim> <profile>
+        /pickpocket profile remove <profile>
     """.trimIndent()
 ) {
     override fun run(sender: CommandSender, args: Array<out String>, data: Any?): Boolean {
-        val result = PickpocketPlugin.profileConfiguration.removeThiefProfile(args[1])
-        if (!result) sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[1])).run { return false }
-        sender.sendMessage(MessageConfiguration.getProfileRemovedMessage(args[1]))
+        val result = PickpocketPlugin.profileConfiguration.removeProfile(args[0])
+        if (!result) sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[0])).run { return false }
+        sender.sendMessage(MessageConfiguration.getProfileRemovedMessage(args[0]))
         return true
     }
 }
