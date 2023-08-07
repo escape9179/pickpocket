@@ -22,12 +22,17 @@ class MainCommand : BasicCommand<CommandSender>(
         sender.sendMessage(
             """
             Pickpocket ${PickpocketPlugin.instance.name} ${PickpocketPlugin.pluginVersion}
-            Admin commands:
             /pickpocket admin notify - Toggle admin notifications for yourself
             /pickpocket admin exempt [name] - Exempt yourself or another player from being stolen from
             /pickpocket admin bypass [name] - Toggle cooldown bypass for yourself or another player
             /pickpocket admin toggle - Toggle pickpocketing on or off.
             /pickpocket admin status - View if pickpocketing is currently enabled or disabled.
+            /pickpocket profile create <name>
+            /pickpocket profile remove <name>
+            /pickpocket profile edit <profile> <property> <value>
+            /pickpocket profile assign <profile> <player>
+            Developer Commands:
+            /pickpocket developer giverandom <amount>
     """.trimIndent()
         )
         return true

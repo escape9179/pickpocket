@@ -49,18 +49,12 @@ object MessageConfiguration {
         get() = getMessage("pluginReload")
     val playerNotFoundMessage: String
         get() = getMessage("playerNotFound")
-    val playerNotAccessibleMessage: String
-        get() = getMessage("playerNotAccessible")
-    val pickpocketDisabledMessage: String
-        get() = getMessage("pickpocketDisabled")
     val pickpocketDisabledOtherMessage: String
         get() = getMessage("pickpocketDisabledOther")
     val pickpocketToggleOnMessage: String
         get() = getMessage("pickpocketToggleOn")
     val pickpocketToggleOffMessage: String
         get() = getMessage("pickpocketToggleOff")
-    val participationTogglingDisabled: String
-        get() = getMessage("participationTogglingDisabled")
     val personCantBeStolenFromMessage: String
         get() = getMessage("personCantBeStolenFrom")
     val pickpocketRegionDisallowMessage: String
@@ -69,18 +63,10 @@ object MessageConfiguration {
         get() = getMessage("pickpocketUnsuccessful")
     val pickpocketSuccessfulMessage: String
         get() = getMessage("pickpocketSuccessful")
-    val participatingTrueNotificationMessage: String
-        get() = getMessage("participatingTrue")
-    val participatingFalseNotificationMessage: String
-        get() = getMessage("participatingFalse")
     val pickpocketOnMoveWarningMessage: String
         get() = getMessage("pickpocketOnMoveWarning")
     val pickpocketOnMoveOtherWarningMessage: String
         get() = getMessage("pickpocketOnMoveWarningOther")
-    val pickpocketVictimWarningMessage: String
-        get() = getMessage("pickpocketVictimWarning")
-    val pickpocketNoticedWarningMessage: String
-        get() = getMessage("pickpocketNoticedWarning")
     val playerStealFromAfkMessage: String
         get() = getMessage("playerAfk")
     val playerStealWhileAfk: String
@@ -99,8 +85,7 @@ object MessageConfiguration {
     fun getProfileAssignSuccessMessage(profile: String, player: Player) = getMessage("profileAssignSuccess", profile, player.name)
     fun getProfileAssignFailureMessage(profile: String, player: Player) = getMessage("profileAssignFailure", profile, player.name)
     fun getProfileNotAssignedMessage() = getMessage("profileNotAssigned")
-    fun getProfileThiefCreateSuccessMessage(value: String) = getMessage("profileThiefCreate", value)
-    fun getProfileVictimCreateSuccessMessage(value: String) = getMessage("profileVictimCreate", value)
+    fun getProfileCreateSuccessMessage(value: String) = getMessage("profileCreate", value)
     fun getProfileErrorAlreadyExistsMessage(value: String) = getMessage("profileAlreadyExists", value)
     fun getProfileNotFoundMessage(value: String) = getMessage("profileNotFound", value)
     fun getProfileChangePropertyMessage(vararg values: String) = getMessage("profileChangeProperty", *values)

@@ -2,7 +2,7 @@ package logan.pickpocket.user
 
 import logan.pickpocket.config.MessageConfiguration
 import logan.pickpocket.main.PickpocketPlugin
-import logan.pickpocket.main.ThiefProfile
+import logan.pickpocket.main.Profile
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
@@ -64,13 +64,13 @@ class PickpocketUser(val uuid: UUID) {
     }
 
     @Deprecated("For private usage only.")
-    fun findThiefProfile(): ThiefProfile? {
-        val thiefProfiles = PickpocketPlugin.profileConfiguration.loadThiefProfiles()
+    fun findThiefProfile(): Profile? {
+        val thiefProfiles = PickpocketPlugin.profileConfiguration.loadProfiles()
         return thiefProfiles.find { bukkitPlayer!!.hasPermission("pickpocket.profile.thief.${it.name}") || thiefProfile?.equals(it) ?: false }
     }
 
     fun assignThiefProfile(name: String): Boolean {
-        PickpocketPlugin.profileConfiguration.loadThiefProfile(name)?.run {
+        PickpocketPlugin.profileConfiguration.loadProfile(name)?.run {
             thiefProfile = this
             return true
         } ?: return false
