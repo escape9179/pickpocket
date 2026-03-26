@@ -1,6 +1,7 @@
 /out/
 /.idea/
 pickpocket.iml
+/target/
 
 # Gradle
 .gradle/
