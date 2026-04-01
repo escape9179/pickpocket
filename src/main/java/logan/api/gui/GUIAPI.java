@@ -1,6 +1,5 @@
 package logan.api.gui;
 
-import logan.api.gui.util.PlaceholderManager;
 import logan.api.listener.InventoryClickListener;
 import logan.api.listener.InventoryCloseListener;
 import logan.api.listener.InventoryListeners;
@@ -25,7 +24,6 @@ public class GUIAPI {
     private static Map<Integer, PlayerInventoryMenu> registeredMenus = new ConcurrentHashMap<>();
     private static final @NotNull List<InventoryClickListener> inventoryClickListeners = new ArrayList<>();
     private static final @NotNull List<InventoryCloseListener> inventoryCloseListeners = new ArrayList<>();
-    private static PlaceholderManager placeholderManager = new PlaceholderManager();
 
     public static void registerMenu(int id, PlayerInventoryMenu menu) {
         if (registeredMenus.containsKey(id)) return;
@@ -44,9 +42,6 @@ public class GUIAPI {
         plugin.getServer().getPluginManager().registerEvents(new InventoryListeners(), plugin);
     }
 
-    public static PlaceholderManager getPlaceholderManager() {
-        return placeholderManager;
-    }
 
     public static void callInventoryClickListeners(InventoryClickEvent event) {
         // Call all menu related inventory click events before calling listeners by other plugins.

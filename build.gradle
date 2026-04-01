@@ -14,9 +14,6 @@ java {
 repositories {
     mavenCentral()
 
-    // Paper
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
-
     // Spigot API
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 
@@ -31,9 +28,7 @@ repositories {
 }
 
 dependencies {
-    // Server API
-    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT'
 
     // Integrations (provided at runtime by the server)
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'

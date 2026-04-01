@@ -57,22 +57,6 @@ public final class Config {
         return config.getBoolean("sameTownTheft");
     }
 
-    public static boolean isDatabaseEnabled() {
-        return config.getBoolean("database.enabled");
-    }
-
-    public static String getDatabaseServer() {
-        return config.getString("database.server");
-    }
-
-    public static String getDatabaseUsername() {
-        return config.getString("database.username");
-    }
-
-    public static String getDatabasePassword() {
-        return config.getString("database.password");
-    }
-
     private static List<String> computeDisabledItems() {
         List<String> finalItems = new ArrayList<>();
         for (String item : config.getStringList("disabledItems")) {

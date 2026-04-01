@@ -56,11 +56,14 @@ public class ProfileConfiguration {
         ConfigurationSection profileSection = config.getConfigurationSection("profiles." + name);
         if (profileSection == null) return null;
         Profile profile = new Profile(name);
-        for (String propKey : profile.getProperties().keySet()) {
-            String value = profileSection.getString(propKey);
-            if (value != null) {
-                profile.getProperties().put(propKey, value);
-            }
+        if (profileSection.contains("cooldown")) {
+            profile.setCooldown(profileSection.getInt("cooldown"));
+        }
+        if (profileSection.contains("canUseFishingRod")) {
+            profile.setCanUseFishingRod(profileSection.getBoolean("canUseFishingRod"));
+        }
+        if (profileSection.contains("numberOfRummageItems")) {
+            profile.setMaxRummageItems(profileSection.getInt("numberOfRummageItems"));
         }
         return profile;
     }

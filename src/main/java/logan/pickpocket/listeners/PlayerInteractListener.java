@@ -10,32 +10,43 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Created by Tre on 12/28/2015.
  */
 public class PlayerInteractListener implements Listener {
-
-    public PlayerInteractListener() {
-        PickpocketPlugin.registerListener(this);
-    }
-
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!event.getPlayer().isSneaking()) return;
-        if (!(event.getRightClicked() instanceof Player victim)) return;
+    public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
+
+        PickpocketPlugin
+                .log("PlayerInteractEvent: " + event.getPlayer().getName() + " " + event.getRightClicked().getName());
+
+        if (!event.getPlayer().isSneaking()) {
+            PickpocketPlugin.log("Sneak check...");
+            return;
+        }
+        if (!(event.getRightClicked() instanceof Player victim)) {
+            PickpocketPlugin.log("Victim check...");
+            return;
+        }
 
         // If offHand is null then getHand() doesn't exist,
         // and if getHand() isn't offHand, we should return
         // so this code isn't run twice.
-        if (event.getHand() == EquipmentSlot.OFF_HAND) return;
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            PickpocketPlugin.log("Offhand check...");
+            return;
+        }
 
         // Nothing will happen to players who don't have the pick-pocket use permission.
         if (!event.getPlayer().hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {
+            PickpocketPlugin.log("Player does not have permission to pickpocket.");
             return;
         }
+
+        PickpocketPlugin.log("Performing checks...");
 
         /* AFK checks */
         if (PickpocketPlugin.isEssentialsPresent()) {

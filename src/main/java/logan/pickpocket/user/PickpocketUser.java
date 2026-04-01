@@ -225,13 +225,8 @@ public class PickpocketUser {
     }
 
     public static PickpocketUser get(Player player) {
-        for (PickpocketUser user : PickpocketPlugin.getUsers()) {
-            if (user.uuid.equals(player.getUniqueId())) {
-                return user;
-            }
-        }
-        PickpocketUser user = new PickpocketUser(player.getUniqueId());
-        PickpocketPlugin.addProfile(user);
-        return user;
+        return PickpocketPlugin.getUsers().computeIfAbsent(
+                player.getUniqueId(), PickpocketUser::new
+        );
     }
 }

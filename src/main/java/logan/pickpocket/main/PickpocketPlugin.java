@@ -21,7 +21,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,7 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Vector;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,14 +39,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PickpocketPlugin extends JavaPlugin {
 
     private static PickpocketPlugin instance;
-    private static Vector<PickpocketUser> users = new Vector<>();
+    private static Map<UUID, PickpocketUser> users = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Player, Integer> cooldowns = new ConcurrentHashMap<>();
     public static final Permission PICKPOCKET_USE = new Permission("pickpocket.use", "Allow a user to pick-pocket.");
-    public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt", "Exempt a user from being stolen from.");
-    public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass", "Allows user to bypass cooldown.");
-    public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin", "Logs pickpocket information to admins.");
-    public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle", "Toggle pick-pocketing for yourself.");
-    public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload", "Reload the Pickpocket configuration file.");
+    public static final Permission PICKPOCKET_EXEMPT = new Permission("pickpocket.exempt",
+            "Exempt a user from being stolen from.");
+    public static final Permission PICKPOCKET_BYPASS = new Permission("pickpocket.bypass",
+            "Allows user to bypass cooldown.");
+    public static final Permission PICKPOCKET_ADMIN = new Permission("pickpocket.admin",
+            "Logs pickpocket information to admins.");
+    public static final Permission PICKPOCKET_TOGGLE = new Permission("pickpocket.toggle",
+            "Toggle pick-pocketing for yourself.");
+    public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload",
+            "Reload the Pickpocket configuration file.");
 
     private static ProfileConfiguration profileConfiguration;
     private static Economy economy;
@@ -64,16 +68,19 @@ public class PickpocketPlugin extends JavaPlugin {
             @SuppressWarnings("unchecked")
             Class<WorldGuard> worldGuardClass = (Class<WorldGuard>) Class.forName("com.sk89q.worldguard.WorldGuard");
             @SuppressWarnings("unchecked")
-            Class<FlagRegistry> flagRegistryClass = (Class<FlagRegistry>) Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
+            Class<FlagRegistry> flagRegistryClass = (Class<FlagRegistry>) Class
+                    .forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
             @SuppressWarnings("unchecked")
-            Class<StateFlag> stateFlagClass = (Class<StateFlag>) Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
+            Class<StateFlag> stateFlagClass = (Class<StateFlag>) Class
+                    .forName("com.sk89q.worldguard.protection.flags.StateFlag");
 
             worldGuardPresent = true;
 
             // Register custom WorldGuard flags if WorldGuard is present.
             try {
                 WorldGuard worldGuardInstance = (WorldGuard) worldGuardClass.getMethod("getInstance").invoke(null);
-                FlagRegistry flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getFlagRegistry").invoke(worldGuardInstance);
+                FlagRegistry flagRegistry = (FlagRegistry) worldGuardClass.getMethod("getFlagRegistry")
+                        .invoke(worldGuardInstance);
                 String pickpocketFlagName = "pickpocket";
                 StateFlag stateFlag = stateFlagClass
                         .getConstructor(String.class, boolean.class)
@@ -98,8 +105,10 @@ public class PickpocketPlugin extends JavaPlugin {
         // Create and initialize configuration files.
         //
         try {
-            Files.copy(getClass().getResourceAsStream("/config.yml"), Paths.get(getDataFolder().getPath() + "/config.yml"));
-            Files.copy(getClass().getResourceAsStream("/messages.yml"), Paths.get(getDataFolder().getPath() + "/messages.yml"));
+            Files.copy(getClass().getResourceAsStream("/config.yml"),
+                    Paths.get(getDataFolder().getPath() + "/config.yml"));
+            Files.copy(getClass().getResourceAsStream("/messages.yml"),
+                    Paths.get(getDataFolder().getPath() + "/messages.yml"));
         } catch (FileAlreadyExistsException e) {
             // TODO Don't use exception handling to produce correct functionality
         } catch (Exception e) {
@@ -110,7 +119,7 @@ public class PickpocketPlugin extends JavaPlugin {
         MessageConfiguration.init();
         createConfigurations();
 
-        users = new Vector<>();
+        users = new ConcurrentHashMap<>();
 
         CommandDispatcher.registerCommand(new MainCommand());
         CommandDispatcher.registerCommand(new DeveloperCommand());
@@ -132,7 +141,7 @@ public class PickpocketPlugin extends JavaPlugin {
         GUIAPI.registerListeners(this);
         GUIAPI.registerInventoryClickListener(new InventoryClickListener());
         GUIAPI.registerInventoryCloseListener(new InventoryCloseListener());
-        new PlayerInteractListener();
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
         getServer().getPluginManager().registerEvents(new ProjectileHitListener(), this);
 
         /* Player movement check thread timer */
@@ -146,7 +155,8 @@ public class PickpocketPlugin extends JavaPlugin {
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (Player player : cooldowns.keySet()) {
                 cooldowns.put(player, cooldowns.get(player) - 1);
-                if (cooldowns.get(player) <= 0) cooldowns.remove(player);
+                if (cooldowns.get(player) <= 0)
+                    cooldowns.remove(player);
             }
         }, 20, 20);
 
@@ -180,8 +190,10 @@ public class PickpocketPlugin extends JavaPlugin {
             if (getDescription().getVersion().equalsIgnoreCase(version)) {
                 getLogger().info("There is not a new update available.");
             } else {
-                getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "There is a new update available from https://www.spigotmc.org/resources/pickpocket.16273/.");
-                getServer().getConsoleSender().sendMessage(String.format(ChatColor.YELLOW + "Pickpocket %s -> %s", getDescription().getVersion(), version));
+                getServer().getConsoleSender().sendMessage(ChatColor.YELLOW
+                        + "There is a new update available from https://www.spigotmc.org/resources/pickpocket.16273/.");
+                getServer().getConsoleSender().sendMessage(String.format(ChatColor.YELLOW + "Pickpocket %s -> %s",
+                        getDescription().getVersion(), version));
             }
         });
 
@@ -202,7 +214,8 @@ public class PickpocketPlugin extends JavaPlugin {
             return false;
         }
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) return false;
+        if (rsp == null)
+            return false;
         economy = rsp.getProvider();
         return economy != null;
     }
@@ -218,12 +231,12 @@ public class PickpocketPlugin extends JavaPlugin {
         return instance;
     }
 
-    public static Vector<PickpocketUser> getUsers() {
+    public static Map<UUID, PickpocketUser> getUsers() {
         return users;
     }
 
-    public static void addProfile(PickpocketUser profile) {
-        users.add(profile);
+    public static void addUser(UUID uuid, PickpocketUser user) {
+        users.put(uuid, user);
     }
 
     public static void addCooldown(Player player, int duration) {
@@ -236,10 +249,6 @@ public class PickpocketPlugin extends JavaPlugin {
 
     public static void log(String message) {
         instance.getLogger().info(message);
-    }
-
-    public static void registerListener(Listener listener) {
-        instance.getServer().getPluginManager().registerEvents(listener, instance);
     }
 
     public static ProfileConfiguration getProfileConfiguration() {

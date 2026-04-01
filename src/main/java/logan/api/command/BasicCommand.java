@@ -2,7 +2,6 @@ package logan.api.command;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,18 +21,18 @@ public abstract class BasicCommand<T extends CommandSender> implements Command<T
     }
 
     protected BasicCommand(String name, String permissionNode, SenderTarget target,
-                           int minArgs, int maxArgs) {
+            int minArgs, int maxArgs) {
         this(name, permissionNode, minArgs, maxArgs, new String[0], target, null, Collections.emptyList(), null);
     }
 
     protected BasicCommand(String name, String permissionNode, SenderTarget target,
-                           String[] aliases) {
+            String[] aliases) {
         this(name, permissionNode, 0, 0, aliases, target, null, Collections.emptyList(), null);
     }
 
     protected BasicCommand(String name, String permissionNode, int minArgs, int maxArgs,
-                           String[] aliases, SenderTarget target, String parentCommand,
-                           List<Class<?>> argTypes, String usage) {
+            String[] aliases, SenderTarget target, String parentCommand,
+            List<Class<?>> argTypes, String usage) {
         this.name = name;
         this.permissionNode = permissionNode;
         this.minArgs = minArgs;
@@ -83,7 +82,8 @@ public abstract class BasicCommand<T extends CommandSender> implements Command<T
 
     @Override
     public boolean equals(Object other) {
-        if (!super.equals(other)) return false;
+        if (!super.equals(other))
+            return false;
         if (other instanceof BasicCommand<?> otherCommand) {
             return otherCommand.name.equals(this.name);
         }

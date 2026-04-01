@@ -17,6 +17,7 @@ public class DeveloperCommand extends BasicCommand<Player> {
 
     @Override
     public boolean run(Player sender, String[] args, Object data) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        sender.sendMessage("Usage:\n/pickpocket developer giverandom <amount>");
+        return true;
     }
 }

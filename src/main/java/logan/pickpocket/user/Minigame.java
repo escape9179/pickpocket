@@ -119,10 +119,8 @@ public class Minigame {
         stealMoney();
         playItemPickupSound(predator);
         predatorUser.setSteals(predatorUser.getSteals() + 1);
-        predatorUser.getPlayerConfiguration().setStealCount(predatorUser.getSteals());
         predator.sendMessage(MessageConfiguration.getPickpocketSuccessfulMessage());
         showAdminNotifications(true);
-        predatorUser.setSteals(predatorUser.getSteals() + 1);
     }
 
     private void doPickpocketFailure() {

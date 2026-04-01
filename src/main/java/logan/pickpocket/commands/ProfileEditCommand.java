@@ -25,9 +25,9 @@ public class ProfileEditCommand extends BasicCommand<CommandSender> {
             sender.sendMessage(MessageConfiguration.getProfileNotFoundMessage(args[0]));
             return true;
         }
-        if (profile.getProperties().containsKey(args[1])) {
-            String previousValue = profile.getProperties().get(args[1]);
-            profile.getProperties().put(args[1], args[2]);
+        if (profile.hasProperty(args[1])) {
+            String previousValue = profile.getProperty(args[1]);
+            profile.setProperty(args[1], args[2]);
             sender.sendMessage(
                     MessageConfiguration.getProfileChangePropertyMessage(
                             args[1],
