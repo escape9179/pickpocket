@@ -77,4 +77,8 @@ public final class Config {
     public static void reload() {
         config = YamlConfiguration.loadConfiguration(file);
     }
+
+    public static float getMinSpeedSkillDelay() {
+        return (float) config.getDouble("skills.speed.minDelaySeconds", 0.0);
+    }
 }

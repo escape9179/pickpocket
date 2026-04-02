@@ -187,7 +187,7 @@ public class Minigame {
     private void showAdminNotifications(boolean success) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             PickpocketUser profile = PickpocketUser.get(player);
-            if (profile.getPlayerConfiguration().isAdmin()) {
+            if (profile.isAdmin()) {
                 if (success) {
                     player.sendMessage(
                             MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(

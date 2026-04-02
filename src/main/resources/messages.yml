@@ -15,36 +15,77 @@
 #                               __/ |                                __/ |
 #                              |___/                                |___/
 
+# Sent when a player's admin status is toggled or changed.
 adminStatusChange: "&7Pickpocket Admin status set to %value%."
+
+# Sent to the player when their bypass status is changed.
 bypassStatusChange: "&7Your bypass status has been changed to %value%."
+
+# Sent to the user who changed another player's bypass status.
 bypassStatusChangeOther: "&7Changed %player%'s bypass status to %value%."
+
+# Sent to the player when their exempt status is changed.
 exemptStatusChange: "&7Your exempt status has been changed to %value%."
+
+# Sent to the user who changed another player's exempt status.
 exemptStatusChangeOther: "&7Changed %player's exempt status to %value%."
+
+# Sent when the plugin configuration is reloaded.
 pluginReload: "&aReloaded Pickpocket configuration."
+
+# Sent when a specified player could not be found.
 playerNotFound: "&cPlayer not found."
+
+# Sent when a player cannot be interacted with (e.g., offline or in different world).
 playerNotAccessible: "&cThat player is not accessible."
+
+# Sent when pick-pocketing is enabled.
 pickpocketToggleOn: "&7Pick-pocketing is now enabled."
+
+# Sent when pick-pocketing is disabled.
 pickpocketToggleOff: "&7Pick-pocketing is now disabled."
+
+# Sent when a player attempts to pickpocket but the feature is disabled.
 pickpocketDisabled: "&cPick-pocketing is disabled."
+
+# Sent when trying to pickpocket a player who is exempt or an admin.
 personCantBeStolenFrom: "&7This person cannot be stolen from."
+
+# Sent when a pickpocket attempt is made in a region where it is disabled.
 pickpocketRegionDisallow: "&cPick-pocketing is disabled in this region."
+
+# Sent to the thief when a pickpocket attempt fails.
 pickpocketUnsuccessful: "&cPickpocket attempt unsuccessful."
+
+# Sent to the thief when a pickpocket attempt succeeds.
 pickpocketSuccessful: "&aPickpocket attempt successful."
+
+# Sent when the thief moves during the pickpocketing process, cancelling the attempt.
 pickpocketOnMoveWarning: "&cYou cannot move whilst pick-pocketing."
+
+# Sent to the victim to warn them they are being pickpocketed or after a failed attempt.
 pickpocketVictimWarning: "&cYou feel something touch your side."
+
+# Sent to the thief when they are noticed by the victim or bystanders.
 pickpocketNoticedWarning: "&cYou've been noticed."
+
+# Sent when a player tries to pickpocket while on cooldown.
 cooldownNotice: "&cYou must wait %value% seconds before attempting another pickpocket."
+
+# Sent when a successful pickpocket yields no money.
 noMoneyReceived: "&cYou received no money."
+
+# Sent to display the amount of money successfully stolen.
 moneyAmountReceived: "&aYou received $%value%."
+
+# Notification sent to admins when a successful pickpocket occurs.
 pickpocketSuccessAdminNotification: "&a%player% succeeded in pick-pocketing %victim%."
+
+# Notification sent to admins when a pickpocket attempt fails.
 pickpocketFailureAdminNotification: "&c%player% failed in pick-pocketing %victim%."
+
+# Sent when trying to pickpocket a player who is currently AFK.
 playerAfk: "&cThat player is AFK."
+
+# Sent when a player attempts to pickpocket while they themselves are AFK.
 attemptStealWhileAfk: "&cYou cannot pick-pocket while AFK."
-profileAssignSuccess: "&aSuccessfully assigned profile %value% to player %value%."
-profileAssignFailure: "&cCouldn't assign profile %value% to player %value%."
-profileNotAssigned: "&cYou haven't been assigned a profile."
-profileCreate: "&aSuccessfully created profile %value%."
-profileAlreadyExists: "&cProfile %value% already exists."
-profileNotFound: "&cCouldn't find profile %value%."
-profileChangeProperty: "&aChanged property %value% from %value% to %value% in profile %value%."
-profileRemoved: "&aRemoved profile %value%."

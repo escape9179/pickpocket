@@ -3,14 +3,13 @@ package logan.api.command;
 import logan.api.util.FunctionUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class CommandDispatcher implements org.bukkit.command.CommandExecutor {
+public class CommandDispatcher implements org.bukkit.command.CommandExecutor, TabCompleter {
 
     private static final Set<BasicCommand<?>> registeredCommands = new HashSet<>();
 
@@ -24,6 +23,118 @@ public class CommandDispatcher implements org.bukkit.command.CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         return handleCommand(sender, command, label, args);
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
+        return handleTabComplete(sender, command, alias, args);
+    }
+
+    public static List<String> handleTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
+        // Find the root command for this label
+        BasicCommand<?> rootCommand = findCommandByName(alias);
+        if (rootCommand == null) return Collections.emptyList();
+
+        // Walk the command tree, consuming args that match subcommand names
+        BasicCommand<?> currentCommand = rootCommand;
+        int argIndex = 0;
+
+        while (argIndex < args.length) {
+            String token = args[argIndex];
+            boolean isLastArg = (argIndex == args.length - 1);
+
+            // Look for a child subcommand whose parent matches the current command
+            BasicCommand<?> childMatch = null;
+            if (!isLastArg) {
+                // Not the last arg — look for an exact match to descend into
+                childMatch = findChildCommand(currentCommand.getName(), token);
+            }
+
+            if (childMatch != null) {
+                currentCommand = childMatch;
+                argIndex++;
+            } else {
+                // We've found the deepest command; remaining args are for this command
+                break;
+            }
+        }
+
+        // Build remaining args from the current position
+        String[] remainingArgs = Arrays.copyOfRange(args, argIndex, args.length);
+        String partial = remainingArgs.length > 0 ? remainingArgs[remainingArgs.length - 1].toLowerCase() : "";
+
+        // If we're at a position where a subcommand name could be typed, suggest child command names
+        if (remainingArgs.length <= 1) {
+            List<String> suggestions = new ArrayList<>();
+
+            // Add child subcommand names
+            for (BasicCommand<?> cmd : registeredCommands) {
+                if (currentCommand.getName().equals(cmd.getParentCommand())) {
+                    if (sender.hasPermission(cmd.getPermissionNode())) {
+                        suggestions.add(cmd.getName());
+                        // Also add aliases
+                        for (String cmdAlias : cmd.getAliases()) {
+                            suggestions.add(cmdAlias);
+                        }
+                    }
+                }
+            }
+
+            // Also add command-specific completions for arg position 0
+            if (sender.hasPermission(currentCommand.getPermissionNode())) {
+                suggestions.addAll(currentCommand.onTabComplete(sender, remainingArgs));
+            }
+
+            return filterSuggestions(suggestions, partial);
+        }
+
+        // Past the subcommand position — delegate to the current command's onTabComplete
+        if (sender.hasPermission(currentCommand.getPermissionNode())) {
+            List<String> suggestions = currentCommand.onTabComplete(sender, remainingArgs);
+            return filterSuggestions(suggestions, partial);
+        }
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * Find a registered command by name or alias (no parent — i.e., a root command or any matching name).
+     */
+    private static BasicCommand<?> findCommandByName(String name) {
+        for (BasicCommand<?> cmd : registeredCommands) {
+            if (cmd.getName().equalsIgnoreCase(name) || containsIgnoreCase(cmd.getAliases(), name)) {
+                return cmd;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find a child command whose parent matches the given parent name and whose name or alias matches the token.
+     */
+    private static BasicCommand<?> findChildCommand(String parentName, String token) {
+        for (BasicCommand<?> cmd : registeredCommands) {
+            if (parentName.equals(cmd.getParentCommand())) {
+                if (cmd.getName().equalsIgnoreCase(token) || containsIgnoreCase(cmd.getAliases(), token)) {
+                    return cmd;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean containsIgnoreCase(String[] array, String value) {
+        for (String s : array) {
+            if (s.equalsIgnoreCase(value)) return true;
+        }
+        return false;
+    }
+
+    private static List<String> filterSuggestions(List<String> suggestions, String partial) {
+        if (partial.isEmpty()) return suggestions;
+        return suggestions.stream()
+                .filter(s -> s.toLowerCase().startsWith(partial))
+                .collect(Collectors.toList());
     }
 
     public static boolean handleCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {

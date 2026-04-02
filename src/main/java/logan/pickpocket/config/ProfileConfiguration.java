@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ProfileConfiguration {
@@ -70,6 +71,15 @@ public class ProfileConfiguration {
 
     public void reload() {
         config = YamlConfiguration.loadConfiguration(file);
+    }
+
+    /**
+     * Returns a list of all profile names defined in the configuration.
+     */
+    public List<String> getProfileNames() {
+        ConfigurationSection section = config.getConfigurationSection("profiles");
+        if (section == null) return Collections.emptyList();
+        return new ArrayList<>(section.getKeys(false));
     }
 
     public boolean createProfile(String name) {

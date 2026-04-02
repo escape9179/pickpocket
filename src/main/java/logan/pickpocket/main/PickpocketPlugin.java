@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -122,11 +123,11 @@ public class PickpocketPlugin extends JavaPlugin {
         users = new ConcurrentHashMap<>();
 
         CommandDispatcher.registerCommand(new MainCommand());
-        CommandDispatcher.registerCommand(new DeveloperCommand());
-        CommandDispatcher.registerCommand(new DeveloperGiveRandom());
-        CommandDispatcher.registerCommand(new AdminCommand());
-        CommandDispatcher.registerCommand(new AdminBypassCommand());
-        CommandDispatcher.registerCommand(new AdminExemptCommand());
+        CommandDispatcher.registerCommand(new DebugCommand());
+        CommandDispatcher.registerCommand(new DebugGiveRandom());
+        // CommandDispatcher.registerCommand(new AdminCommand());
+        // CommandDispatcher.registerCommand(new AdminBypassCommand());
+        // CommandDispatcher.registerCommand(new AdminExemptCommand());
         CommandDispatcher.registerCommand(new ReloadCommand());
         CommandDispatcher.registerCommand(new ToggleCommand());
         CommandDispatcher.registerCommand(new StatusCommand());
@@ -223,6 +224,11 @@ public class PickpocketPlugin extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return CommandDispatcher.handleCommand(sender, command, label, args);
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return CommandDispatcher.handleTabComplete(sender, command, alias, args);
     }
 
     // Static accessors

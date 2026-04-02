@@ -80,6 +80,17 @@ public abstract class BasicCommand<T extends CommandSender> implements Command<T
         return usage;
     }
 
+    /**
+     * Override this method to provide tab-completion suggestions for this command's arguments.
+     *
+     * @param sender the command sender
+     * @param args   the arguments typed so far (after this command's name has been consumed)
+     * @return a list of suggestions for the current argument position
+     */
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!super.equals(other))

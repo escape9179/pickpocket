@@ -6,6 +6,7 @@ import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.main.PickpocketPlugin;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileRemoveCommand extends BasicCommand<CommandSender> {
@@ -15,6 +16,14 @@ public class ProfileRemoveCommand extends BasicCommand<CommandSender> {
                 new String[0], SenderTarget.BOTH, "profile",
                 List.of(String.class, String.class),
                 "Usage:\n/pickpocket profile remove <profile>");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length <= 1) {
+            return new ArrayList<>(PickpocketPlugin.getProfileConfiguration().getProfileNames());
+        }
+        return List.of();
     }
 
     @Override
