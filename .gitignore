@@ -4,6 +4,7 @@ pickpocket.iml
 /target/
 /bin/
 /.agent/
+/.vscode/
 
 # Gradle
 .gradle/

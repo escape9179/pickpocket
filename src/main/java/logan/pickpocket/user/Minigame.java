@@ -34,9 +34,9 @@ public class Minigame {
         this.victimUser = victimUser;
         this.item = item;
         this.gui = new PlayerInventoryMenu(
-                "Pick-pocketing " + (victimUser.getBukkitPlayer() != null ? victimUser.getBukkitPlayer().getName() : "unknown"),
-                INVENTORY_SIZE / 9
-        );
+                (victimUser.getBukkitPlayer() != null ? victimUser.getBukkitPlayer().getName() : "unknown")
+                        + "'s Inventory",
+                INVENTORY_SIZE / 9);
     }
 
     public PickpocketUser getPredatorUser() {
@@ -87,13 +87,15 @@ public class Minigame {
 
     private double getPercentageOfVictimBalance(Player victim) {
         Economy economy = VaultHook.getEconomy();
-        if (economy == null) return 0.0;
+        if (economy == null)
+            return 0.0;
         return economy.getBalance(victim) * Config.getMoneyPercentageToSteal();
     }
 
     private void doMoneyTransaction(Player thief, Player victim, double amountStolen) {
         Economy economy = VaultHook.getEconomy();
-        if (economy == null) return;
+        if (economy == null)
+            return;
         if (amountStolen > 0) {
             economy.withdrawPlayer(victim, amountStolen);
             economy.depositPlayer(thief, amountStolen);
@@ -145,10 +147,12 @@ public class Minigame {
     private void shuffleInventoryItems() {
         Inventory inventory = gui.getInventory();
         for (int i = 0; i < INVENTORY_SIZE; i++) {
-            if (inventory.getItem(i) == null) continue;
+            if (inventory.getItem(i) == null)
+                continue;
             int randomSlot = (int) (Math.random() * INVENTORY_SIZE);
             ItemStack temp = inventory.getItem(randomSlot);
-            if (temp == null) temp = new ItemStack(Material.AIR);
+            if (temp == null)
+                temp = new ItemStack(Material.AIR);
             inventory.setItem(randomSlot, inventory.getItem(i));
             inventory.setItem(i, temp);
         }
@@ -158,7 +162,8 @@ public class Minigame {
         Map<Integer, MenuItem> menuItemMap = new HashMap<>();
         for (int i = 0; i < INVENTORY_SIZE; i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack == null) stack = new ItemStack(Material.AIR, 1);
+            if (stack == null)
+                stack = new ItemStack(Material.AIR, 1);
             MenuItem menuItem = new MenuItem(stack);
             menuItem.addListener(this::onMenuItemClick);
             menuItemMap.put(i, menuItem);
@@ -193,16 +198,12 @@ public class Minigame {
                     player.sendMessage(
                             MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(
                                     predatorUser.getBukkitPlayer(),
-                                    victimUser.getBukkitPlayer()
-                            )
-                    );
+                                    victimUser.getBukkitPlayer()));
                 } else {
                     player.sendMessage(
                             MessageConfiguration.getPickpocketFailureAdminNotification(
                                     predatorUser.getBukkitPlayer(),
-                                    victimUser.getBukkitPlayer()
-                            )
-                    );
+                                    victimUser.getBukkitPlayer()));
                 }
             }
         }

@@ -7,7 +7,6 @@ import logan.api.util.UpdateChecker;
 import logan.pickpocket.commands.*;
 import logan.pickpocket.config.Config;
 import logan.pickpocket.config.MessageConfiguration;
-import logan.pickpocket.config.ProfileConfiguration;
 import logan.pickpocket.hooks.EssentialsHook;
 import logan.pickpocket.hooks.TownyHook;
 import logan.pickpocket.hooks.VaultHook;
@@ -42,8 +41,6 @@ public class PickpocketPlugin extends JavaPlugin {
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload",
             "Reload the Pickpocket configuration file.");
 
-    private static ProfileConfiguration profileConfiguration;
-
     @Override
     public void onLoad() {
         WorldGuardHook.onLoad(this);
@@ -57,7 +54,6 @@ public class PickpocketPlugin extends JavaPlugin {
 
         Config.init();
         MessageConfiguration.init();
-        profileConfiguration = new ProfileConfiguration();
 
         registerCommands();
         registerListeners();
@@ -135,10 +131,6 @@ public class PickpocketPlugin extends JavaPlugin {
         if (instance != null) {
             instance.getLogger().info(message);
         }
-    }
-
-    public static ProfileConfiguration getProfileConfiguration() {
-        return profileConfiguration;
     }
 
     public static String getPluginVersion() {

@@ -35,7 +35,6 @@ public class RummageInventory {
 
     public void show(PickpocketUser predator) {
         predator.setVictim(victim);
-        predator.findThiefProfile(); // ensure profile is loaded
         populateRummageMenu();
         menu.addItem(menu.getBottomRight(), rummageButton);
         menu.show(predator.getBukkitPlayer());
@@ -59,8 +58,7 @@ public class RummageInventory {
                 }
                 Minigame minigame = new Minigame(
                         predator, victim,
-                        menuItemClickEvent.getInventoryClickEvent().getCurrentItem()
-                );
+                        menuItemClickEvent.getInventoryClickEvent().getCurrentItem());
                 minigame.start(menu.getInventory());
             });
             menu.addItem(randomSlot, menuItem);
@@ -71,12 +69,12 @@ public class RummageInventory {
 
     private List<ItemStack> getRandomItemsFromPlayer() {
         List<ItemStack> randomItemList = new ArrayList<>();
-        PickpocketUser predator = victim.getPredator();
-        int maxItems = predator.findThiefProfile().getMaxRummageItems();
-        for (int i = 0; i < maxItems; i++) {
+        for (int i = 0; i < 5; i++) { // TODO: Add config option for max items to rummage
             ItemStack randomItem = PlayerUtils.getRandomItemFromMainInventory(victim.getBukkitPlayer());
-            if (randomItem == null) continue;
-            if (PickpocketUtils.isItemTypeDisabled(randomItem.getType())) continue;
+            if (randomItem == null)
+                continue;
+            if (PickpocketUtils.isItemTypeDisabled(randomItem.getType()))
+                continue;
             randomItemList.add(randomItem);
         }
         return randomItemList;
