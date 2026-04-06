@@ -23,15 +23,17 @@ public class PlayerSkills {
      * Enforces the maximum level cap.
      */
     public void setSkillLevel(Skills skill, int level) {
-        if (level < 0) level = 0;
-        
+        if (level < 0)
+            level = 0;
+
         // As defined by the specific skills, normally max 100
         int maxLevel = 100;
         if (skill == Skills.SPEED) {
             maxLevel = SpeedSkill.MAX_LEVEL;
         }
 
-        if (level > maxLevel) level = maxLevel;
+        if (level > maxLevel)
+            level = maxLevel;
 
         user.getConfiguration().set("skills." + skill.name() + ".level", level);
         user.save();
@@ -53,14 +55,16 @@ public class PlayerSkills {
     }
 
     /**
-     * Adds experience to a skill, automatically leveling it up if it passes a threshold.
+     * Adds experience to a skill, automatically leveling it up if it passes a
+     * threshold.
      * For now, we will use a simple linear progression: 100 exp per level.
      */
     public void addExperience(Skills skill, int amount) {
         int currentExp = getSkillExp(skill);
         int currentLevel = getSkillLevel(skill);
 
-        if (currentLevel >= 100) return; // Reached max level
+        if (currentLevel >= 100)
+            return; // Reached max level
 
         int newExp = currentExp + amount;
         int expNeeded = getExpRequiredForNextLevel(currentLevel);
@@ -69,9 +73,10 @@ public class PlayerSkills {
             newExp -= expNeeded;
             currentLevel++;
             expNeeded = getExpRequiredForNextLevel(currentLevel);
-            
+
             // Send optional level up message
-            user.sendMessage("&a&lLevel Up! &7Your &e" + skill.name() + " &7skill is now level &e" + currentLevel + "&7!");
+            user.sendMessage(
+                    "&a&lLevel Up! &7Your &e" + skill.name() + " &7skill is now level &e" + currentLevel + "&7!");
         }
 
         if (currentLevel >= 100) { // Safety check after loop

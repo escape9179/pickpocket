@@ -71,12 +71,7 @@ public class PlayerInteractListener implements Listener {
         }
 
         PickpocketUser victimUser = PickpocketUser.get(victim);
-        PickpocketUser profile = PickpocketUser.get(event.getPlayer());
-
-        if (profile.findThiefProfile() == null) {
-            event.getPlayer().sendMessage("You aren't allowed to pickpocket.");
-            return;
-        }
+        PickpocketUser thiefUser = PickpocketUser.get(event.getPlayer());
 
         if (!Config.isPickpocketingEnabled()) {
             if (Config.isStatusOnInteract())
@@ -84,7 +79,7 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        profile.doPickpocket(victimUser);
+        thiefUser.doPickpocket(victimUser);
     }
 
     private boolean isTownMember(Player player) {

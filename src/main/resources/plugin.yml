@@ -2,7 +2,7 @@ main: logan.pickpocket.main.PickpocketPlugin
 name: Pickpocket
 version: 3.0
 author: escape9179
-api-version: "1.19"
+api-version: '1.19'
 softdepend: [ Vault, WorldGuard, WorldEdit, Essentials, Towny ]
 commands:
   pickpocket:
@@ -13,36 +13,9 @@ permissions:
   pickpocket.use:
     description: Basic access to plugin features.
     default: true
-  pickpocket.admin:
-    description: Access to administrative commands.
-    children:
-      pickpocket.admin.bypass: true
-      pickpocket.admin.exempt: true
-      pickpocket.admin.toggle: true
-  pickpocket.admin.bypass:
-    description: Ability to bypass pickpocketing cooldown.
-  pickpocket.admin.exempt:
-    description: Exempt yourself from getting pickpocketed.
   pickpocket.admin.toggle:
-    description: Toggle pickpocketing on or off for the server.
-  pickpocket.developer:
-    description: Access to developer commands.
+    description: Toggle server-wide pickpocketing.
+  pickpocket.debug:
+    description: Access to debug commands.
     children:
-      pickpocket.developer.giverandom: true
-  pickpocket.profile:
-    description: Access to profile commands.
-    children:
-      pickpocket.profile.view: true
-      pickpocket.profile.create: true
-      pickpocket.profile.edit: true
-      pickpocket.profile.remove: true
-  pickpocket.profile.view:
-    description: View the properties and values of a configured profile.
-  pickpocket.profile.create:
-    description: Permission to create configuration profiles.
-  pickpocket.profile.edit:
-    description: Permission to edit configuration profiles.
-  pickpocket.profile.remove:
-    description: Permission to remove configuration profiles.
-  pickpocket.reload:
-    description: Access to the plugin reload command.
+      pickpocket.debug.giverandom: true
