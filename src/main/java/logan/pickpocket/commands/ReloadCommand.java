@@ -15,7 +15,7 @@ public class ReloadCommand extends BasicCommand<CommandSender> {
         super("reload", "pickpocket.reload", 0, 0,
                 new String[0], SenderTarget.BOTH, "pickpocket",
                 Collections.emptyList(),
-                "Usage:\n/pickpocket reload (no args)");
+                "Usage:\n/pickpocket reload");
     }
 
     @Override

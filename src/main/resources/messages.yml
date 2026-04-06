@@ -89,3 +89,12 @@ playerAfk: "&cThat player is AFK."
 
 # Sent when a player attempts to pickpocket while they themselves are AFK.
 attemptStealWhileAfk: "&cYou cannot pick-pocket while AFK."
+
+# Sent to the thief when a pickpocket attempt starts.
+pickpocketAttempt: "&eAttempting to pickpocket... Stay close!"
+
+# Sent when the thief moves and the pickpocketing is cancelled.
+pickpocketCancelledMoved: "&cPickpocketing cancelled because you moved!"
+
+# Sent when the target moves away and the pickpocketing is cancelled.
+pickpocketCancelledTargetMoved: "&cPickpocketing cancelled because the target moved away!"

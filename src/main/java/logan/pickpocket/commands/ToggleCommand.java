@@ -12,18 +12,17 @@ public class ToggleCommand extends BasicCommand<Player> {
 
     public ToggleCommand() {
         super("toggle", "pickpocket.admin.toggle", 0, 0,
-                new String[0], SenderTarget.PLAYER, "admin",
+                new String[0], SenderTarget.PLAYER, "pickpocket",
                 Collections.emptyList(),
-                "Usage:\n/pickpocket admin toggle (no args)");
+                "Usage:\n/pickpocket toggle");
     }
 
     @Override
     public boolean run(Player sender, String[] args, Object data) {
         boolean status = !Config.isPickpocketingEnabled();
         Config.setPickpocketingEnabled(status);
-        sender.sendMessage(status ?
-                MessageConfiguration.getPickpocketToggleOnMessage() :
-                MessageConfiguration.getPickpocketToggleOffMessage());
+        sender.sendMessage(status ? MessageConfiguration.getPickpocketToggleOnMessage()
+                : MessageConfiguration.getPickpocketToggleOffMessage());
         return true;
     }
 }

@@ -38,7 +38,7 @@ public class DebugGiveRandom extends BasicCommand<Player> {
             Material material = MATERIALS[random.nextInt(MATERIALS.length)];
             sender.getInventory().addItem(new ItemStack(material, random.nextInt(1, material.getMaxStackSize() + 1)));
         }
-        FunctionUtils.sendMessage(sender, "&eGiven random items.", true);
+        FunctionUtils.sendMessage(sender, "&eGiven " + amount + " items.", true);
         return true;
     }
 }

@@ -10,10 +10,10 @@ import java.util.Collections;
 public class StatusCommand extends BasicCommand<Player> {
 
     public StatusCommand() {
-        super("status", "pickpocket.admin.status", 0, 0,
-                new String[0], SenderTarget.PLAYER, "admin",
+        super("status", "pickpocket.status", 0, 0,
+                new String[0], SenderTarget.PLAYER, "pickpocket",
                 Collections.emptyList(),
-                "Usage:\n/pickpocket admin status (no args)");
+                "Usage:\n/pickpocket status");
     }
 
     @Override

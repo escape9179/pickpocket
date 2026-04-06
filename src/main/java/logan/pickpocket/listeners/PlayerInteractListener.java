@@ -20,15 +20,10 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
 
-        PickpocketPlugin
-                .log("PlayerInteractEvent: " + event.getPlayer().getName() + " " + event.getRightClicked().getName());
-
         if (!event.getPlayer().isSneaking()) {
-            PickpocketPlugin.log("Sneak check...");
             return;
         }
         if (!(event.getRightClicked() instanceof Player victim)) {
-            PickpocketPlugin.log("Victim check...");
             return;
         }
 
@@ -36,21 +31,17 @@ public class PlayerInteractListener implements Listener {
         // and if getHand() isn't offHand, we should return
         // so this code isn't run twice.
         if (event.getHand() == EquipmentSlot.OFF_HAND) {
-            PickpocketPlugin.log("Offhand check...");
             return;
         }
 
         // Nothing will happen to players who don't have the pick-pocket use permission.
         if (!event.getPlayer().hasPermission(PickpocketPlugin.PICKPOCKET_USE)) {
-            PickpocketPlugin.log("Player does not have permission to pickpocket.");
             return;
         }
 
-        PickpocketPlugin.log("Performing checks...");
-
         /* AFK checks */
-        if (PickpocketPlugin.isEssentialsPresent()) {
-            Essentials essentials = (Essentials) PickpocketPlugin.getEssentials();
+        if (logan.pickpocket.hooks.EssentialsHook.isEssentialsPresent()) {
+            Essentials essentials = logan.pickpocket.hooks.EssentialsHook.getEssentials();
 
             /* Check if the victim is AFK */
             if (essentials.getUser(event.getRightClicked().getUniqueId()).isAfk()) {
@@ -66,7 +57,7 @@ public class PlayerInteractListener implements Listener {
         }
 
         /* Foreign town member check */
-        if (PickpocketPlugin.isTownyPresent()) {
+        if (logan.pickpocket.hooks.TownyHook.isTownyPresent()) {
             if (!isTownMember(event.getPlayer()) && isTownMember(victim) && !Config.isForeignTownTheft()) {
                 event.getPlayer().sendMessage(ChatColor.RED + "You cannot steal from players in their own town.");
                 return;

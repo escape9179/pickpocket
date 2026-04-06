@@ -5,6 +5,7 @@ import logan.api.gui.MenuItemClickEvent;
 import logan.api.gui.PlayerInventoryMenu;
 import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.config.Config;
+import logan.pickpocket.hooks.VaultHook;
 import logan.pickpocket.main.PickpocketPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -85,13 +86,13 @@ public class Minigame {
     }
 
     private double getPercentageOfVictimBalance(Player victim) {
-        Economy economy = PickpocketPlugin.getEconomy();
+        Economy economy = VaultHook.getEconomy();
         if (economy == null) return 0.0;
         return economy.getBalance(victim) * Config.getMoneyPercentageToSteal();
     }
 
     private void doMoneyTransaction(Player thief, Player victim, double amountStolen) {
-        Economy economy = PickpocketPlugin.getEconomy();
+        Economy economy = VaultHook.getEconomy();
         if (economy == null) return;
         if (amountStolen > 0) {
             economy.withdrawPlayer(victim, amountStolen);
@@ -103,7 +104,7 @@ public class Minigame {
     }
 
     private boolean isMoneyStealEnabled() {
-        return PickpocketPlugin.isVaultEnabled() && Config.isMoneyCanBeStolen();
+        return VaultHook.isVaultEnabled() && Config.isMoneyCanBeStolen();
     }
 
     private void stealMoney() {

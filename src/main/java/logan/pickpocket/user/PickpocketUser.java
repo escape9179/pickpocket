@@ -3,11 +3,13 @@ package logan.pickpocket.user;
 import logan.api.config.BasicConfiguration;
 import logan.api.config.YamlConfigurationUtil;
 import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.hooks.WorldGuardHook;
 import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.main.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import logan.pickpocket.managers.CooldownManager;
+import logan.pickpocket.managers.UserManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -51,7 +53,7 @@ public class PickpocketUser implements BasicConfiguration {
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_THIEF_PROFILE, "default");
         save();
-        
+
         this.skills = new PlayerSkills(this);
     }
 
@@ -169,14 +171,6 @@ public class PickpocketUser implements BasicConfiguration {
         this.currentMinigame = currentMinigame;
     }
 
-    public Profile getThiefProfile() {
-        return findThiefProfile();
-    }
-
-    public void setThiefProfile(Profile profile) {
-        configuration.set(KEY_THIEF_PROFILE, profile != null ? profile.getName() : "default");
-    }
-
     public int getSteals() {
         return configuration.getInt(KEY_STEALS);
     }
@@ -187,14 +181,12 @@ public class PickpocketUser implements BasicConfiguration {
 
     public void doPickpocket(PickpocketUser victim) {
         Player player = getBukkitPlayer();
-        if (!WorldGuardUtil.isPickpocketingAllowed(player)) {
+        if (!WorldGuardHook.isPickpocketingAllowedAtPlayerRegion(player)) {
             player.sendMessage(MessageConfiguration.getPickpocketRegionDisallowMessage());
         } else if (isCoolingDown()) {
             player.sendMessage(
                     MessageConfiguration.getCooldownNoticeMessage(
-                            String.valueOf(PickpocketPlugin.getCooldowns().get(player))
-                    )
-            );
+                            String.valueOf(CooldownManager.getCooldowns().get(player))));
         } else {
             this.victim = victim;
             victim.setPredator(this);
@@ -214,7 +206,7 @@ public class PickpocketUser implements BasicConfiguration {
                 return;
             }
 
-            sendMessage("&eAttempting to pickpocket... Stay close!");
+            player.sendMessage(MessageConfiguration.getPickpocketAttemptMessage());
 
             new BukkitRunnable() {
                 private int ticksPassed = 0;
@@ -229,14 +221,14 @@ public class PickpocketUser implements BasicConfiguration {
                     }
 
                     if (player.getLocation().distanceSquared(startLocation) > 0.5) {
-                        sendMessage("&cPickpocketing cancelled because you moved!");
+                        player.sendMessage(MessageConfiguration.getPickpocketCancelledMovedMessage());
                         PickpocketUser.this.victim = null;
                         cancel();
                         return;
                     }
 
                     if (targetPlayer.getLocation().distanceSquared(victimStartLocation) > 0.5) {
-                        sendMessage("&cPickpocketing cancelled because the target moved away!");
+                        player.sendMessage(MessageConfiguration.getPickpocketCancelledTargetMovedMessage());
                         PickpocketUser.this.victim = null;
                         cancel();
                         return;
@@ -246,10 +238,10 @@ public class PickpocketUser implements BasicConfiguration {
                         openRummageInventory = new RummageInventory(victim);
                         openRummageInventory.show(PickpocketUser.this);
                         rummaging = true;
-                        
+
                         // Gain experience
                         PickpocketUser.this.skills.addExperience(Skills.SPEED, 10);
-                        
+
                         cancel();
                     }
                     ticksPassed++;
@@ -258,46 +250,8 @@ public class PickpocketUser implements BasicConfiguration {
         }
     }
 
-    public Profile findThiefProfile() {
-        var thiefProfiles = PickpocketPlugin.getProfileConfiguration().loadProfiles();
-        Player player = getBukkitPlayer();
-        for (Profile profile : thiefProfiles) {
-            if (player.hasPermission("pickpocket.profile.thief." + profile.getName())) {
-                return profile;
-            }
-            Profile currentThiefProfile = getThiefProfileFromConfig();
-            if (currentThiefProfile != null && currentThiefProfile.equals(profile)) {
-                return profile;
-            }
-        }
-        return null;
-    }
-
-    private Profile getThiefProfileFromConfig() {
-        String profileName = configuration.getString(KEY_THIEF_PROFILE);
-        if (profileName == null) return null;
-        return PickpocketPlugin.getProfileConfiguration().loadProfile(profileName);
-    }
-
-    public boolean assignThiefProfile(String name) {
-        Profile profile = PickpocketPlugin.getProfileConfiguration().loadProfile(name);
-        if (profile != null) {
-            setThiefProfile(profile);
-            return true;
-        }
-        return false;
-    }
-
-    public void giveCooldown() {
-        Profile thiefProfile = findThiefProfile();
-        if (thiefProfile == null) return;
-        if (!isBypassing()) {
-            PickpocketPlugin.addCooldown(getBukkitPlayer(), thiefProfile.getCooldown());
-        }
-    }
-
     private boolean isCoolingDown() {
-        return PickpocketPlugin.getCooldowns().containsKey(getBukkitPlayer());
+        return CooldownManager.hasCooldown(getBukkitPlayer());
     }
 
     public void sendMessage(String message, Object... args) {
@@ -315,8 +269,7 @@ public class PickpocketUser implements BasicConfiguration {
     }
 
     public static PickpocketUser get(Player player) {
-        return PickpocketPlugin.getUsers().computeIfAbsent(
-                player.getUniqueId(), PickpocketUser::new
-        );
+        return UserManager.getUsers().computeIfAbsent(
+                player.getUniqueId(), PickpocketUser::new);
     }
 }

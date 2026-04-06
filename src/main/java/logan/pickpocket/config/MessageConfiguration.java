@@ -37,17 +37,13 @@ public final class MessageConfiguration {
     }
 
     private static String getMessageWithPlayerAndValue(String key, Player player, String value) {
-        String keyValue = config.getString(key);
-        String replacedValue = keyValue.replace("%player%", player.getName());
-        String replacedPlayer = replacedValue.replace("%value%", value);
-        return ColorUtils.colorize(replacedPlayer);
+        String keyValue = config.getString(key, "");
+        return ColorUtils.colorize(keyValue.replace("%player%", player.getName()).replace("%value%", value));
     }
 
     private static String getMessageWithPlayers(String key, Player player, Player victim) {
-        String keyValue = config.getString(key);
-        String replacedPlayer = keyValue.replace("%player%", player.getName());
-        String replacedVictim = replacedPlayer.replace("%victim%", victim.getName());
-        return ColorUtils.colorize(replacedVictim);
+        String keyValue = config.getString(key, "");
+        return ColorUtils.colorize(keyValue.replace("%player%", player.getName()).replace("%victim%", victim.getName()));
     }
 
     public static String getReloadNotificationMessage() {
@@ -96,6 +92,18 @@ public final class MessageConfiguration {
 
     public static String getPlayerStealWhileAfk() {
         return getMessage("attemptStealWhileAfk");
+    }
+
+    public static String getPickpocketAttemptMessage() {
+        return getMessage("pickpocketAttempt");
+    }
+
+    public static String getPickpocketCancelledMovedMessage() {
+        return getMessage("pickpocketCancelledMoved");
+    }
+
+    public static String getPickpocketCancelledTargetMovedMessage() {
+        return getMessage("pickpocketCancelledTargetMoved");
     }
 
     public static String getNoMoneyReceivedMessage() {
