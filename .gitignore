@@ -1,4 +1,10 @@
 /out/
 /.idea/
 pickpocket.iml
-/.idea/
+/target/
+/bin/
+/.agent/
+
+# Gradle
+.gradle/
+build/

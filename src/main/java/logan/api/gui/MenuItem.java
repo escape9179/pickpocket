@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public final class MenuItem implements MenuItemClickListener {
 
     private MenuItemClickListener listener;
-    private ItemStack             itemStack;
+    private ItemStack itemStack;
 
     public MenuItem(String name, ItemStack itemStack) {
         this.itemStack = itemStack.clone();
@@ -43,12 +44,12 @@ public final class MenuItem implements MenuItemClickListener {
     }
 
     public final MenuItem setDurability(int durability) {
-        setDurability((short) durability);
-        return this;
-    }
-
-    public final MenuItem setDurability(short durability) {
-        itemStack.setDurability(durability);
+        setMetaProperty(m -> {
+            if (m instanceof Damageable) {
+                ((Damageable) m).setDamage(durability);
+            }
+            return m;
+        });
         return this;
     }
 
@@ -64,7 +65,8 @@ public final class MenuItem implements MenuItemClickListener {
 
     public final MenuItem setName(String name) {
         setMetaProperty(m -> {
-            if (m != null ) m.setDisplayName(ChatColor.WHITE + name);
+            if (m != null)
+                m.setDisplayName(ChatColor.WHITE + name);
             return m;
         });
         return this;
@@ -85,7 +87,7 @@ public final class MenuItem implements MenuItemClickListener {
     }
 
     public final MenuItem setMagic(boolean magic) {
-        addEnchantment(Enchantment.ARROW_DAMAGE, 0, false);
+        addEnchantment(Enchantment.POWER, 0, false);
         addItemFlags(ItemFlag.HIDE_ENCHANTS);
         return this;
     }
@@ -147,8 +149,8 @@ public final class MenuItem implements MenuItemClickListener {
         return itemStack.getAmount();
     }
 
-    public short getDurability() {
-        return itemStack.getDurability();
+    public int getDurability() {
+        return getMetaProperty(m -> (m instanceof Damageable) ? ((Damageable) m).getDamage() : 0);
     }
 
     public List<String> getLore() {

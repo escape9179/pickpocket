@@ -108,12 +108,13 @@ public class Metrics {
             config.addDefault("logResponseStatusText", false);
 
             // Inform the server owners about bStats
-            config.options().header(
-                    "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
-                            "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
+            config.options().setHeader(List.of(
+                    "bStats collects some data for plugin authors like how many servers are using their plugins.",
+                    "To honor their work, you should not disable it.",
+                    "This has nearly no effect on the server performance!",
+                    "Check out https://bStats.org/ to learn more :)"
+            ));
+            config.options().copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -290,7 +291,7 @@ public class Metrics {
                                     Method jsonStringGetter = jsonObjectJsonSimple.getDeclaredMethod("toJSONString");
                                     jsonStringGetter.setAccessible(true);
                                     String jsonString = (String) jsonStringGetter.invoke(plugin);
-                                    JsonObject object = new JsonParser().parse(jsonString).getAsJsonObject();
+                                    JsonObject object = JsonParser.parseString(jsonString).getAsJsonObject();
                                     pluginData.add(object);
                                 }
                             } catch (ClassNotFoundException e) {

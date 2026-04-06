@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+group = 'logan.pickpocket'
+version = '3.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    // Spigot API
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+
+    // Vault / Towny (JitPack)
+    maven { url 'https://jitpack.io' }
+
+    // Essentials
+    maven { url 'https://repo.essentialsx.net/releases/' }
+
+    // WorldGuard / WorldEdit
+    maven { url 'https://maven.enginehub.org/repo/' }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT'
+
+    // Integrations (provided at runtime by the server)
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'net.essentialsx:EssentialsX:2.19.0'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
+    compileOnly 'com.github.LlmDl:Towny:0.98.3.1'
+
+    // bStats (bundled into the JAR)
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
+}
+
+tasks.named('processResources') {
+    filesMatching('plugin.yml') {
+        expand version: project.version
+    }
+}
