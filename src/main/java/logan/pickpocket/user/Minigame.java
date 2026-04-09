@@ -3,12 +3,10 @@ package logan.pickpocket.user;
 import logan.api.gui.MenuItem;
 import logan.api.gui.MenuItemClickEvent;
 import logan.api.gui.PlayerInventoryMenu;
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.config.Config;
 import logan.pickpocket.hooks.VaultHook;
-import logan.pickpocket.main.PickpocketPlugin;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -99,9 +97,9 @@ public class Minigame {
         if (amountStolen > 0) {
             economy.withdrawPlayer(victim, amountStolen);
             economy.depositPlayer(thief, amountStolen);
-            thief.sendMessage(MessageConfiguration.getMoneyAmountReceivedMessage(String.format("%.2f", amountStolen)));
+            thief.sendMessage(MessageConfig.getMoneyAmountReceivedMessage(String.format("%.2f", amountStolen)));
         } else {
-            thief.sendMessage(MessageConfiguration.getNoMoneyReceivedMessage());
+            thief.sendMessage(MessageConfig.getNoMoneyReceivedMessage());
         }
     }
 
@@ -122,18 +120,16 @@ public class Minigame {
         stealMoney();
         playItemPickupSound(predator);
         predatorUser.setSteals(predatorUser.getSteals() + 1);
-        predator.sendMessage(MessageConfiguration.getPickpocketSuccessfulMessage());
-        showAdminNotifications(true);
+        predator.sendMessage(MessageConfig.getPickpocketSuccessfulMessage());
     }
 
     private void doPickpocketFailure() {
         Player predator = predatorUser.getBukkitPlayer();
         if (predator != null) {
             playBassSound(predator);
-            predator.sendMessage(MessageConfiguration.getPickpocketUnsuccessfulMessage());
+            predator.sendMessage(MessageConfig.getPickpocketUnsuccessfulMessage());
         }
         victimUser.playRummageSound();
-        showAdminNotifications(false);
     }
 
     private void doGameLoop() {
@@ -187,25 +183,6 @@ public class Minigame {
         Player victim = victimUser.getBukkitPlayer();
         if (victim != null) {
             victim.playSound(victim.getLocation(), sound, 1.0f, 1.0f);
-        }
-    }
-
-    private void showAdminNotifications(boolean success) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            PickpocketUser profile = PickpocketUser.get(player);
-            if (profile.isAdmin()) {
-                if (success) {
-                    player.sendMessage(
-                            MessageConfiguration.getPickpocketSuccessAdminNotificationMessage(
-                                    predatorUser.getBukkitPlayer(),
-                                    victimUser.getBukkitPlayer()));
-                } else {
-                    player.sendMessage(
-                            MessageConfiguration.getPickpocketFailureAdminNotification(
-                                    predatorUser.getBukkitPlayer(),
-                                    victimUser.getBukkitPlayer()));
-                }
-            }
         }
     }
 

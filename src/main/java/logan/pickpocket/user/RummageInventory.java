@@ -3,7 +3,6 @@ package logan.pickpocket.user;
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
 import logan.api.util.PlayerUtils;
-import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.main.PickpocketUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

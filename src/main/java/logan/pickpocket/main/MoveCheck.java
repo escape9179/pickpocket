@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,32 +38,13 @@ public final class MoveCheck {
 
         // Check if the player is a predator.
         if (user.isPredator()) {
-            PickpocketUser victimProfile = user.getVictim();
-            if (user.isPlayingMinigame()) {
-                user.getCurrentMinigame().stop();
-            }
-            if (user.isRummaging()) {
-                user.getBukkitPlayer().closeInventory();
-                user.setRummaging(false);
-            }
-            player.sendMessage(MessageConfiguration.getPickpocketOnMoveWarningMessage());
-            user.setVictim(null);
-            victimProfile.setPredator(null);
+            PickpocketSessionManager.onPredatorMoved(player, user);
             return;
         }
 
         // Check if the player is a victim.
         if (user.isVictim()) {
-            PickpocketUser predatorProfile = user.getPredator();
-            if (predatorProfile.isPlayingMinigame()) {
-                predatorProfile.getCurrentMinigame().stop();
-            }
-            if (predatorProfile.isRummaging()) {
-                predatorProfile.getBukkitPlayer().closeInventory();
-                predatorProfile.setRummaging(false);
-            }
-            user.setPredator(null);
-            predatorProfile.setVictim(null);
+            PickpocketSessionManager.onVictimMoved(user);
         }
     }
 }

@@ -2,7 +2,7 @@ package logan.pickpocket.listeners;
 
 import com.earth2me.essentials.Essentials;
 import com.palmergames.bukkit.towny.TownyAPI;
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.config.Config;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.user.PickpocketUser;
@@ -45,13 +45,13 @@ public class PlayerInteractListener implements Listener {
 
             /* Check if the victim is AFK */
             if (essentials.getUser(event.getRightClicked().getUniqueId()).isAfk()) {
-                event.getPlayer().sendMessage(MessageConfiguration.getPlayerStealFromAfkMessage());
+                event.getPlayer().sendMessage(MessageConfig.getPlayerStealFromAfkMessage());
                 return;
             }
 
             /* Check if the predator is AFK */
             if (essentials.getUser(event.getPlayer().getUniqueId()).isAfk()) {
-                event.getPlayer().sendMessage(MessageConfiguration.getPlayerStealWhileAfk());
+                event.getPlayer().sendMessage(MessageConfig.getPlayerStealWhileAfk());
                 return;
             }
         }
@@ -75,7 +75,7 @@ public class PlayerInteractListener implements Listener {
 
         if (!Config.isPickpocketingEnabled()) {
             if (Config.isStatusOnInteract())
-                event.getPlayer().sendMessage(MessageConfiguration.getPickpocketDisabledMessage());
+                event.getPlayer().sendMessage(MessageConfig.getPickpocketDisabledMessage());
             return;
         }
 

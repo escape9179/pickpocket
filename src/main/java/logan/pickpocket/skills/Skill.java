@@ -1,8 +1,22 @@
 package logan.pickpocket.skills;
 
-public abstract class Skill {
+public enum Skill {
 
-    public abstract String getName();
+    SPEED("Speed", "Determines how fast you can start rummaging through a player's inventory.");
 
-    public abstract String getDescription();
+    private String name;
+    private String description;
+
+     Skill(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

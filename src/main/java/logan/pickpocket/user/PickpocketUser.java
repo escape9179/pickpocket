@@ -1,33 +1,25 @@
 package logan.pickpocket.user;
 
-import logan.api.config.BasicConfiguration;
-import logan.api.config.YamlConfigurationUtil;
-import logan.pickpocket.config.MessageConfiguration;
-import logan.pickpocket.hooks.WorldGuardHook;
-import logan.pickpocket.main.PickpocketPlugin;
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import logan.pickpocket.managers.CooldownManager;
-import logan.pickpocket.managers.UserManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.util.UUID;
-import logan.pickpocket.skills.PlayerSkills;
-import logan.pickpocket.skills.Skills;
+import logan.api.config.YamlConfigurationUtil;
+import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.managers.UserManager;
+import logan.pickpocket.skills.SkillModule;
 import logan.pickpocket.skills.SpeedSkill;
-import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class PickpocketUser implements BasicConfiguration {
+public class PickpocketUser {
 
-    private static final String KEY_ADMIN = "admin";
-    private static final String KEY_BYPASS = "bypass";
-    private static final String KEY_EXEMPT = "exempt";
     private static final String KEY_STEALS = "steals";
-    private static final String KEY_THIEF_PROFILE = "thiefProfile";
 
     private final UUID uuid;
     private PickpocketUser victim;
@@ -39,7 +31,7 @@ public class PickpocketUser implements BasicConfiguration {
     private Minigame currentMinigame;
     private File file;
     private YamlConfiguration configuration;
-    private PlayerSkills skills;
+    private SkillModule skillModule;
 
     public PickpocketUser(UUID uuid) {
         this.uuid = uuid;
@@ -47,33 +39,34 @@ public class PickpocketUser implements BasicConfiguration {
         this.file = new File(directory, uuid + ".yml");
         this.configuration = YamlConfiguration.loadConfiguration(file);
 
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_ADMIN, false);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_BYPASS, false);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_EXEMPT, false);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_THIEF_PROFILE, "default");
-        save();
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        this.skills = new PlayerSkills(this);
+        this.skillModule = new SkillModule(this);
     }
 
-    @Override
+    public SpeedSkill getSpeedSkill() {
+        return skillModule.getSpeedSkill();
+    }
+
     public File getFile() {
         return file;
     }
 
-    @Override
     public YamlConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override
     public void setConfiguration(YamlConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public PlayerSkills getSkills() {
-        return skills;
+    public SkillModule getSkillModule() {
+        return skillModule;
     }
 
     public UUID getUuid() {
@@ -139,30 +132,6 @@ public class PickpocketUser implements BasicConfiguration {
         this.openRummageInventory = openRummageInventory;
     }
 
-    public boolean isAdmin() {
-        return configuration.getBoolean(KEY_ADMIN);
-    }
-
-    public void setAdmin(boolean value) {
-        configuration.set(KEY_ADMIN, value);
-    }
-
-    public boolean isBypassing() {
-        return configuration.getBoolean(KEY_BYPASS);
-    }
-
-    public void setBypassing(boolean value) {
-        configuration.set(KEY_BYPASS, value);
-    }
-
-    public boolean isExempt() {
-        return configuration.getBoolean(KEY_EXEMPT);
-    }
-
-    public void setExempt(boolean value) {
-        configuration.set(KEY_EXEMPT, value);
-    }
-
     public Minigame getCurrentMinigame() {
         return currentMinigame;
     }
@@ -180,78 +149,7 @@ public class PickpocketUser implements BasicConfiguration {
     }
 
     public void doPickpocket(PickpocketUser victim) {
-        Player player = getBukkitPlayer();
-        if (!WorldGuardHook.isPickpocketingAllowedAtPlayerRegion(player)) {
-            player.sendMessage(MessageConfiguration.getPickpocketRegionDisallowMessage());
-        } else if (isCoolingDown()) {
-            player.sendMessage(
-                    MessageConfiguration.getCooldownNoticeMessage(
-                            String.valueOf(CooldownManager.getCooldowns().get(player))));
-        } else {
-            this.victim = victim;
-            victim.setPredator(this);
-
-            int speedLevel = this.skills.getSkillLevel(Skills.SPEED);
-            float delaySeconds = new SpeedSkill().getDelaySeconds(speedLevel);
-            int delayTicks = (int) (delaySeconds * 20);
-
-            Location startLocation = player.getLocation();
-            Location victimStartLocation = victim.getBukkitPlayer().getLocation();
-
-            if (delayTicks <= 0) {
-                openRummageInventory = new RummageInventory(victim);
-                openRummageInventory.show(this);
-                rummaging = true;
-                this.skills.addExperience(Skills.SPEED, 10);
-                return;
-            }
-
-            player.sendMessage(MessageConfiguration.getPickpocketAttemptMessage());
-
-            new BukkitRunnable() {
-                private int ticksPassed = 0;
-
-                @Override
-                public void run() {
-                    Player targetPlayer = victim.getBukkitPlayer();
-                    if (player == null || !player.isOnline() || targetPlayer == null || !targetPlayer.isOnline()) {
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (player.getLocation().distanceSquared(startLocation) > 0.5) {
-                        player.sendMessage(MessageConfiguration.getPickpocketCancelledMovedMessage());
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (targetPlayer.getLocation().distanceSquared(victimStartLocation) > 0.5) {
-                        player.sendMessage(MessageConfiguration.getPickpocketCancelledTargetMovedMessage());
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (ticksPassed >= delayTicks) {
-                        openRummageInventory = new RummageInventory(victim);
-                        openRummageInventory.show(PickpocketUser.this);
-                        rummaging = true;
-
-                        // Gain experience
-                        PickpocketUser.this.skills.addExperience(Skills.SPEED, 10);
-
-                        cancel();
-                    }
-                    ticksPassed++;
-                }
-            }.runTaskTimer(PickpocketPlugin.getInstance(), 0L, 1L);
-        }
-    }
-
-    private boolean isCoolingDown() {
-        return CooldownManager.hasCooldown(getBukkitPlayer());
+        PickpocketSessionManager.startPickpocket(this, victim);
     }
 
     public void sendMessage(String message, Object... args) {

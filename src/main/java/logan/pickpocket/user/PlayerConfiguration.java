@@ -1,15 +1,15 @@
 package logan.pickpocket.user;
 
-import logan.api.config.BasicConfiguration;
 import logan.api.config.YamlConfigurationUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Tre on 1/18/2016.
  */
-public class PlayerConfiguration implements BasicConfiguration {
+public class PlayerConfiguration {
 
     private File file;
     private YamlConfiguration configuration;
@@ -26,20 +26,18 @@ public class PlayerConfiguration implements BasicConfiguration {
         YamlConfigurationUtil.setIfNotSet(configuration, "exempt", false);
         YamlConfigurationUtil.setIfNotSet(configuration, "steals", 0);
         YamlConfigurationUtil.setIfNotSet(configuration, "thiefProfile", "default");
-        save();
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public File getFile() {
-        return file;
-    }
-
-    @Override
     public YamlConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override
     public void setConfiguration(YamlConfiguration configuration) {
         this.configuration = configuration;
     }

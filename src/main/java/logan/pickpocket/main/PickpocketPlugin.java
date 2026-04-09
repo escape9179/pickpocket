@@ -1,26 +1,36 @@
 package logan.pickpocket.main;
 
-import logan.api.bstats.Metrics;
-import logan.api.command.CommandDispatcher;
-import logan.api.gui.GUIAPI;
-import logan.api.util.UpdateChecker;
-import logan.pickpocket.commands.*;
-import logan.pickpocket.config.Config;
-import logan.pickpocket.config.MessageConfiguration;
-import logan.pickpocket.hooks.EssentialsHook;
-import logan.pickpocket.hooks.TownyHook;
-import logan.pickpocket.hooks.VaultHook;
-import logan.pickpocket.hooks.WorldGuardHook;
-import logan.pickpocket.listeners.*;
-import logan.pickpocket.tasks.CooldownTask;
-import logan.pickpocket.tasks.MoveCheckTask;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
+import logan.api.bstats.Metrics;
+import logan.api.command.CommandDispatcher;
+import logan.api.gui.GUIAPI;
+import logan.api.util.UpdateChecker;
+import logan.pickpocket.commands.DebugCommand;
+import logan.pickpocket.commands.DebugGiveRandom;
+import logan.pickpocket.commands.MainCommand;
+import logan.pickpocket.commands.ReloadCommand;
+import logan.pickpocket.commands.StatusCommand;
+import logan.pickpocket.commands.TestCommand;
+import logan.pickpocket.commands.ToggleCommand;
+import logan.pickpocket.config.Config;
+import logan.pickpocket.config.MessageConfig;
+import logan.pickpocket.hooks.EssentialsHook;
+import logan.pickpocket.hooks.TownyHook;
+import logan.pickpocket.hooks.VaultHook;
+import logan.pickpocket.hooks.WorldGuardHook;
+import logan.pickpocket.listeners.InventoryClickListener;
+import logan.pickpocket.listeners.InventoryCloseListener;
+import logan.pickpocket.listeners.PlayerInteractListener;
+import logan.pickpocket.listeners.ProjectileHitListener;
+import logan.pickpocket.tasks.CooldownTask;
+import logan.pickpocket.tasks.MoveCheckTask;
 
 /**
  * Created by Tre on 12/14/2015.
@@ -52,8 +62,8 @@ public class PickpocketPlugin extends JavaPlugin {
         saveDefaultConfig();
         saveResource("messages.yml", false);
 
-        Config.init();
-        MessageConfiguration.init();
+        Config.init(this);
+        MessageConfig.init(this);
 
         registerCommands();
         registerListeners();
@@ -90,6 +100,7 @@ public class PickpocketPlugin extends JavaPlugin {
         CommandDispatcher.registerCommand(new ReloadCommand());
         CommandDispatcher.registerCommand(new ToggleCommand());
         CommandDispatcher.registerCommand(new StatusCommand());
+        CommandDispatcher.registerCommand(new TestCommand());
     }
 
     private void registerListeners() {

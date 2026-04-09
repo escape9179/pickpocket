@@ -1,6 +1,6 @@
 package logan.pickpocket.listeners;
 
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -13,15 +13,7 @@ public class InventoryCloseListener implements logan.api.listener.InventoryClose
     @Override
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        PickpocketUser profile = PickpocketUser.get(player);
-        if (profile.isPlayingMinigame()) {
-            profile.getCurrentMinigame().stop();
-            player.sendMessage(MessageConfiguration.getPickpocketUnsuccessfulMessage());
-        }
-        if (profile.isRummaging()) {
-            profile.setRummaging(false);
-            profile.getVictim().setPredator(null);
-            profile.setVictim(null);
-        }
+        PickpocketUser user = PickpocketUser.get(player);
+        PickpocketSessionManager.onInventoryClosed(user);
     }
 }

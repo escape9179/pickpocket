@@ -1,6 +1,5 @@
 package logan.pickpocket.listeners;
 
-import logan.pickpocket.config.MessageConfiguration;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,9 +13,9 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        PickpocketUser profile = PickpocketUser.get(player);
+        PickpocketUser user = PickpocketUser.get(player);
         Inventory inventory = event.getInventory();
-        if (profile.isRummaging() || profile.isPlayingMinigame()) {
+        if (user.isRummaging() || user.isPlayingMinigame()) {
             event.setCancelled(true);
             return;
         }
@@ -27,15 +26,9 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        if (!profile.isPredator()) {
+        if (!user.isPredator()) {
+
             return;
-        }
-        if (profile.getVictim().isExempt()) {
-            event.setCancelled(true);
-            Player bukkitPlayer = profile.getBukkitPlayer();
-            if (bukkitPlayer != null) {
-                bukkitPlayer.sendMessage(MessageConfiguration.getPersonCantBeStolenFromMessage());
-            }
         }
     }
 }

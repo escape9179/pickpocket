@@ -2,19 +2,12 @@ package logan.pickpocket.skills;
 
 import logan.pickpocket.config.Config;
 
-public class SpeedSkill extends Skill {
+public class SpeedSkill extends PlayerSkill {
 
-    public static final int MAX_LEVEL = 100;
     public static final float BASE_DELAY_SECONDS = 5.0f;
 
-    @Override
-    public String getName() {
-        return "Speed";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Determines how fast you can start rummaging through a player's inventory.";
+    SpeedSkill() {
+        super(Skill.SPEED);
     }
 
     /**
@@ -37,5 +30,17 @@ public class SpeedSkill extends Skill {
         // Level MAX_LEVEL -> minDelay
         float progress = (float) level / MAX_LEVEL;
         return BASE_DELAY_SECONDS - (progress * (BASE_DELAY_SECONDS - minDelay));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

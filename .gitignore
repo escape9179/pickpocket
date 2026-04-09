@@ -9,3 +9,4 @@ pickpocket.iml
 # Gradle
 .gradle/
 build/
+gradle-local.properties

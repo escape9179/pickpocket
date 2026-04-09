@@ -1,0 +1,9 @@
+# Copy to gradle-local.properties (gitignored) and adjust for your machine.
+#
+# spigotPluginsDir — required for deployToSpigot / copyJarToSpigot.
+# outputJarToSpigot — if true, every jar/build writes the JAR straight into that folder.
+#   If false (default), JAR stays under build/libs; run deployToSpigot to copy to the server.
+#
+# Override on the CLI: -PoutputJarToSpigot=true -PspigotPluginsDir=C:/path/to/plugins
+spigotPluginsDir=C:/path/to/spigot/server/plugins
+outputJarToSpigot=false
