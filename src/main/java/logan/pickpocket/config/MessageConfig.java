@@ -42,9 +42,7 @@ public final class MessageConfig {
 
     private static String getMessage(String key) {
         if (!config.contains(key)) {
-            // If the key doesn't exist, add it with a default placeholder value and save the config
-            String defaultValue = "&cMissing message: " + key;
-            config.set(key, defaultValue);
+            config.set(key, defaultConfig.getString(key));
             try {
                 config.save(file);
             } catch (IOException e) {
@@ -138,5 +136,9 @@ public final class MessageConfig {
 
     public static void reload() {
         config = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public static String getAlreadyInSessionMessage() {
+        return getMessage("alreadyInSession");
     }
 }

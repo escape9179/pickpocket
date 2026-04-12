@@ -35,15 +35,15 @@ public final class MoveCheck {
         }
 
         PickpocketUser user = PickpocketUser.get(player);
-
-        // Check if the player is a predator.
-        if (user.isPredator()) {
+        var session = PickpocketSessionManager.getSession(user);
+        if (session == null) {
+            return;
+        }
+        if (session.isThief(user)) {
             PickpocketSessionManager.onPredatorMoved(player, user);
             return;
         }
-
-        // Check if the player is a victim.
-        if (user.isVictim()) {
+        if (session.isVictim(user)) {
             PickpocketSessionManager.onVictimMoved(user);
         }
     }

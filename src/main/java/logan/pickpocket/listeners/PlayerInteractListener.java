@@ -1,17 +1,20 @@
 package logan.pickpocket.listeners;
 
-import com.earth2me.essentials.Essentials;
-import com.palmergames.bukkit.towny.TownyAPI;
-import logan.pickpocket.config.MessageConfig;
-import logan.pickpocket.config.Config;
-import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
+
+import com.earth2me.essentials.Essentials;
+import com.palmergames.bukkit.towny.TownyAPI;
+
+import logan.pickpocket.config.Config;
+import logan.pickpocket.config.MessageConfig;
+import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.user.PickpocketUser;
 
 /**
  * Created by Tre on 12/28/2015.
@@ -79,6 +82,11 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
+        if (PickpocketSessionManager.hasUserInSession(thiefUser)) {
+            event.getPlayer().sendMessage(MessageConfig.getAlreadyInSessionMessage());
+            return;
+        }
+        
         thiefUser.doPickpocket(victimUser);
     }
 

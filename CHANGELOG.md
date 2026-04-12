@@ -1,3 +1,5 @@
+v3.0
+
 # v2.8
 * **Added a configuration option to enable fishing rod pickpocketing.**
   This allows a player to initiate pickpocketing by using a fishing rod instead of sneak right-clicking.

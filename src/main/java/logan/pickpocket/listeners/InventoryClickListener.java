@@ -1,5 +1,6 @@
 package logan.pickpocket.listeners;
 
+import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,7 +16,8 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
         Player player = (Player) event.getWhoClicked();
         PickpocketUser user = PickpocketUser.get(player);
         Inventory inventory = event.getInventory();
-        if (user.isRummaging() || user.isPlayingMinigame()) {
+        var pickSession = PickpocketSessionManager.getSession(user);
+        if (pickSession != null && pickSession.isRummaging()) {
             event.setCancelled(true);
             return;
         }
@@ -26,8 +28,7 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        if (!user.isPredator()) {
-
+        if (pickSession == null || !pickSession.isThief(user)) {
             return;
         }
     }

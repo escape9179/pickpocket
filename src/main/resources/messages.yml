@@ -98,3 +98,6 @@ pickpocketCancelledMoved: "&cPickpocketing cancelled because you moved!"
 
 # Sent when the target moves away and the pickpocketing is cancelled.
 pickpocketCancelledTargetMoved: "&cPickpocketing cancelled because the target moved away!"
+
+# Sent when a player attempts to pickpocket while they are already in a pickpocket session.
+alreadyInSession: "&cYou are already pickpocketing someone."

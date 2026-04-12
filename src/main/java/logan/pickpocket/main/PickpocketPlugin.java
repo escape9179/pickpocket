@@ -132,8 +132,6 @@ public class PickpocketPlugin extends JavaPlugin {
         return CommandDispatcher.handleTabComplete(sender, command, alias, args);
     }
 
-    // Static accessors
-
     public static PickpocketPlugin getInstance() {
         return instance;
     }

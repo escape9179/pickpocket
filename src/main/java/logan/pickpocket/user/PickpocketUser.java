@@ -14,6 +14,8 @@ import logan.api.config.YamlConfigurationUtil;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.UserManager;
+import logan.pickpocket.skills.MemorySkill;
+import logan.pickpocket.skills.RevealSkill;
 import logan.pickpocket.skills.SkillModule;
 import logan.pickpocket.skills.SpeedSkill;
 
@@ -22,13 +24,6 @@ public class PickpocketUser {
     private static final String KEY_STEALS = "steals";
 
     private final UUID uuid;
-    private PickpocketUser victim;
-    private PickpocketUser predator;
-    private PickpocketUser lastPredator;
-    private boolean playingMinigame;
-    private boolean rummaging;
-    private RummageInventory openRummageInventory;
-    private Minigame currentMinigame;
     private File file;
     private YamlConfiguration configuration;
     private SkillModule skillModule;
@@ -51,6 +46,14 @@ public class PickpocketUser {
 
     public SpeedSkill getSpeedSkill() {
         return skillModule.getSpeedSkill();
+    }
+
+    public RevealSkill getRevealSkill() {
+        return skillModule.getRevealSkill();
+    }
+
+    public MemorySkill getMemorySkill() {
+        return skillModule.getMemorySkill();
     }
 
     public File getFile() {
@@ -77,69 +80,6 @@ public class PickpocketUser {
         return Bukkit.getPlayer(uuid);
     }
 
-    public PickpocketUser getVictim() {
-        return victim;
-    }
-
-    public void setVictim(PickpocketUser victim) {
-        this.victim = victim;
-    }
-
-    public PickpocketUser getPredator() {
-        return predator;
-    }
-
-    public void setPredator(PickpocketUser predator) {
-        this.predator = predator;
-        if (lastPredator == null) {
-            lastPredator = predator;
-        }
-    }
-
-    public PickpocketUser getLastPredator() {
-        return lastPredator;
-    }
-
-    public boolean isPredator() {
-        return victim != null;
-    }
-
-    public boolean isVictim() {
-        return predator != null;
-    }
-
-    public boolean isPlayingMinigame() {
-        return playingMinigame;
-    }
-
-    public void setPlayingMinigame(boolean playingMinigame) {
-        this.playingMinigame = playingMinigame;
-    }
-
-    public boolean isRummaging() {
-        return rummaging;
-    }
-
-    public void setRummaging(boolean rummaging) {
-        this.rummaging = rummaging;
-    }
-
-    public RummageInventory getOpenRummageInventory() {
-        return openRummageInventory;
-    }
-
-    public void setOpenRummageInventory(RummageInventory openRummageInventory) {
-        this.openRummageInventory = openRummageInventory;
-    }
-
-    public Minigame getCurrentMinigame() {
-        return currentMinigame;
-    }
-
-    public void setCurrentMinigame(Minigame currentMinigame) {
-        this.currentMinigame = currentMinigame;
-    }
-
     public int getSteals() {
         return configuration.getInt(KEY_STEALS);
     }
@@ -163,6 +103,13 @@ public class PickpocketUser {
         Player player = getBukkitPlayer();
         if (player != null) {
             player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
+        }
+    }
+
+    public void playRummageBlockedSound() {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.75f);
         }
     }
 

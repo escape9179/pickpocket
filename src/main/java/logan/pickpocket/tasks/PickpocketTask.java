@@ -2,6 +2,7 @@ package logan.pickpocket.tasks;
 
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.managers.SessionEndReason;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -32,27 +33,27 @@ public class PickpocketTask extends BukkitRunnable {
         Player targetPlayer = victim.getBukkitPlayer();
 
         if (player == null || !player.isOnline() || targetPlayer == null || !targetPlayer.isOnline()) {
-            PickpocketSessionManager.unlinkSession(predator);
+            PickpocketSessionManager.unlinkSession(predator, SessionEndReason.TASK_CANCELLED);
             cancel();
             return;
         }
 
         if (player.getLocation().distanceSquared(startLocation) > 0.5) {
             predator.sendMessage(MessageConfig.getPickpocketCancelledMovedMessage());
-            PickpocketSessionManager.unlinkSession(predator);
+            PickpocketSessionManager.unlinkSession(predator, SessionEndReason.TASK_CANCELLED);
             cancel();
             return;
         }
 
         if (targetPlayer.getLocation().distanceSquared(victimStartLocation) > 0.5) {
             predator.sendMessage(MessageConfig.getPickpocketCancelledTargetMovedMessage());
-            PickpocketSessionManager.unlinkSession(predator);
+            PickpocketSessionManager.unlinkSession(predator, SessionEndReason.TASK_CANCELLED);
             cancel();
             return;
         }
 
         if (ticksPassed >= delayTicks) {
-            PickpocketSessionManager.completePickpocketAndOpenRummage(predator, victim);
+            PickpocketSessionManager.openRummageInventory(predator, victim);
             cancel();
         }
 
