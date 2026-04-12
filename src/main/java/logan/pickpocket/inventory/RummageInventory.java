@@ -24,6 +24,9 @@ public final class RummageInventory {
     private static final int MAX_ROWS = 6;
     private static final int REVEAL_BASE_COUNT = 1;
     private static final int REVEAL_PER_STAGE = 1;
+    private static final float EXPAND_SOUND_BASE_VOLUME = 0.6f;
+    private static final float EXPAND_SOUND_STEP_INCREMENT = 0.18f;
+    private static final float EXPAND_SOUND_MAX_VOLUME = 1.5f;
 
     private final PickpocketSession session;
     private final PickpocketUser thief;
@@ -55,8 +58,9 @@ public final class RummageInventory {
         applyMemoryDecay(previousRows);
         ensureRevealTarget();
         rebuildAndShowMenu(true);
-        thief.playRummageSound();
-        victim.playRummageSound();
+        float expandSoundVolume = getExpandSoundVolume(previousRows);
+        thief.playRummageExpandSound(expandSoundVolume);
+        victim.playRummageExpandSound(expandSoundVolume);
     }
 
     private void onRevealedItemClick(int menuSlot) {
@@ -177,6 +181,12 @@ public final class RummageInventory {
         int stageIndex = state.getCurrentRows() - 1;
         int revealLevelBonus = thief.getRevealSkill().getRevealLevelBonus();
         return Math.max(0, REVEAL_BASE_COUNT + (stageIndex * REVEAL_PER_STAGE) + revealLevelBonus);
+    }
+
+    private float getExpandSoundVolume(int previousRows) {
+        int expansionIndex = Math.max(0, previousRows - 1);
+        float scaledVolume = EXPAND_SOUND_BASE_VOLUME + (EXPAND_SOUND_STEP_INCREMENT * expansionIndex);
+        return Math.min(EXPAND_SOUND_MAX_VOLUME, scaledVolume);
     }
 
     private void applyMemoryDecay(int previousRows) {

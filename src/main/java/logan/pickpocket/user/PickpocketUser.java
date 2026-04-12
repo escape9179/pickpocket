@@ -106,6 +106,13 @@ public class PickpocketUser {
         }
     }
 
+    public void playRummageExpandSound(float volume) {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.BLOCK_WOOL_BREAK, volume, 0.85f);
+        }
+    }
+
     public void playRummageBlockedSound() {
         Player player = getBukkitPlayer();
         if (player != null) {
