@@ -33,7 +33,7 @@ import logan.pickpocket.tasks.CooldownTask;
 import logan.pickpocket.tasks.MoveCheckTask;
 
 /**
- * Created by Tre on 12/14/2015.
+ * Main Bukkit plugin entrypoint for Pickpocket.
  */
 public class PickpocketPlugin extends JavaPlugin {
 
@@ -51,11 +51,17 @@ public class PickpocketPlugin extends JavaPlugin {
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload",
             "Reload the Pickpocket configuration file.");
 
+    /**
+     * Registers optional WorldGuard integration before enable.
+     */
     @Override
     public void onLoad() {
         WorldGuardHook.onLoad(this);
     }
 
+    /**
+     * Initializes configuration, hooks, listeners, commands, and repeating tasks.
+     */
     @Override
     public void onEnable() {
         instance = this;
@@ -88,6 +94,9 @@ public class PickpocketPlugin extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + getName() + " enabled.");
     }
 
+    /**
+     * Logs plugin shutdown.
+     */
     @Override
     public void onDisable() {
         getServer().getConsoleSender().sendMessage(ChatColor.RED + getName() + " disabled.");
@@ -132,16 +141,27 @@ public class PickpocketPlugin extends JavaPlugin {
         return CommandDispatcher.handleTabComplete(sender, command, alias, args);
     }
 
+    /**
+     * @return plugin singleton instance
+     */
     public static PickpocketPlugin getInstance() {
         return instance;
     }
 
+    /**
+     * Logs a message through plugin logger when initialized.
+     *
+     * @param message message to log
+     */
     public static void log(String message) {
         if (instance != null) {
             instance.getLogger().info(message);
         }
     }
 
+    /**
+     * @return currently loaded plugin version
+     */
     public static String getPluginVersion() {
         return instance.getDescription().getVersion();
     }

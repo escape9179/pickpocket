@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Detects block-level movement and notifies session logic.
+ */
 public final class MoveCheck {
 
     private static final Map<UUID, Location> playerLocationMap = new HashMap<>();
@@ -16,6 +19,11 @@ public final class MoveCheck {
     private MoveCheck() {
     }
 
+    /**
+     * Compares current and previous player locations and reacts to movement.
+     *
+     * @param player player to inspect
+     */
     public static void check(Player player) {
         Location previousLocation = playerLocationMap.get(player.getUniqueId());
         if (previousLocation == null) {

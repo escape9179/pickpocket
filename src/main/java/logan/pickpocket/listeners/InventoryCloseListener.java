@@ -6,10 +6,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**
- * Created by Tre on 12/28/2015.
+ * Handles cleanup when rummage inventories are closed.
  */
 public class InventoryCloseListener implements logan.api.listener.InventoryCloseListener {
 
+    /**
+     * Delegates close handling to the session manager.
+     *
+     * @param event inventory close event
+     */
     @Override
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();

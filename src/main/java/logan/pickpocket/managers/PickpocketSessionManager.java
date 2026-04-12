@@ -57,6 +57,12 @@ public final class PickpocketSessionManager {
         }
     }
 
+    /**
+     * Starts a pickpocket attempt, enforcing region and cooldown checks first.
+     *
+     * @param thief stealing user
+     * @param victim target user
+     */
     public static void startPickpocket(PickpocketUser thief, PickpocketUser victim) {
         Player player = thief.getBukkitPlayer();
         if (player == null) {
@@ -100,6 +106,12 @@ public final class PickpocketSessionManager {
                 .runTaskTimer(PickpocketPlugin.getInstance(), 0L, 1L);
     }
 
+    /**
+     * Opens rummage inventory for an active thief-victim session.
+     *
+     * @param thief stealing user
+     * @param victim target user
+     */
     public static void openRummageInventory(PickpocketUser thief, PickpocketUser victim) {
         PickpocketSession session = sessionByThiefId.get(thief.getUuid());
         if (session == null || !session.getVictim().getUuid().equals(victim.getUuid())) {
@@ -127,6 +139,11 @@ public final class PickpocketSessionManager {
         endSession(sessionByThiefId.get(thief.getUuid()), reason);
     }
 
+    /**
+     * Handles inventory close events related to rummage UI lifecycle.
+     *
+     * @param user closing user
+     */
     public static void onInventoryClosed(PickpocketUser user) {
         PickpocketSession session = getSession(user);
         if (session == null) {
@@ -141,6 +158,12 @@ public final class PickpocketSessionManager {
         }
     }
 
+    /**
+     * Ends a session when the thief moves during a pending or active attempt.
+     *
+     * @param player thief Bukkit player
+     * @param predator thief user
+     */
     public static void onPredatorMoved(Player player, PickpocketUser predator) {
         PickpocketSession session = getSession(predator);
         if (session == null || !session.isThief(predator)) {
@@ -157,6 +180,11 @@ public final class PickpocketSessionManager {
         endSession(session, SessionEndReason.PREDATOR_MOVED);
     }
 
+    /**
+     * Ends a session when the victim moves during a pending or active attempt.
+     *
+     * @param victim victim user
+     */
     public static void onVictimMoved(PickpocketUser victim) {
         PickpocketSession session = getSession(victim);
         if (session == null || !session.isVictim(victim)) {

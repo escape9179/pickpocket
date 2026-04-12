@@ -6,25 +6,42 @@ import java.util.Objects;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+/**
+ * Runtime and serializable state for a concrete player skill.
+ */
 public class PlayerSkill implements PickpocketSkill, ConfigurationSerializable {
     private Skill skill;
     private int level;
     private int exp;
 
+    /**
+     * Creates a new skill state initialized at level 0 and exp 0.
+     *
+     * @param skill represented skill definition
+     */
     public PlayerSkill(Skill skill) {
         this.skill = skill;
         this.level = 0;
         this.exp = 0;
     }
     
+    /**
+     * @return underlying skill definition
+     */
     public Skill getSkill() {
         return skill;
     }
 
+    /**
+     * @return current skill level
+     */
     public int getLevel() {
         return level;
     }
 
+    /**
+     * @return current experience toward next level
+     */
     public int getExp() {
         return exp;
     }
@@ -99,6 +116,11 @@ public class PlayerSkill implements PickpocketSkill, ConfigurationSerializable {
         return 100; //TODO: Implement this
     }
 
+    /**
+     * Serializes this skill for Bukkit configuration storage.
+     *
+     * @return serialized key/value map
+     */
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();

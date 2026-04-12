@@ -7,10 +7,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 /**
- * Created by Tre on 12/28/2015.
+ * Cancels inventory interaction while the thief is rummaging.
  */
 public class InventoryClickListener implements logan.api.listener.InventoryClickListener {
 
+    /**
+     * Prevents normal item clicks when an active rummage UI is open.
+     *
+     * @param event inventory click event
+     */
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();

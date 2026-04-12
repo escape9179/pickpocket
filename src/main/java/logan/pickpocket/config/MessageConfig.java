@@ -24,6 +24,11 @@ public final class MessageConfig {
         
     }
 
+    /**
+     * Initializes message configuration from disk and embedded defaults.
+     *
+     * @param plugin active plugin instance
+     */
     public static void init(PickpocketPlugin plugin) {
         // Load the embedded messages.yml file
         defaultConfig = new YamlConfiguration();
@@ -40,6 +45,12 @@ public final class MessageConfig {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
+    /**
+     * Resolves and colorizes a message by key, writing missing defaults to disk.
+     *
+     * @param key config key in {@code messages.yml}
+     * @return resolved and colorized message
+     */
     private static String getMessage(String key) {
         if (!config.contains(key)) {
             config.set(key, defaultConfig.getString(key));
@@ -54,6 +65,13 @@ public final class MessageConfig {
         return ColorUtils.colorize(keyValue);
     }
 
+    /**
+     * Resolves and colorizes a templated message, replacing each {@code %value%} in order.
+     *
+     * @param key config key in {@code messages.yml}
+     * @param values replacement values for {@code %value%}
+     * @return resolved and colorized message
+     */
     private static String getMessage(String key, String... values) {
         String keyValue = config.getString(key);
         for (String value : values) {
@@ -134,6 +152,9 @@ public final class MessageConfig {
         return getMessage("moneyAmountReceived", value.toString());
     }
 
+    /**
+     * Reloads messages from disk.
+     */
     public static void reload() {
         config = YamlConfiguration.loadConfiguration(file);
     }

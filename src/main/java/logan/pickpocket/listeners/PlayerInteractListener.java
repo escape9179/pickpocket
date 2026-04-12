@@ -17,9 +17,14 @@ import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.user.PickpocketUser;
 
 /**
- * Created by Tre on 12/28/2015.
+ * Starts pickpocket attempts from sneak-right-click interactions.
  */
 public class PlayerInteractListener implements Listener {
+    /**
+     * Validates theft rules and starts a new pickpocket attempt.
+     *
+     * @param event entity interaction event
+     */
     @EventHandler
     public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
 
@@ -90,6 +95,12 @@ public class PlayerInteractListener implements Listener {
         thiefUser.doPickpocket(victimUser);
     }
 
+    /**
+     * Checks whether a player belongs to the town at their current location.
+     *
+     * @param player player to check
+     * @return true when player is a resident of the local town
+     */
     private boolean isTownMember(Player player) {
         var town = TownyAPI.getInstance().getTown(player.getLocation());
         return town != null && town.hasResident(player.getName());

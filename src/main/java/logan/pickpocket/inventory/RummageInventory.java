@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Handles rendering and interaction for the rummage inventory UI.
+ */
 public final class RummageInventory {
 
     private static final String MENU_TITLE = "Rummage";
@@ -36,6 +39,11 @@ public final class RummageInventory {
 
     private PlayerInventoryMenu menu;
 
+    /**
+     * Creates a rummage inventory view bound to a pickpocket session.
+     *
+     * @param session active pickpocket session
+     */
     public RummageInventory(PickpocketSession session) {
         this.session = session;
         this.thief = session.getThief();
@@ -43,11 +51,17 @@ public final class RummageInventory {
         this.state = session.getRummageState();
     }
 
+    /**
+     * Reveals initial items and opens the rummage menu for the thief.
+     */
     public void show() {
         ensureRevealTarget();
         rebuildAndShowMenu(false);
     }
 
+    /**
+     * Expands the rummage menu by one row and applies memory/reveal effects.
+     */
     private void onRummageButtonClick() {
         if (state.getCurrentRows() >= MAX_ROWS) {
             thief.playRummageBlockedSound();
@@ -63,6 +77,11 @@ public final class RummageInventory {
         victim.playRummageExpandSound(expandSoundVolume);
     }
 
+    /**
+     * Transfers a clicked revealed item from victim inventory to thief inventory.
+     *
+     * @param menuSlot clicked menu slot
+     */
     private void onRevealedItemClick(int menuSlot) {
         Player thiefPlayer = thief.getBukkitPlayer();
         Player victimPlayer = victim.getBukkitPlayer();
@@ -98,6 +117,11 @@ public final class RummageInventory {
         refreshSingleSlot(menuSlot);
     }
 
+    /**
+     * Rebuilds menu contents and shows the inventory to the thief.
+     *
+     * @param replacingOpenMenu whether an open menu is being replaced
+     */
     private void rebuildAndShowMenu(boolean replacingOpenMenu) {
         Player thiefPlayer = thief.getBukkitPlayer();
         if (thiefPlayer == null) {
@@ -115,6 +139,9 @@ public final class RummageInventory {
         menu.show(thiefPlayer);
     }
 
+    /**
+     * Renders filler panes, revealed items, and expansion button.
+     */
     private void renderMenuContents() {
         int size = menu.getSize();
         int buttonSlot = size - 1;
@@ -151,6 +178,9 @@ public final class RummageInventory {
         menu.update();
     }
 
+    /**
+     * Ensures the number of revealed items matches current reveal target.
+     */
     private void ensureRevealTarget() {
         int targetVisibleCount = getRevealTargetCount();
         while (state.getRevealedCount() < targetVisibleCount) {
@@ -177,18 +207,32 @@ public final class RummageInventory {
         }
     }
 
+    /**
+     * @return number of items that should currently be revealed
+     */
     private int getRevealTargetCount() {
         int stageIndex = state.getCurrentRows() - 1;
         int revealLevelBonus = thief.getRevealSkill().getRevealLevelBonus();
         return Math.max(0, REVEAL_BASE_COUNT + (stageIndex * REVEAL_PER_STAGE) + revealLevelBonus);
     }
 
+    /**
+     * Computes expansion sound volume based on previous menu size.
+     *
+     * @param previousRows row count before expansion
+     * @return clamped volume for expansion sounds
+     */
     private float getExpandSoundVolume(int previousRows) {
         int expansionIndex = Math.max(0, previousRows - 1);
         float scaledVolume = EXPAND_SOUND_BASE_VOLUME + (EXPAND_SOUND_STEP_INCREMENT * expansionIndex);
         return Math.min(EXPAND_SOUND_MAX_VOLUME, scaledVolume);
     }
 
+    /**
+     * Applies memory skill decay to previously revealed slots.
+     *
+     * @param previousRows row count before expansion
+     */
     private void applyMemoryDecay(int previousRows) {
         int stageIndex = state.getCurrentRows() - 1;
         int forgetCount = thief.getMemorySkill().getForgetCount(stageIndex);
@@ -213,6 +257,9 @@ public final class RummageInventory {
         }
     }
 
+    /**
+     * @return random eligible menu slot for a new reveal, or null when unavailable
+     */
     private Integer getRandomOpenMenuSlot() {
         int size = state.getCurrentRows() * 9;
         int buttonSlot = size - 1;
@@ -235,6 +282,11 @@ public final class RummageInventory {
         return freeSlots.get(random.nextInt(freeSlots.size()));
     }
 
+    /**
+     * Renders a single slot as filler glass and updates the menu.
+     *
+     * @param slot menu slot index
+     */
     private void refreshSingleSlot(int slot) {
         if (menu == null) {
             return;
@@ -243,6 +295,9 @@ public final class RummageInventory {
         menu.update();
     }
 
+    /**
+     * @return a neutral filler menu item
+     */
     private MenuItem createGlassItem() {
         return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE));
     }

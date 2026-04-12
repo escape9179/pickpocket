@@ -10,6 +10,9 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * Optional WorldGuard integration and custom region flag support.
+ */
 public class WorldGuardHook {
 
     private static StateFlag pickpocketFlag;
@@ -17,6 +20,11 @@ public class WorldGuardHook {
 
     private WorldGuardHook() {}
 
+    /**
+     * Registers the custom {@code pickpocket} WorldGuard state flag when possible.
+     *
+     * @param plugin plugin instance used for logging
+     */
     public static void onLoad(Plugin plugin) {
         try {
             Class.forName("com.sk89q.worldguard.WorldGuard");
@@ -33,14 +41,26 @@ public class WorldGuardHook {
         }
     }
 
+    /**
+     * @return registered pickpocket flag
+     */
     public static StateFlag getPickpocketFlag() {
         return pickpocketFlag;
     }
 
+    /**
+     * @return true when WorldGuard classes are present
+     */
     public static boolean isWorldGuardPresent() {
         return worldGuardPresent;
     }
 
+    /**
+     * Checks whether pickpocketing is allowed for a player at their location.
+     *
+     * @param player player to evaluate
+     * @return true when allowed by region flags (or when WorldGuard is absent)
+     */
     public static boolean isPickpocketingAllowedAtPlayerRegion(Player player) {
         if (!isWorldGuardPresent()) return true;
         var localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);

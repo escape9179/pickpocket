@@ -2,6 +2,9 @@ package logan.pickpocket.skills;
 
 import logan.pickpocket.config.Config;
 
+/**
+ * Skill that reduces delay before rummage inventory opens.
+ */
 public class SpeedSkill extends PlayerSkill {
 
     public static final float BASE_DELAY_SECONDS = 5.0f;

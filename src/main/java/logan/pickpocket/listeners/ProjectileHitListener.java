@@ -10,8 +10,16 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 
 import java.util.List;
 
+/**
+ * Starts pickpocket attempts when a fishing hook lands near a player.
+ */
 public class ProjectileHitListener implements Listener {
 
+    /**
+     * Locates nearby player victims and starts pickpocketing from the shooter.
+     *
+     * @param event projectile hit event
+     */
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof FishHook hook))
