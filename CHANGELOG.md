@@ -1,8 +1,14 @@
 # Unreleased (post-v3.0)
+* **Gradle: `deploy` replaces `deployToSpigot`.**
+  The distribution task that builds and copies the plugin JAR to `spigotPluginsDir` is now named `deploy`.
 * **Replaced the old minigame with staged rummage stealing.**
   Pickpocketing now progresses through a staged rummage flow rather than the previous minigame implementation.
 * **Improved rummage pacing and feedback.**
   Rummage expansion now ramps and uses shuffled audio cues to make repeated attempts feel less repetitive.
+* **Rummage expansion grid rules and slot visuals.**
+  After expanding, earlier menu rows no longer receive new victim-item reveals; only slots in newly added rows can. Each former expand-chest cell becomes a dead gray pane. Slots forgotten by memory or steals use blue panes and never accept a new mapping for that session. Mappings cleared because the victim slot is empty stay white panes only.
+* **Rummage reveals per menu row.**
+  The target number of revealed victim slots is now one per menu row as a baseline, multiplied by row count, with extra slots per row from the thief's Reveal skill (same bonus that used to add only to the global total).
 * **Fishing-rod triggered pickpocketing has been removed.**
   Pickpocketing can no longer be initiated by fishing hook hits and now only starts through the standard interaction flow.
 * **Refactored session, skill, and message systems.**

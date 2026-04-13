@@ -24,8 +24,6 @@ public final class RummageInventory {
     private static final String MENU_TITLE = "Rummage";
     private static final String RUMMAGE_BUTTON_TEXT = "Expand Rummage";
     private static final int MAX_ROWS = 6;
-    private static final int REVEAL_BASE_COUNT = 1;
-    private static final int REVEAL_PER_STAGE = 1;
     private static final float EXPAND_SOUND_BASE_VOLUME = 0.6f;
     private static final float EXPAND_SOUND_STEP_INCREMENT = 0.18f;
     private static final float EXPAND_SOUND_MAX_VOLUME = 1.5f;
@@ -68,6 +66,7 @@ public final class RummageInventory {
         }
         int previousRows = state.getCurrentRows();
         state.setCurrentRows(previousRows + 1);
+        state.recordRummageExpand(previousRows);
         applyMemoryDecay(previousRows);
         ensureRevealTarget();
         rebuildAndShowMenu(true);
@@ -98,7 +97,7 @@ public final class RummageInventory {
 
         ItemStack victimItem = victimPlayer.getInventory().getItem(victimSlot);
         if (victimItem == null || victimItem.getType() == Material.AIR) {
-            state.markMenuSlotForgotten(menuSlot);
+            state.removeRevealedMapping(menuSlot);
             refreshSingleSlot(menuSlot);
             return;
         }
@@ -154,7 +153,7 @@ public final class RummageInventory {
             if (slot == buttonSlot) {
                 continue;
             }
-            menu.addItem(slot, createGlassItem());
+            menu.addItem(slot, createFillerMenuItem(slot));
         }
 
         for (Map.Entry<Integer, Integer> mapping : new ArrayList<>(state.getRevealedMappings().entrySet())) {
@@ -212,12 +211,16 @@ public final class RummageInventory {
     }
 
     /**
-     * @return number of items that should currently be revealed
+     * @return total number of victim items that should be revealed at once: each menu row contributes
+     *         {@link logan.pickpocket.skills.RevealSkill#getRevealedSlotsPerMenuRow()} slots (baseline one per row,
+     *         plus the thief's reveal level bonus applied per row).
      */
     private int getRevealTargetCount() {
-        int stageIndex = state.getCurrentRows() - 1;
-        int revealLevelBonus = thief.getRevealSkill().getRevealLevelBonus();
-        return Math.max(0, REVEAL_BASE_COUNT + (stageIndex * REVEAL_PER_STAGE) + revealLevelBonus);
+        int rows = state.getCurrentRows();
+        if (rows <= 0) {
+            return 0;
+        }
+        return rows * thief.getRevealSkill().getRevealedSlotsPerMenuRow();
     }
 
     /**
@@ -272,6 +275,12 @@ public final class RummageInventory {
             if (slot == buttonSlot) {
                 continue;
             }
+            if (slot < state.getFirstMenuSlotOpenForNewReveals()) {
+                continue;
+            }
+            if (state.isDeadExpandMenuSlot(slot)) {
+                continue;
+            }
             if (state.getVictimSlotForMenuSlot(slot) != null) {
                 continue;
             }
@@ -295,14 +304,20 @@ public final class RummageInventory {
         if (menu == null) {
             return;
         }
-        menu.addItem(slot, createGlassItem());
+        menu.addItem(slot, createFillerMenuItem(slot));
         menu.update();
     }
 
     /**
-     * @return a neutral filler menu item
+     * @return filler pane for a menu slot (dead expand, forgotten, or default white)
      */
-    private MenuItem createGlassItem() {
+    private MenuItem createFillerMenuItem(int menuSlot) {
+        if (state.isDeadExpandMenuSlot(menuSlot)) {
+            return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
+        if (state.isMenuSlotForgotten(menuSlot)) {
+            return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+        }
         return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE));
     }
 }

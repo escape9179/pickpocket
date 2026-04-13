@@ -119,14 +119,14 @@ tasks.register('copyJarToSpigot', Copy) {
     }
 }
 
-tasks.register('deployToSpigot') {
+tasks.register('deploy') {
     group = 'distribution'
     description = 'Full build, then JAR to spigotPluginsDir (direct write if outputJarToSpigot=true, else copy from build/libs).'
     dependsOn build, copyJarToSpigot
     doLast {
         if (resolveSpigotPluginsDir() == null) {
             throw new GradleException(
-                'deployToSpigot: set spigotPluginsDir in gradle-local.properties ' +
+                'deploy: set spigotPluginsDir in gradle-local.properties ' +
                 '(see gradle-local.properties.example) or pass -PspigotPluginsDir=C:/path/to/plugins'
             )
         }

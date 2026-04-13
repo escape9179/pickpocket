@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Mutable per-session rummage state (rows, revealed slots, and victim slot candidates).
+ * Mutable per-session rummage state (rows, revealed slots, victim slot candidates,
+ * expansion freeze for new reveals, dead former expand-chest cells, and forgotten slots).
  */
 public final class RummageSessionState {
 
@@ -27,9 +28,11 @@ public final class RummageSessionState {
     private final Map<Integer, Integer> revealedMenuSlotToVictimSlot = new HashMap<>();
     private final Set<Integer> consumedVictimSlots = new HashSet<>();
     private final Set<Integer> forgottenMenuSlots = new HashSet<>();
+    private final Set<Integer> deadExpandMenuSlots = new HashSet<>();
 
     private int candidateCursor = 0;
     private int currentRows = START_ROWS;
+    private int firstMenuSlotOpenForNewReveals = 0;
     private boolean suppressNextInventoryClose;
 
     /**
@@ -65,8 +68,10 @@ public final class RummageSessionState {
         revealedMenuSlotToVictimSlot.clear();
         consumedVictimSlots.clear();
         forgottenMenuSlots.clear();
+        deadExpandMenuSlots.clear();
         candidateCursor = 0;
         currentRows = START_ROWS;
+        firstMenuSlotOpenForNewReveals = 0;
         suppressNextInventoryClose = false;
     }
 
@@ -100,9 +105,17 @@ public final class RummageSessionState {
      * @param victimSlot victim inventory slot index
      */
     public void addRevealedMapping(int menuSlot, int victimSlot) {
+        if (forgottenMenuSlots.contains(menuSlot)) {
+            return;
+        }
+        if (menuSlot < firstMenuSlotOpenForNewReveals) {
+            return;
+        }
+        if (deadExpandMenuSlots.contains(menuSlot)) {
+            return;
+        }
         revealedMenuSlotToVictimSlot.put(menuSlot, victimSlot);
         consumedVictimSlots.add(victimSlot);
-        forgottenMenuSlots.remove(menuSlot);
     }
 
     /**
@@ -146,6 +159,32 @@ public final class RummageSessionState {
      */
     public boolean isMenuSlotForgotten(int menuSlot) {
         return forgottenMenuSlots.contains(menuSlot);
+    }
+
+    /**
+     * Records a successful rummage expansion: freezes the prior menu footprint for new reveals
+     * and retires the former expand-chest slot as a dead cell.
+     *
+     * @param previousRows row count before this expansion
+     */
+    public void recordRummageExpand(int previousRows) {
+        firstMenuSlotOpenForNewReveals = Math.max(firstMenuSlotOpenForNewReveals, previousRows * 9);
+        deadExpandMenuSlots.add(previousRows * 9 - 1);
+    }
+
+    /**
+     * @return smallest menu slot index that may receive a new victim mapping
+     */
+    public int getFirstMenuSlotOpenForNewReveals() {
+        return firstMenuSlotOpenForNewReveals;
+    }
+
+    /**
+     * @param menuSlot menu slot index
+     * @return true if this index was a former expand-chest cell (dead slot)
+     */
+    public boolean isDeadExpandMenuSlot(int menuSlot) {
+        return deadExpandMenuSlots.contains(menuSlot);
     }
 
     /**
