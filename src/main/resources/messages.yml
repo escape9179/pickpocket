@@ -57,9 +57,6 @@ pickpocketRegionDisallow: "&cPick-pocketing is disabled in this region."
 # Sent to the thief when a pickpocket attempt fails.
 pickpocketUnsuccessful: "&cPickpocket attempt unsuccessful."
 
-# Sent to the thief when a pickpocket attempt succeeds.
-pickpocketSuccessful: "&aPickpocket attempt successful."
-
 # Sent when the thief moves during the pickpocketing process, cancelling the attempt.
 pickpocketOnMoveWarning: "&cYou cannot move whilst pick-pocketing."
 

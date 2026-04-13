@@ -112,10 +112,6 @@ public final class MessageConfig {
         return getMessage("pickpocketUnsuccessful");
     }
 
-    public static String getPickpocketSuccessfulMessage() {
-        return getMessage("pickpocketSuccessful");
-    }
-
     public static String getPickpocketOnMoveWarningMessage() {
         return getMessage("pickpocketOnMoveWarning");
     }

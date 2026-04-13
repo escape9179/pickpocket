@@ -371,6 +371,16 @@ public class PickpocketUser {
     }
 
     /**
+     * Plays feedback when the thief successfully takes an item from the victim.
+     */
+    public void playStealSuccessSound() {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+        }
+    }
+
+    /**
      * Resolves or creates a cached user object for a player.
      *
      * @param player Bukkit player

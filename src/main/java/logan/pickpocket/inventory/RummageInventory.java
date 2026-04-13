@@ -2,7 +2,6 @@ package logan.pickpocket.inventory;
 
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
-import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.managers.PickpocketSession;
 import logan.pickpocket.managers.RummageSessionState;
 import logan.pickpocket.user.PickpocketUser;
@@ -118,7 +117,7 @@ public final class RummageInventory {
         victim.incrementVictimCount();
         thief.save();
         victim.save();
-        thief.sendMessage(MessageConfig.getPickpocketSuccessfulMessage());
+        thief.playStealSuccessSound();
         refreshSingleSlot(menuSlot);
     }
 
