@@ -113,6 +113,13 @@ public final class RummageInventory {
 
         state.markMenuSlotForgotten(menuSlot);
         thief.setSteals(thief.getSteals() + 1);
+        thief.incrementPredatorSuccesses();
+        thief.addTotalItemsStolen(1);
+        thief.incrementVictimCounterpart(victim.getUuid());
+        victim.incrementVictimCount();
+        victim.incrementPredatorCounterpart(thief.getUuid());
+        thief.save();
+        victim.save();
         thief.sendMessage(MessageConfig.getPickpocketSuccessfulMessage());
         refreshSingleSlot(menuSlot);
     }

@@ -12,6 +12,7 @@ public final class PickpocketSession {
     private final PickpocketUser victim;
 
     private boolean rummaging;
+    private long rummageStartEpochMilli = -1L;
     private RummageInventory rummageInventory;
     private final RummageSessionState rummageState = new RummageSessionState();
 
@@ -48,6 +49,31 @@ public final class PickpocketSession {
      */
     public void setRummaging(boolean rummaging) {
         this.rummaging = rummaging;
+    }
+
+    /**
+     * Marks the beginning of active rummaging for elapsed-time tracking.
+     *
+     * @param startEpochMilli start time in epoch milliseconds
+     */
+    public void setRummageStartEpochMilli(long startEpochMilli) {
+        this.rummageStartEpochMilli = startEpochMilli;
+    }
+
+    /**
+     * Consumes and resets the tracked rummage elapsed time.
+     *
+     * @param endEpochMilli end time in epoch milliseconds
+     * @return elapsed rummage time in milliseconds
+     */
+    public long consumeRummageElapsedMillis(long endEpochMilli) {
+        if (rummageStartEpochMilli <= 0L || endEpochMilli <= rummageStartEpochMilli) {
+            rummageStartEpochMilli = -1L;
+            return 0L;
+        }
+        long elapsed = endEpochMilli - rummageStartEpochMilli;
+        rummageStartEpochMilli = -1L;
+        return elapsed;
     }
 
     /**
@@ -94,6 +120,7 @@ public final class PickpocketSession {
      */
     void clearEphemeralState() {
         rummaging = false;
+        rummageStartEpochMilli = -1L;
         rummageInventory = null;
         rummageState.reset();
     }

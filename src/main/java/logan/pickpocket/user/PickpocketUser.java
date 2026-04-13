@@ -2,11 +2,16 @@ package logan.pickpocket.user;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -15,7 +20,9 @@ import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.UserManager;
 import logan.pickpocket.skills.MemorySkill;
+import logan.pickpocket.skills.PlayerSkill;
 import logan.pickpocket.skills.RevealSkill;
+import logan.pickpocket.skills.Skill;
 import logan.pickpocket.skills.SkillModule;
 import logan.pickpocket.skills.SpeedSkill;
 
@@ -25,6 +32,13 @@ import logan.pickpocket.skills.SpeedSkill;
 public class PickpocketUser {
 
     private static final String KEY_STEALS = "steals";
+    private static final String KEY_STATS_PREDATOR_SUCCESSES = "stats.predator.successes";
+    private static final String KEY_STATS_VICTIM_COUNT = "stats.victim.count";
+    private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
+    private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
+    private static final String KEY_COUNTERPART_VICTIMS = "stats.counterparts.victims";
+    private static final String KEY_COUNTERPART_PREDATORS = "stats.counterparts.predators";
+    private static final String KEY_SKILLS = "skills";
 
     private final UUID uuid;
     private File file;
@@ -40,16 +54,77 @@ public class PickpocketUser {
         this.uuid = uuid;
         String directory = PickpocketPlugin.getInstance().getDataFolder() + "/players/";
         this.file = new File(directory, uuid + ".yml");
+        File parent = this.file.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
         this.configuration = YamlConfiguration.loadConfiguration(file);
+        this.skillModule = new SkillModule(this);
 
+        initializeDefaults();
+        loadSkillStats();
+        save();
+    }
+
+    private void initializeDefaults() {
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_PREDATOR_SUCCESSES, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_COUNTERPART_VICTIMS, new java.util.LinkedHashMap<String, Object>());
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_COUNTERPART_PREDATORS, new java.util.LinkedHashMap<String, Object>());
+        for (Skill skill : Skill.values()) {
+            String skillKey = skillPath(skill);
+            YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
+            YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".exp", 0);
+        }
+    }
+
+    /**
+     * Persists this user's current configuration to disk.
+     */
+    public void save() {
         try {
             configuration.save(file);
         } catch (IOException e) {
+            PickpocketPlugin.log("Failed saving player data for " + uuid + ": " + e.getMessage());
             e.printStackTrace();
         }
+    }
 
-        this.skillModule = new SkillModule(this);
+    /**
+     * Loads persisted skill values into runtime skill objects.
+     */
+    public void loadSkillStats() {
+        loadSkill(getSpeedSkill(), Skill.SPEED);
+        loadSkill(getRevealSkill(), Skill.REVEAL);
+        loadSkill(getMemorySkill(), Skill.MEMORY);
+    }
+
+    /**
+     * Writes current runtime skill values into config.
+     */
+    public void persistSkillStats() {
+        persistSkill(getSpeedSkill(), Skill.SPEED);
+        persistSkill(getRevealSkill(), Skill.REVEAL);
+        persistSkill(getMemorySkill(), Skill.MEMORY);
+    }
+
+    private void loadSkill(PlayerSkill playerSkill, Skill skill) {
+        String skillKey = skillPath(skill);
+        playerSkill.setLevel(configuration.getInt(skillKey + ".level", 0));
+        playerSkill.setExp(configuration.getInt(skillKey + ".exp", 0));
+    }
+
+    private void persistSkill(PlayerSkill playerSkill, Skill skill) {
+        String skillKey = skillPath(skill);
+        configuration.set(skillKey + ".level", playerSkill.getLevel());
+        configuration.set(skillKey + ".exp", playerSkill.getExp());
+    }
+
+    private String skillPath(Skill skill) {
+        return KEY_SKILLS + "." + skill.name().toLowerCase();
     }
 
     /**
@@ -131,6 +206,162 @@ public class PickpocketUser {
      */
     public void setSteals(int value) {
         configuration.set(KEY_STEALS, value);
+    }
+
+    /**
+     * @return successful steals performed as predator
+     */
+    public int getPredatorSuccesses() {
+        return configuration.getInt(KEY_STATS_PREDATOR_SUCCESSES);
+    }
+
+    /**
+     * Increments successful steals performed as predator.
+     */
+    public void incrementPredatorSuccesses() {
+        configuration.set(KEY_STATS_PREDATOR_SUCCESSES, getPredatorSuccesses() + 1);
+    }
+
+    /**
+     * @return times this user has been victim of a successful steal
+     */
+    public int getVictimCount() {
+        return configuration.getInt(KEY_STATS_VICTIM_COUNT);
+    }
+
+    /**
+     * Increments times this user has been victim of a successful steal.
+     */
+    public void incrementVictimCount() {
+        configuration.set(KEY_STATS_VICTIM_COUNT, getVictimCount() + 1);
+    }
+
+    /**
+     * @return total number of items successfully stolen
+     */
+    public int getTotalItemsStolen() {
+        return configuration.getInt(KEY_STATS_TOTAL_ITEMS_STOLEN);
+    }
+
+    /**
+     * Adds to total items stolen.
+     *
+     * @param amount amount to add
+     */
+    public void addTotalItemsStolen(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        configuration.set(KEY_STATS_TOTAL_ITEMS_STOLEN, getTotalItemsStolen() + amount);
+    }
+
+    /**
+     * @return accumulated rummage time in milliseconds
+     */
+    public long getTotalRummageMillis() {
+        return configuration.getLong(KEY_STATS_TOTAL_RUMMAGE_MILLIS);
+    }
+
+    /**
+     * Adds elapsed rummage time.
+     *
+     * @param millis elapsed milliseconds
+     */
+    public void addRummageMillis(long millis) {
+        if (millis <= 0) {
+            return;
+        }
+        configuration.set(KEY_STATS_TOTAL_RUMMAGE_MILLIS, getTotalRummageMillis() + millis);
+    }
+
+    /**
+     * Increments victim UUID frequency for "most common victim" tracking.
+     *
+     * @param victimId victim UUID
+     */
+    public void incrementVictimCounterpart(UUID victimId) {
+        incrementCounterpart(KEY_COUNTERPART_VICTIMS, victimId);
+    }
+
+    /**
+     * Increments predator UUID frequency for "most common predator" tracking.
+     *
+     * @param predatorId predator UUID
+     */
+    public void incrementPredatorCounterpart(UUID predatorId) {
+        incrementCounterpart(KEY_COUNTERPART_PREDATORS, predatorId);
+    }
+
+    /**
+     * @return UUID of the most frequent victim counterpart
+     */
+    public Optional<UUID> getMostCommonVictimUuid() {
+        return findTopCounterpart(KEY_COUNTERPART_VICTIMS);
+    }
+
+    /**
+     * @return UUID of the most frequent predator counterpart
+     */
+    public Optional<UUID> getMostCommonPredatorUuid() {
+        return findTopCounterpart(KEY_COUNTERPART_PREDATORS);
+    }
+
+    /**
+     * @return resolved name (or UUID string fallback) for most common victim
+     */
+    public String getMostCommonVictimName() {
+        return resolveName(getMostCommonVictimUuid());
+    }
+
+    /**
+     * @return resolved name (or UUID string fallback) for most common predator
+     */
+    public String getMostCommonPredatorName() {
+        return resolveName(getMostCommonPredatorUuid());
+    }
+
+    private void incrementCounterpart(String path, UUID counterpartId) {
+        if (counterpartId == null) {
+            return;
+        }
+        String key = path + "." + counterpartId;
+        configuration.set(key, configuration.getInt(key) + 1);
+    }
+
+    private Optional<UUID> findTopCounterpart(String path) {
+        ConfigurationSection section = configuration.getConfigurationSection(path);
+        if (section == null) {
+            return Optional.empty();
+        }
+        return section.getKeys(false).stream()
+                .map(uuidText -> parseCounterpartEntry(uuidText, section.getInt(uuidText)))
+                .flatMap(Optional::stream)
+                .max(Comparator
+                        .comparingInt((Map.Entry<UUID, Integer> entry) -> entry.getValue())
+                        .thenComparing(entry -> entry.getKey().toString(), Comparator.reverseOrder()))
+                .map(Map.Entry::getKey);
+    }
+
+    private Optional<Map.Entry<UUID, Integer>> parseCounterpartEntry(String uuidText, int count) {
+        if (count <= 0) {
+            return Optional.empty();
+        }
+        try {
+            UUID parsed = UUID.fromString(uuidText);
+            return Optional.of(Map.entry(parsed, count));
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
+    }
+
+    private String resolveName(Optional<UUID> uuidValue) {
+        if (uuidValue.isEmpty()) {
+            return "None";
+        }
+        UUID id = uuidValue.get();
+        OfflinePlayer player = Bukkit.getOfflinePlayer(id);
+        String name = player != null ? player.getName() : null;
+        return name != null ? name : id.toString();
     }
 
     /**

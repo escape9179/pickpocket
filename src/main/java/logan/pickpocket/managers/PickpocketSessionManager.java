@@ -122,7 +122,10 @@ public final class PickpocketSessionManager {
         session.setRummageInventory(inventory);
         inventory.show();
         session.setRummaging(true);
+        session.setRummageStartEpochMilli(System.currentTimeMillis());
         thief.getSpeedSkill().addExp(10);
+        thief.persistSkillStats();
+        thief.save();
     }
 
     /**
@@ -213,6 +216,7 @@ public final class PickpocketSessionManager {
         if (session == null) {
             return;
         }
+        persistRummageDuration(session);
         if (!sessionByThiefId.remove(session.getThief().getUuid(), session)) {
             return;
         }
@@ -221,6 +225,16 @@ public final class PickpocketSessionManager {
         usersInSession.remove(session.getVictim());
         appendHistory(session, reason);
         session.clearEphemeralState();
+    }
+
+    private static void persistRummageDuration(PickpocketSession session) {
+        long elapsedMillis = session.consumeRummageElapsedMillis(System.currentTimeMillis());
+        if (elapsedMillis <= 0L) {
+            return;
+        }
+        PickpocketUser thief = session.getThief();
+        thief.addRummageMillis(elapsedMillis);
+        thief.save();
     }
 
     private static void appendHistory(PickpocketSession session, SessionEndReason reason) {
