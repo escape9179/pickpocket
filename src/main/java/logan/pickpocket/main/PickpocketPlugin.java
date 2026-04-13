@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +27,7 @@ import logan.pickpocket.hooks.EssentialsHook;
 import logan.pickpocket.hooks.TownyHook;
 import logan.pickpocket.hooks.VaultHook;
 import logan.pickpocket.hooks.WorldGuardHook;
+import logan.pickpocket.managers.PickpocketSessionHistoryEntry;
 import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
@@ -65,6 +67,7 @@ public class PickpocketPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        ConfigurationSerialization.registerClass(PickpocketSessionHistoryEntry.class);
         saveDefaultConfig();
         saveResource("messages.yml", false);
 

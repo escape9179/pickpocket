@@ -2,8 +2,6 @@ package logan.pickpocket.user;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,11 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import logan.api.config.YamlConfigurationUtil;
+import logan.pickpocket.history.PickpocketHistoryLog;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.UserManager;
@@ -36,8 +34,6 @@ public class PickpocketUser {
     private static final String KEY_STATS_VICTIM_COUNT = "stats.victim.count";
     private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
     private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
-    private static final String KEY_COUNTERPART_VICTIMS = "stats.counterparts.victims";
-    private static final String KEY_COUNTERPART_PREDATORS = "stats.counterparts.predators";
     private static final String KEY_SKILLS = "skills";
 
     private final UUID uuid;
@@ -67,18 +63,21 @@ public class PickpocketUser {
     }
 
     private void initializeDefaults() {
+        stripLegacyCounterpartStats();
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_PREDATOR_SUCCESSES, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_COUNTERPART_VICTIMS, new java.util.LinkedHashMap<String, Object>());
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_COUNTERPART_PREDATORS, new java.util.LinkedHashMap<String, Object>());
         for (Skill skill : Skill.values()) {
             String skillKey = skillPath(skill);
             YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
             YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".exp", 0);
         }
+    }
+
+    private void stripLegacyCounterpartStats() {
+        configuration.set("stats.counterparts", null);
     }
 
     /**
@@ -275,83 +274,36 @@ public class PickpocketUser {
     }
 
     /**
-     * Increments victim UUID frequency for "most common victim" tracking.
+     * UUID of the victim this player pickpocketed in the most ended sessions (see {@code history/} logs).
+     * Session frequency differs from per-item steal counts.
      *
-     * @param victimId victim UUID
+     * @return UUID if any session exists as thief, otherwise empty
      */
-    public void incrementVictimCounterpart(UUID victimId) {
-        incrementCounterpart(KEY_COUNTERPART_VICTIMS, victimId);
+    public Optional<UUID> getMostStealsFromUuid() {
+        return PickpocketHistoryLog.mostStealsFrom(uuid);
     }
 
     /**
-     * Increments predator UUID frequency for "most common predator" tracking.
+     * UUID of the thief who pickpocketed this player in the most ended sessions.
      *
-     * @param predatorId predator UUID
+     * @return UUID if any session exists as victim, otherwise empty
      */
-    public void incrementPredatorCounterpart(UUID predatorId) {
-        incrementCounterpart(KEY_COUNTERPART_PREDATORS, predatorId);
+    public Optional<UUID> getMostStealsByUuid() {
+        return PickpocketHistoryLog.mostStealsBy(uuid);
     }
 
     /**
-     * @return UUID of the most frequent victim counterpart
+     * @return resolved name (or UUID string fallback) for {@link #getMostStealsFromUuid()}
      */
-    public Optional<UUID> getMostCommonVictimUuid() {
-        return findTopCounterpart(KEY_COUNTERPART_VICTIMS);
+    public String getMostStealsFromName() {
+        return resolveName(getMostStealsFromUuid());
     }
 
     /**
-     * @return UUID of the most frequent predator counterpart
+     * @return resolved name (or UUID string fallback) for {@link #getMostStealsByUuid()}
      */
-    public Optional<UUID> getMostCommonPredatorUuid() {
-        return findTopCounterpart(KEY_COUNTERPART_PREDATORS);
-    }
-
-    /**
-     * @return resolved name (or UUID string fallback) for most common victim
-     */
-    public String getMostCommonVictimName() {
-        return resolveName(getMostCommonVictimUuid());
-    }
-
-    /**
-     * @return resolved name (or UUID string fallback) for most common predator
-     */
-    public String getMostCommonPredatorName() {
-        return resolveName(getMostCommonPredatorUuid());
-    }
-
-    private void incrementCounterpart(String path, UUID counterpartId) {
-        if (counterpartId == null) {
-            return;
-        }
-        String key = path + "." + counterpartId;
-        configuration.set(key, configuration.getInt(key) + 1);
-    }
-
-    private Optional<UUID> findTopCounterpart(String path) {
-        ConfigurationSection section = configuration.getConfigurationSection(path);
-        if (section == null) {
-            return Optional.empty();
-        }
-        return section.getKeys(false).stream()
-                .map(uuidText -> parseCounterpartEntry(uuidText, section.getInt(uuidText)))
-                .flatMap(Optional::stream)
-                .max(Comparator
-                        .comparingInt((Map.Entry<UUID, Integer> entry) -> entry.getValue())
-                        .thenComparing(entry -> entry.getKey().toString(), Comparator.reverseOrder()))
-                .map(Map.Entry::getKey);
-    }
-
-    private Optional<Map.Entry<UUID, Integer>> parseCounterpartEntry(String uuidText, int count) {
-        if (count <= 0) {
-            return Optional.empty();
-        }
-        try {
-            UUID parsed = UUID.fromString(uuidText);
-            return Optional.of(Map.entry(parsed, count));
-        } catch (IllegalArgumentException ex) {
-            return Optional.empty();
-        }
+    public String getMostStealsByName() {
+        return resolveName(getMostStealsByUuid());
     }
 
     private String resolveName(Optional<UUID> uuidValue) {

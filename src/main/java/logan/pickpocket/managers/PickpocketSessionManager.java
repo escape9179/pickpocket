@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.hooks.WorldGuardHook;
+import logan.pickpocket.history.PickpocketHistoryLog;
 import logan.pickpocket.inventory.RummageInventory;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.tasks.PickpocketTask;
@@ -238,11 +239,13 @@ public final class PickpocketSessionManager {
     }
 
     private static void appendHistory(PickpocketSession session, SessionEndReason reason) {
-        sessionHistory.add(new PickpocketSessionHistoryEntry(
+        PickpocketSessionHistoryEntry entry = new PickpocketSessionHistoryEntry(
                 session.getThief().getUuid(),
                 session.getVictim().getUuid(),
                 System.currentTimeMillis(),
-                reason));
+                reason);
+        sessionHistory.add(entry);
+        PickpocketHistoryLog.append(entry);
     }
 
     /**
