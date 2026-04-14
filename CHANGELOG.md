@@ -1,4 +1,10 @@
 # Unreleased (post-v3.0)
+* **Memory-based forgetting now scales by chance.**
+  On rummage expansion, each revealed item in previous rows is now forgotten using a linear Memory-based chance (level 0 => 100%, level 100 => 0%), while level 0 still guarantees all eligible previous-row reveals are forgotten.
+* **Fixed Memory level 0 retention during early expansions.**
+  Expanding rummage now clears all previously revealed slots from earlier rows when Memory is level 0, preventing old-row items from lingering after the first and second expansions.
+* **Added a skills menu command.**
+  Players can now run `/pickpocket skills` to open an inventory menu showing their Speed, Reveal, and Memory skill levels.
 * **Gradle: `deploy` replaces `deployToSpigot`.**
   The distribution task that builds and copies the plugin JAR to `spigotPluginsDir` is now named `deploy`.
 * **Replaced the old minigame with staged rummage stealing.**

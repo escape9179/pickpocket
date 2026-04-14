@@ -1,28 +1,23 @@
 package logan.pickpocket.skills;
 
 /**
- * Skill that reduces how many revealed slots are forgotten each stage.
+ * Skill that reduces the chance revealed slots are forgotten on rummage expansion.
  */
 public final class MemorySkill extends PlayerSkill {
 
-    private static final int LEVELS_PER_FORGET_REDUCTION = 25;
+    private static final int MAX_MEMORY_LEVEL = 100;
 
     MemorySkill() {
         super(Skill.MEMORY);
     }
 
     /**
-     * Rows after the initial row are represented as stage indexes (row2 = stage 1).
-     */
-    /**
-     * Computes number of previously revealed slots to forget for a stage.
+     * Computes linear per-slot forgetting chance for previous rows on expansion.
      *
-     * @param stageIndex rummage stage index (row 2 = stage 1)
-     * @return number of slots to forget
+     * @return chance in [0.0, 1.0], where level 0 => 1.0 and level 100 => 0.0
      */
-    public int getForgetCount(int stageIndex) {
-        int clampedStage = Math.max(0, stageIndex);
-        int reduction = Math.max(0, getLevel() / LEVELS_PER_FORGET_REDUCTION);
-        return Math.max(0, clampedStage - reduction);
+    public double getForgetChance() {
+        double clampedLevel = Math.max(0, Math.min(MAX_MEMORY_LEVEL, getLevel()));
+        return 1.0D - (clampedLevel / MAX_MEMORY_LEVEL);
     }
 }

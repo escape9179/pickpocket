@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -230,12 +229,7 @@ public final class RummageInventory {
      * @param previousRows row count before expansion
      */
     private void applyMemoryDecay(int previousRows) {
-        int stageIndex = state.getCurrentRows() - 1;
-        int forgetCount = thief.getMemorySkill().getForgetCount(stageIndex);
-        if (forgetCount <= 0) {
-            return;
-        }
-
+        int memoryLevel = thief.getMemorySkill().getLevel();
         int previousSize = previousRows * 9;
         List<Integer> eligibleSlots = new ArrayList<>();
         for (Integer menuSlot : state.getRevealedMappings().keySet()) {
@@ -246,10 +240,19 @@ public final class RummageInventory {
         if (eligibleSlots.isEmpty()) {
             return;
         }
-        Collections.shuffle(eligibleSlots, random);
-        int toForget = Math.min(forgetCount, eligibleSlots.size());
-        for (int i = 0; i < toForget; i++) {
-            state.markMenuSlotForgotten(eligibleSlots.get(i));
+
+        if (memoryLevel == 0) {
+            for (Integer menuSlot : eligibleSlots) {
+                state.markMenuSlotForgotten(menuSlot);
+            }
+            return;
+        }
+
+        double forgetChance = thief.getMemorySkill().getForgetChance();
+        for (Integer menuSlot : eligibleSlots) {
+            if (random.nextDouble() < forgetChance) {
+                state.markMenuSlotForgotten(menuSlot);
+            }
         }
     }
 
