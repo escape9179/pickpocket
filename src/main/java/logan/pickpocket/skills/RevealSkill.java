@@ -1,27 +1,22 @@
 package logan.pickpocket.skills;
 
 /**
- * Skill that increases how many item slots can be revealed per menu row in rummage.
+ * Skill that controls how many item slots are revealed in each active rummage row.
  */
 public final class RevealSkill extends PlayerSkill {
 
-    private static final int LEVELS_PER_REVEAL_BONUS = 20;
+    private static final int MAX_REVEALED_SLOTS_PER_ROW = 8;
+    private static final int MIN_REVEALED_SLOTS_PER_ROW = 1;
 
     RevealSkill() {
         super(Skill.REVEAL);
     }
 
     /**
-     * @return additional revealed slots per menu row (on top of the baseline of one)
-     */
-    public int getRevealLevelBonus() {
-        return Math.max(0, getLevel() / LEVELS_PER_REVEAL_BONUS);
-    }
-
-    /**
-     * @return target number of revealed victim slots for each full menu row (baseline one, plus skill)
+     * @return number of victim slots to reveal for each active menu row, scaled 1:1 with skill level and capped at 8
      */
     public int getRevealedSlotsPerMenuRow() {
-        return 1 + getRevealLevelBonus();
+        int level = Math.max(MIN_REVEALED_SLOTS_PER_ROW, getLevel());
+        return Math.min(MAX_REVEALED_SLOTS_PER_ROW, level);
     }
 }

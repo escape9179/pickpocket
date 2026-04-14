@@ -49,15 +49,15 @@ public final class RummageInventory {
     }
 
     /**
-     * Reveals initial items and opens the rummage menu for the thief.
+     * Reveals items for the initial row and opens the rummage menu for the thief.
      */
     public void show() {
-        ensureRevealTarget();
+        revealForActiveRow();
         rebuildAndShowMenu(false);
     }
 
     /**
-     * Expands the rummage menu by one row and applies memory/reveal effects.
+     * Expands the rummage menu by one row, applies memory decay, and reveals items for the new row.
      */
     private void onRummageButtonClick() {
         if (state.getCurrentRows() >= MAX_ROWS) {
@@ -68,7 +68,7 @@ public final class RummageInventory {
         state.setCurrentRows(previousRows + 1);
         state.recordRummageExpand(previousRows);
         applyMemoryDecay(previousRows);
-        ensureRevealTarget();
+        revealForActiveRow();
         rebuildAndShowMenu(true);
         float expandSoundVolume = getExpandSoundVolume(previousRows);
         thief.playRummageExpandSound(expandSoundVolume);
@@ -182,11 +182,12 @@ public final class RummageInventory {
     }
 
     /**
-     * Ensures the number of revealed items matches current reveal target.
+     * Reveals victim items for the currently active row only.
      */
-    private void ensureRevealTarget() {
-        int targetVisibleCount = getRevealTargetCount();
-        while (state.getRevealedCount() < targetVisibleCount) {
+    private void revealForActiveRow() {
+        int revealsPerRow = thief.getRevealSkill().getRevealedSlotsPerMenuRow();
+        int revealedForRow = 0;
+        while (revealedForRow < revealsPerRow) {
             Integer menuSlot = getRandomOpenMenuSlot();
             if (menuSlot == null) {
                 return;
@@ -207,20 +208,8 @@ public final class RummageInventory {
             }
 
             state.addRevealedMapping(menuSlot, victimSlot);
+            revealedForRow++;
         }
-    }
-
-    /**
-     * @return total number of victim items that should be revealed at once: each menu row contributes
-     *         {@link logan.pickpocket.skills.RevealSkill#getRevealedSlotsPerMenuRow()} slots (baseline one per row,
-     *         plus the thief's reveal level bonus applied per row).
-     */
-    private int getRevealTargetCount() {
-        int rows = state.getCurrentRows();
-        if (rows <= 0) {
-            return 0;
-        }
-        return rows * thief.getRevealSkill().getRevealedSlotsPerMenuRow();
     }
 
     /**
