@@ -13,7 +13,7 @@ import logan.pickpocket.user.PickpocketUser;
 
 public class SetSkillCommand extends BasicCommand<Player> {
 
-    private static final List<String> SKILL_SUGGESTIONS = List.of("speed", "reveal", "memory");
+    private static final List<String> SKILL_SUGGESTIONS = List.of("speed", "reveal", "memory", "quickness");
     private static final List<String> LEVEL_SUGGESTIONS = List.of("0", "1", "10", "50", "100");
 
     public SetSkillCommand() {
@@ -39,7 +39,7 @@ public class SetSkillCommand extends BasicCommand<Player> {
         PickpocketUser user = PickpocketUser.get(sender);
         PlayerSkill playerSkill = resolveSkill(user, args[0]);
         if (playerSkill == null) {
-            sender.sendMessage("Unknown skill. Valid skills: speed, reveal, memory.");
+            sender.sendMessage("Unknown skill. Valid skills: speed, reveal, memory, quickness.");
             return true;
         }
 
@@ -69,6 +69,8 @@ public class SetSkillCommand extends BasicCommand<Player> {
                 return user.getRevealSkill();
             case "memory":
                 return user.getMemorySkill();
+            case "quickness":
+                return user.getQuicknessSkill();
             default:
                 return null;
         }

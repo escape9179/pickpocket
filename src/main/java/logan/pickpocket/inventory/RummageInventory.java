@@ -2,13 +2,16 @@ package logan.pickpocket.inventory;
 
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
+import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSession;
+import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.RummageSessionState;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ public final class RummageInventory {
     private final Random random = new Random();
 
     private PlayerInventoryMenu menu;
+    private BukkitTask pendingTransferTask;
 
     /**
      * Creates a rummage inventory view bound to a pickpocket session.
@@ -88,6 +92,10 @@ public final class RummageInventory {
             refreshSingleSlot(menuSlot);
             return;
         }
+        if (pendingTransferTask != null) {
+            thief.playRummageBlockedSound();
+            return;
+        }
 
         Integer victimSlot = state.getVictimSlotForMenuSlot(menuSlot);
         if (victimSlot == null) {
@@ -101,8 +109,45 @@ public final class RummageInventory {
             return;
         }
 
+        long delayTicks = Math.max(1L, Math.round(thief.getQuicknessSkill().getTransferDelaySeconds() * 20.0f));
+        pendingTransferTask = PickpocketPlugin.getInstance().getServer().getScheduler().runTaskLater(
+                PickpocketPlugin.getInstance(),
+                () -> completeDelayedTransfer(menuSlot, victimSlot),
+                delayTicks);
+    }
+
+    private void completeDelayedTransfer(int menuSlot, int expectedVictimSlot) {
+        pendingTransferTask = null;
+        if (!isSessionStillRummaging()) {
+            return;
+        }
+
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer == null || victimPlayer == null || !victimPlayer.isOnline()) {
+            if (thiefPlayer != null) {
+                thief.sendMessage(ChatColor.RED + "Player is no longer available.");
+            }
+            state.markMenuSlotForgotten(menuSlot);
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+
+        Integer mappedVictimSlot = state.getVictimSlotForMenuSlot(menuSlot);
+        if (mappedVictimSlot == null || mappedVictimSlot != expectedVictimSlot) {
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+
+        ItemStack victimItem = victimPlayer.getInventory().getItem(expectedVictimSlot);
+        if (victimItem == null || victimItem.getType() == Material.AIR) {
+            state.removeRevealedMapping(menuSlot);
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+
         ItemStack stolenItem = victimItem.clone();
-        victimPlayer.getInventory().setItem(victimSlot, new ItemStack(Material.AIR));
+        victimPlayer.getInventory().setItem(expectedVictimSlot, new ItemStack(Material.AIR));
         Map<Integer, ItemStack> overflow = thiefPlayer.getInventory().addItem(stolenItem);
         if (!overflow.isEmpty()) {
             overflow.values().forEach(item -> thiefPlayer.getWorld().dropItemNaturally(thiefPlayer.getLocation(), item));
@@ -117,6 +162,13 @@ public final class RummageInventory {
         victim.save();
         thief.playStealSuccessSound();
         refreshSingleSlot(menuSlot);
+    }
+
+    private boolean isSessionStillRummaging() {
+        PickpocketSession activeSession = PickpocketSessionManager.getSession(thief);
+        return activeSession != null
+                && activeSession == session
+                && activeSession.isRummaging();
     }
 
     /**

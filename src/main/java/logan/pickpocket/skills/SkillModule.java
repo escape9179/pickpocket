@@ -10,6 +10,7 @@ public class SkillModule {
     private SpeedSkill speedSkill;
     private RevealSkill revealSkill;
     private MemorySkill memorySkill;
+    private QuicknessSkill quicknessSkill;
 
     /**
      * Creates default skill instances for a user.
@@ -20,6 +21,7 @@ public class SkillModule {
         this.speedSkill = new SpeedSkill();
         this.revealSkill = new RevealSkill();
         this.memorySkill = new MemorySkill();
+        this.quicknessSkill = new QuicknessSkill();
     }
 
     /**
@@ -41,5 +43,12 @@ public class SkillModule {
      */
     public MemorySkill getMemorySkill() {
         return memorySkill;
+    }
+
+    /**
+     * @return quickness skill state
+     */
+    public QuicknessSkill getQuicknessSkill() {
+        return quicknessSkill;
     }
 }

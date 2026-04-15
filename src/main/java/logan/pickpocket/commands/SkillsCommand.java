@@ -31,9 +31,10 @@ public class SkillsCommand extends BasicCommand<Player> {
 
         PlayerInventoryMenu menu = new PlayerInventoryMenu(MENU_TITLE, 3);
         fillBackground(menu);
-        menu.addItem(11, createSkillItem(Material.SUGAR, user.getSpeedSkill()));
-        menu.addItem(13, createSkillItem(Material.COMPASS, user.getRevealSkill()));
-        menu.addItem(15, createSkillItem(Material.BOOK, user.getMemorySkill()));
+        menu.addItem(10, createSkillItem(Material.SUGAR, user.getSpeedSkill()));
+        menu.addItem(12, createSkillItem(Material.COMPASS, user.getRevealSkill()));
+        menu.addItem(14, createSkillItem(Material.BOOK, user.getMemorySkill()));
+        menu.addItem(16, createSkillItem(Material.RABBIT_FOOT, user.getQuicknessSkill()));
         menu.show(sender);
 
         return true;

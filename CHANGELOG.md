@@ -1,4 +1,6 @@
 # Unreleased (post-v3.0)
+* **Added Quickness-based delayed rummage transfers.**
+  Successful revealed-item steals now transfer after a Quickness-scaled delay (level 0 => 3s, level 10 => 1s), with only one pending transfer allowed at a time. Added the new Quickness skill (max level 10) to persistence, `/pickpocket setskill`, and the skills menu.
 * **Victim inventory open now catches active rummaging thieves.**
   If a victim opens an inventory while the thief is in the rummage UI, both players hear a caught cue at the thief's location, the thief's rummage inventory closes immediately, and the session ends.
 * **Pickpocket attempt now uses delay-matched bone meal audio feedback.**

@@ -20,6 +20,7 @@ import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.UserManager;
 import logan.pickpocket.skills.MemorySkill;
 import logan.pickpocket.skills.PlayerSkill;
+import logan.pickpocket.skills.QuicknessSkill;
 import logan.pickpocket.skills.RevealSkill;
 import logan.pickpocket.skills.Skill;
 import logan.pickpocket.skills.SkillModule;
@@ -104,6 +105,7 @@ public class PickpocketUser {
         loadSkill(getSpeedSkill(), Skill.SPEED);
         loadSkill(getRevealSkill(), Skill.REVEAL);
         loadSkill(getMemorySkill(), Skill.MEMORY);
+        loadSkill(getQuicknessSkill(), Skill.QUICKNESS);
     }
 
     /**
@@ -113,6 +115,7 @@ public class PickpocketUser {
         persistSkill(getSpeedSkill(), Skill.SPEED);
         persistSkill(getRevealSkill(), Skill.REVEAL);
         persistSkill(getMemorySkill(), Skill.MEMORY);
+        persistSkill(getQuicknessSkill(), Skill.QUICKNESS);
     }
 
     private void loadSkill(PlayerSkill playerSkill, Skill skill) {
@@ -150,6 +153,13 @@ public class PickpocketUser {
      */
     public MemorySkill getMemorySkill() {
         return skillModule.getMemorySkill();
+    }
+
+    /**
+     * @return the player's quickness skill
+     */
+    public QuicknessSkill getQuicknessSkill() {
+        return skillModule.getQuicknessSkill();
     }
 
     /**

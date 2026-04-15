@@ -7,7 +7,8 @@ public enum Skill {
 
     SPEED("Speed", "Determines how fast you can start rummaging through a player's inventory."),
     REVEAL("Reveal", "Determines how many items can be revealed each rummage stage."),
-    MEMORY("Memory", "Determines how many previously revealed items are retained while expanding.");
+    MEMORY("Memory", "Determines how many previously revealed items are retained while expanding."),
+    QUICKNESS("Quickness", "Determines how quickly stolen items transfer during rummaging.");
 
     private String name;
     private String description;
