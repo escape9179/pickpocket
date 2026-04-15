@@ -1,5 +1,6 @@
 # Unreleased (v3.0)
 
+- Removed CooldownTask and startup scheduling.
 - **Added Quickness-based delayed rummage transfers.**
 Successful revealed-item steals now transfer after a Quickness-scaled delay (level 0 => 3s, level 10 => 1s), with only one pending transfer allowed at a time. Added the new Quickness skill (max level 10) to persistence, `/pickpocket setskill`, and the skills menu.
 - **Victim inventory open now catches active rummaging thieves.**

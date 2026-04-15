@@ -33,7 +33,6 @@ import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
 import logan.pickpocket.listeners.InventoryOpenListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
-import logan.pickpocket.tasks.CooldownTask;
 import logan.pickpocket.tasks.MoveCheckTask;
 
 /**
@@ -135,7 +134,6 @@ public class PickpocketPlugin extends JavaPlugin {
 
     private void startTasks() {
         new MoveCheckTask(this).start();
-        new CooldownTask(this).start();
     }
 
     @Override
