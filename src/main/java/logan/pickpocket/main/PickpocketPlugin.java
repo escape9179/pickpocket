@@ -31,6 +31,7 @@ import logan.pickpocket.hooks.WorldGuardHook;
 import logan.pickpocket.managers.PickpocketSessionHistoryEntry;
 import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
+import logan.pickpocket.listeners.InventoryOpenListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
 import logan.pickpocket.tasks.CooldownTask;
 import logan.pickpocket.tasks.MoveCheckTask;
@@ -122,6 +123,7 @@ public class PickpocketPlugin extends JavaPlugin {
         GUIAPI.registerListeners(this);
         GUIAPI.registerInventoryClickListener(new InventoryClickListener());
         GUIAPI.registerInventoryCloseListener(new InventoryCloseListener());
+        getServer().getPluginManager().registerEvents(new InventoryOpenListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
     }
 

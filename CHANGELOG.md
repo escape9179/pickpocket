@@ -1,4 +1,8 @@
 # Unreleased (post-v3.0)
+* **Victim inventory open now catches active rummaging thieves.**
+  If a victim opens an inventory while the thief is in the rummage UI, both players hear a caught cue at the thief's location, the thief's rummage inventory closes immediately, and the session ends.
+* **Pickpocket attempt now uses delay-matched bone meal audio feedback.**
+  Starting a delayed pickpocket no longer sends the attempt chat line; it now plays `minecraft:item.bone_meal.use`, with pitch scaling across the computed pre-rummage delay window (3s to configured minimum), from default pitch at longer waits to higher pitch at shorter waits.
 * **Memory-based forgetting now scales by chance.**
   On rummage expansion, each revealed item in previous rows is now forgotten using a linear Memory-based chance (level 0 => 100%, level 100 => 0%), while level 0 still guarantees all eligible previous-row reveals are forgotten.
 * **Fixed Memory level 0 retention during early expansions.**

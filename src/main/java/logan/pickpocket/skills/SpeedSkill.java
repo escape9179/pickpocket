@@ -7,7 +7,7 @@ import logan.pickpocket.config.Config;
  */
 public class SpeedSkill extends PlayerSkill {
 
-    public static final float BASE_DELAY_SECONDS = 5.0f;
+    public static final float BASE_DELAY_SECONDS = 3.0f;
 
     SpeedSkill() {
         super(Skill.SPEED);

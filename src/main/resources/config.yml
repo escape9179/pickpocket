@@ -47,6 +47,6 @@ towny:
 
 skills:
   speed:
-    # Overrides calculation with a linear progression from base delay (5s) to this value (at max level 100).
+    # Overrides calculation with a linear progression from base delay (3s) to this value (at max level 100).
     # Leaving it at 0.0 means at max level, the inventory opens instantly.
     minDelaySeconds: 0.0

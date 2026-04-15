@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import logan.pickpocket.config.MessageConfig;
@@ -101,7 +102,7 @@ public final class PickpocketSessionManager {
             return;
         }
 
-        player.sendMessage(MessageConfig.getPickpocketAttemptMessage());
+        thief.playPickpocketAttemptSound(delaySeconds);
 
         new PickpocketTask(thief, victim, delayTicks, startLocation, victimStartLocation)
                 .runTaskTimer(PickpocketPlugin.getInstance(), 0L, 1L);
@@ -160,6 +161,39 @@ public final class PickpocketSessionManager {
             session.setRummaging(false);
             endSession(session, SessionEndReason.RUMMAGE_INVENTORY_CLOSED);
         }
+    }
+
+    /**
+     * Marks a rummaging thief as caught when the victim opens an inventory.
+     *
+     * @param user inventory-opening user
+     */
+    public static void onInventoryOpened(PickpocketUser user) {
+        PickpocketSession session = getSession(user);
+        if (session == null || !session.isVictim(user) || !session.isRummaging()) {
+            return;
+        }
+
+        Player thiefPlayer = session.getThief().getBukkitPlayer();
+        Player victimPlayer = session.getVictim().getBukkitPlayer();
+        Location soundLocation = thiefPlayer != null
+                ? thiefPlayer.getLocation()
+                : (victimPlayer != null ? victimPlayer.getLocation() : null);
+
+        if (soundLocation != null) {
+            if (thiefPlayer != null) {
+                thiefPlayer.playSound(soundLocation, Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.5f);
+            }
+            if (victimPlayer != null) {
+                victimPlayer.playSound(soundLocation, Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.5f);
+            }
+        }
+
+        session.setRummaging(false);
+        if (thiefPlayer != null) {
+            thiefPlayer.closeInventory();
+        }
+        endSession(session, SessionEndReason.VICTIM_INVENTORY_OPENED);
     }
 
     /**

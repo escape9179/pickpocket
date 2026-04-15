@@ -124,10 +124,6 @@ public final class MessageConfig {
         return getMessage("attemptStealWhileAfk");
     }
 
-    public static String getPickpocketAttemptMessage() {
-        return getMessage("pickpocketAttempt");
-    }
-
     public static String getPickpocketCancelledMovedMessage() {
         return getMessage("pickpocketCancelledMoved");
     }

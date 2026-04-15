@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import logan.api.config.YamlConfigurationUtil;
+import logan.pickpocket.config.Config;
 import logan.pickpocket.history.PickpocketHistoryLog;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSessionManager;
@@ -35,6 +36,10 @@ public class PickpocketUser {
     private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
     private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
     private static final String KEY_SKILLS = "skills";
+    private static final String ATTEMPT_SOUND_KEY = "minecraft:item.bone_meal.use";
+    private static final float ATTEMPT_SOUND_MIN_PITCH = 0.5f;
+    private static final float ATTEMPT_SOUND_MAX_PITCH = 2.0f;
+    private static final float ATTEMPT_SOUND_DEFAULT_PITCH = 1.0f;
 
     private final UUID uuid;
     private File file;
@@ -346,6 +351,38 @@ public class PickpocketUser {
         if (player != null) {
             player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
         }
+    }
+
+    /**
+     * Plays attempt feedback where pitch scales with the expected rummage-open delay.
+     *
+     * @param delaySeconds pending delay before rummage opens
+     */
+    public void playPickpocketAttemptSound(float delaySeconds) {
+        Player player = getBukkitPlayer();
+        if (player == null) {
+            return;
+        }
+        player.playSound(
+                player.getLocation(),
+                ATTEMPT_SOUND_KEY,
+                1.0f,
+                resolveAttemptSoundPitch(delaySeconds));
+    }
+
+    private float resolveAttemptSoundPitch(float delaySeconds) {
+        float configuredMinDelay = Config.getMinSpeedSkillDelay();
+        float fastestDelay = Math.min(configuredMinDelay, SpeedSkill.BASE_DELAY_SECONDS);
+        float slowestDelay = Math.max(configuredMinDelay, SpeedSkill.BASE_DELAY_SECONDS);
+        if (slowestDelay <= fastestDelay) {
+            return ATTEMPT_SOUND_DEFAULT_PITCH;
+        }
+
+        float clampedDelay = Math.max(fastestDelay, Math.min(slowestDelay, delaySeconds));
+        float normalizedDelay = (clampedDelay - fastestDelay) / (slowestDelay - fastestDelay);
+        float inverse = 1.0f - normalizedDelay;
+        return ATTEMPT_SOUND_MIN_PITCH
+                + (inverse * (ATTEMPT_SOUND_MAX_PITCH - ATTEMPT_SOUND_MIN_PITCH));
     }
 
     /**
