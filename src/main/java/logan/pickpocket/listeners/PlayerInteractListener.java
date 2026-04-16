@@ -1,11 +1,5 @@
 package logan.pickpocket.listeners;
 
-import com.earth2me.essentials.Essentials;
-import com.palmergames.bukkit.towny.TownyAPI;
-import logan.pickpocket.config.MessageConfiguration;
-import logan.pickpocket.config.Config;
-import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,10 +7,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import com.earth2me.essentials.Essentials;
+import com.palmergames.bukkit.towny.TownyAPI;
+
+import logan.pickpocket.config.Config;
+import logan.pickpocket.config.MessageConfig;
+import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.user.PickpocketUser;
+
 /**
- * Created by Tre on 12/28/2015.
+ * Starts pickpocket attempts from sneak-right-click interactions.
  */
 public class PlayerInteractListener implements Listener {
+    /**
+     * Validates theft rules and starts a new pickpocket attempt.
+     *
+     * @param event entity interaction event
+     */
     @EventHandler
     public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
 
@@ -45,13 +53,13 @@ public class PlayerInteractListener implements Listener {
 
             /* Check if the victim is AFK */
             if (essentials.getUser(event.getRightClicked().getUniqueId()).isAfk()) {
-                event.getPlayer().sendMessage(MessageConfiguration.getPlayerStealFromAfkMessage());
+                event.getPlayer().sendMessage(MessageConfig.getPlayerStealFromAfkMessage());
                 return;
             }
 
             /* Check if the predator is AFK */
             if (essentials.getUser(event.getPlayer().getUniqueId()).isAfk()) {
-                event.getPlayer().sendMessage(MessageConfiguration.getPlayerStealWhileAfk());
+                event.getPlayer().sendMessage(MessageConfig.getPlayerStealWhileAfk());
                 return;
             }
         }
@@ -75,13 +83,24 @@ public class PlayerInteractListener implements Listener {
 
         if (!Config.isPickpocketingEnabled()) {
             if (Config.isStatusOnInteract())
-                event.getPlayer().sendMessage(MessageConfiguration.getPickpocketDisabledMessage());
+                event.getPlayer().sendMessage(MessageConfig.getPickpocketDisabledMessage());
             return;
         }
 
+        if (PickpocketSessionManager.hasUserInSession(thiefUser)) {
+            event.getPlayer().sendMessage(MessageConfig.getAlreadyInSessionMessage());
+            return;
+        }
+        
         thiefUser.doPickpocket(victimUser);
     }
 
+    /**
+     * Checks whether a player belongs to the town at their current location.
+     *
+     * @param player player to check
+     * @return true when player is a resident of the local town
+     */
     private boolean isTownMember(Player player) {
         var town = TownyAPI.getInstance().getTown(player.getLocation());
         return town != null && town.hasResident(player.getName());

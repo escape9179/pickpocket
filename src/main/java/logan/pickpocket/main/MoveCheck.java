@@ -1,6 +1,6 @@
 package logan.pickpocket.main;
 
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Detects block-level movement and notifies session logic.
+ */
 public final class MoveCheck {
 
     private static final Map<UUID, Location> playerLocationMap = new HashMap<>();
@@ -16,6 +19,11 @@ public final class MoveCheck {
     private MoveCheck() {
     }
 
+    /**
+     * Compares current and previous player locations and reacts to movement.
+     *
+     * @param player player to inspect
+     */
     public static void check(Player player) {
         Location previousLocation = playerLocationMap.get(player.getUniqueId());
         if (previousLocation == null) {
@@ -35,35 +43,16 @@ public final class MoveCheck {
         }
 
         PickpocketUser user = PickpocketUser.get(player);
-
-        // Check if the player is a predator.
-        if (user.isPredator()) {
-            PickpocketUser victimProfile = user.getVictim();
-            if (user.isPlayingMinigame()) {
-                user.getCurrentMinigame().stop();
-            }
-            if (user.isRummaging()) {
-                user.getBukkitPlayer().closeInventory();
-                user.setRummaging(false);
-            }
-            player.sendMessage(MessageConfiguration.getPickpocketOnMoveWarningMessage());
-            user.setVictim(null);
-            victimProfile.setPredator(null);
+        var session = PickpocketSessionManager.getSession(user);
+        if (session == null) {
             return;
         }
-
-        // Check if the player is a victim.
-        if (user.isVictim()) {
-            PickpocketUser predatorProfile = user.getPredator();
-            if (predatorProfile.isPlayingMinigame()) {
-                predatorProfile.getCurrentMinigame().stop();
-            }
-            if (predatorProfile.isRummaging()) {
-                predatorProfile.getBukkitPlayer().closeInventory();
-                predatorProfile.setRummaging(false);
-            }
-            user.setPredator(null);
-            predatorProfile.setVictim(null);
+        if (session.isThief(user)) {
+            PickpocketSessionManager.onPredatorMoved(player, user);
+            return;
+        }
+        if (session.isVictim(user)) {
+            PickpocketSessionManager.onVictimMoved(user);
         }
     }
 }

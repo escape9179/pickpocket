@@ -27,6 +27,9 @@ public class MainCommand extends BasicCommand<CommandSender> {
                         + "\n" +
                         "/pickpocket toggle - Toggle server-wide pickpocketing.\n" +
                         "/pickpocket status - Check server-wide pickpocketing status.\n" +
+                        "/pickpocket trap - Open your trap inventory.\n" +
+                        "/pickpocket skills - View your skill levels in a menu.\n" +
+                        "/pickpocket setskill <skill name> <level> - Set one of your skill levels.\n" +
                         "/pickpocket reload - Reload the plugin.\n" +
                         "/pickpocket debug giverandom <amount> - Give yourself random items.");
         return true;

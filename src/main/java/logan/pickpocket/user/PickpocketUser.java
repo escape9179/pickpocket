@@ -1,259 +1,408 @@
 package logan.pickpocket.user;
 
-import logan.api.config.BasicConfiguration;
-import logan.api.config.YamlConfigurationUtil;
-import logan.pickpocket.config.MessageConfiguration;
-import logan.pickpocket.hooks.WorldGuardHook;
-import logan.pickpocket.main.PickpocketPlugin;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
-import logan.pickpocket.managers.CooldownManager;
-import logan.pickpocket.managers.UserManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.io.File;
-import java.util.UUID;
-import logan.pickpocket.skills.PlayerSkills;
-import logan.pickpocket.skills.Skills;
+import logan.api.config.YamlConfigurationUtil;
+import logan.pickpocket.config.Config;
+import logan.pickpocket.history.PickpocketHistoryLog;
+import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.managers.UserManager;
+import logan.pickpocket.skills.MemorySkill;
+import logan.pickpocket.skills.PlayerSkill;
+import logan.pickpocket.skills.QuicknessSkill;
+import logan.pickpocket.skills.RevealSkill;
+import logan.pickpocket.skills.Skill;
+import logan.pickpocket.skills.SkillModule;
 import logan.pickpocket.skills.SpeedSkill;
-import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class PickpocketUser implements BasicConfiguration {
+/**
+ * Per-player pickpocket state and utility actions.
+ */
+public class PickpocketUser {
 
-    private static final String KEY_ADMIN = "admin";
-    private static final String KEY_BYPASS = "bypass";
-    private static final String KEY_EXEMPT = "exempt";
     private static final String KEY_STEALS = "steals";
-    private static final String KEY_THIEF_PROFILE = "thiefProfile";
+    private static final String KEY_STATS_PREDATOR_SUCCESSES = "stats.predator.successes";
+    private static final String KEY_STATS_VICTIM_COUNT = "stats.victim.count";
+    private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
+    private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
+    private static final String KEY_TRAP_CONTENTS = "traps.contents";
+    private static final String KEY_SKILLS = "skills";
+    private static final String ATTEMPT_SOUND_KEY = "minecraft:item.bone_meal.use";
+    private static final float ATTEMPT_SOUND_MIN_PITCH = 0.5f;
+    private static final float ATTEMPT_SOUND_MAX_PITCH = 2.0f;
+    private static final float ATTEMPT_SOUND_DEFAULT_PITCH = 1.0f;
+    private static final int TRAP_INVENTORY_SIZE = 54;
 
     private final UUID uuid;
-    private PickpocketUser victim;
-    private PickpocketUser predator;
-    private PickpocketUser lastPredator;
-    private boolean playingMinigame;
-    private boolean rummaging;
-    private RummageInventory openRummageInventory;
-    private Minigame currentMinigame;
     private File file;
     private YamlConfiguration configuration;
-    private PlayerSkills skills;
+    private SkillModule skillModule;
 
+    /**
+     * Creates and initializes user data storage for a player UUID.
+     *
+     * @param uuid player UUID
+     */
     public PickpocketUser(UUID uuid) {
         this.uuid = uuid;
         String directory = PickpocketPlugin.getInstance().getDataFolder() + "/players/";
         this.file = new File(directory, uuid + ".yml");
+        File parent = this.file.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
         this.configuration = YamlConfiguration.loadConfiguration(file);
+        this.skillModule = new SkillModule(this);
 
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_ADMIN, false);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_BYPASS, false);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_EXEMPT, false);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_THIEF_PROFILE, "default");
+        initializeDefaults();
+        loadSkillStats();
         save();
-
-        this.skills = new PlayerSkills(this);
     }
 
-    @Override
+    private void initializeDefaults() {
+        stripLegacyCounterpartStats();
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STEALS, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_PREDATOR_SUCCESSES, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_TRAP_CONTENTS, new ArrayList<>());
+        for (Skill skill : Skill.values()) {
+            String skillKey = skillPath(skill);
+            YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
+            YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".exp", 0);
+        }
+    }
+
+    private void stripLegacyCounterpartStats() {
+        configuration.set("stats.counterparts", null);
+    }
+
+    /**
+     * Persists this user's current configuration to disk.
+     */
+    public void save() {
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            PickpocketPlugin.log("Failed saving player data for " + uuid + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads persisted skill values into runtime skill objects.
+     */
+    public void loadSkillStats() {
+        loadSkill(getSpeedSkill(), Skill.SPEED);
+        loadSkill(getRevealSkill(), Skill.REVEAL);
+        loadSkill(getMemorySkill(), Skill.MEMORY);
+        loadSkill(getQuicknessSkill(), Skill.QUICKNESS);
+    }
+
+    /**
+     * Writes current runtime skill values into config.
+     */
+    public void persistSkillStats() {
+        persistSkill(getSpeedSkill(), Skill.SPEED);
+        persistSkill(getRevealSkill(), Skill.REVEAL);
+        persistSkill(getMemorySkill(), Skill.MEMORY);
+        persistSkill(getQuicknessSkill(), Skill.QUICKNESS);
+    }
+
+    private void loadSkill(PlayerSkill playerSkill, Skill skill) {
+        String skillKey = skillPath(skill);
+        playerSkill.setLevel(configuration.getInt(skillKey + ".level", 0));
+        playerSkill.setExp(configuration.getInt(skillKey + ".exp", 0));
+    }
+
+    private void persistSkill(PlayerSkill playerSkill, Skill skill) {
+        String skillKey = skillPath(skill);
+        configuration.set(skillKey + ".level", playerSkill.getLevel());
+        configuration.set(skillKey + ".exp", playerSkill.getExp());
+    }
+
+    private String skillPath(Skill skill) {
+        return KEY_SKILLS + "." + skill.name().toLowerCase();
+    }
+
+    /**
+     * @return the player's speed skill
+     */
+    public SpeedSkill getSpeedSkill() {
+        return skillModule.getSpeedSkill();
+    }
+
+    /**
+     * @return the player's reveal skill
+     */
+    public RevealSkill getRevealSkill() {
+        return skillModule.getRevealSkill();
+    }
+
+    /**
+     * @return the player's memory skill
+     */
+    public MemorySkill getMemorySkill() {
+        return skillModule.getMemorySkill();
+    }
+
+    /**
+     * @return the player's quickness skill
+     */
+    public QuicknessSkill getQuicknessSkill() {
+        return skillModule.getQuicknessSkill();
+    }
+
+    /**
+     * @return user backing file
+     */
     public File getFile() {
         return file;
     }
 
-    @Override
+    /**
+     * @return loaded user configuration
+     */
     public YamlConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override
+    /**
+     * Replaces the in-memory configuration reference.
+     *
+     * @param configuration new configuration instance
+     */
     public void setConfiguration(YamlConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public PlayerSkills getSkills() {
-        return skills;
+    /**
+     * @return skill module for this user
+     */
+    public SkillModule getSkillModule() {
+        return skillModule;
     }
 
+    /**
+     * @return unique id of this user
+     */
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * @return online Bukkit player instance, or null if offline
+     */
     public Player getBukkitPlayer() {
         return Bukkit.getPlayer(uuid);
     }
 
-    public PickpocketUser getVictim() {
-        return victim;
-    }
-
-    public void setVictim(PickpocketUser victim) {
-        this.victim = victim;
-    }
-
-    public PickpocketUser getPredator() {
-        return predator;
-    }
-
-    public void setPredator(PickpocketUser predator) {
-        this.predator = predator;
-        if (lastPredator == null) {
-            lastPredator = predator;
-        }
-    }
-
-    public PickpocketUser getLastPredator() {
-        return lastPredator;
-    }
-
-    public boolean isPredator() {
-        return victim != null;
-    }
-
-    public boolean isVictim() {
-        return predator != null;
-    }
-
-    public boolean isPlayingMinigame() {
-        return playingMinigame;
-    }
-
-    public void setPlayingMinigame(boolean playingMinigame) {
-        this.playingMinigame = playingMinigame;
-    }
-
-    public boolean isRummaging() {
-        return rummaging;
-    }
-
-    public void setRummaging(boolean rummaging) {
-        this.rummaging = rummaging;
-    }
-
-    public RummageInventory getOpenRummageInventory() {
-        return openRummageInventory;
-    }
-
-    public void setOpenRummageInventory(RummageInventory openRummageInventory) {
-        this.openRummageInventory = openRummageInventory;
-    }
-
-    public boolean isAdmin() {
-        return configuration.getBoolean(KEY_ADMIN);
-    }
-
-    public void setAdmin(boolean value) {
-        configuration.set(KEY_ADMIN, value);
-    }
-
-    public boolean isBypassing() {
-        return configuration.getBoolean(KEY_BYPASS);
-    }
-
-    public void setBypassing(boolean value) {
-        configuration.set(KEY_BYPASS, value);
-    }
-
-    public boolean isExempt() {
-        return configuration.getBoolean(KEY_EXEMPT);
-    }
-
-    public void setExempt(boolean value) {
-        configuration.set(KEY_EXEMPT, value);
-    }
-
-    public Minigame getCurrentMinigame() {
-        return currentMinigame;
-    }
-
-    public void setCurrentMinigame(Minigame currentMinigame) {
-        this.currentMinigame = currentMinigame;
-    }
-
+    /**
+     * @return total successful steals recorded for this user
+     */
     public int getSteals() {
         return configuration.getInt(KEY_STEALS);
     }
 
+    /**
+     * Sets the recorded successful steal count.
+     *
+     * @param value steal count
+     */
     public void setSteals(int value) {
         configuration.set(KEY_STEALS, value);
     }
 
-    public void doPickpocket(PickpocketUser victim) {
-        Player player = getBukkitPlayer();
-        if (!WorldGuardHook.isPickpocketingAllowedAtPlayerRegion(player)) {
-            player.sendMessage(MessageConfiguration.getPickpocketRegionDisallowMessage());
-        } else if (isCoolingDown()) {
-            player.sendMessage(
-                    MessageConfiguration.getCooldownNoticeMessage(
-                            String.valueOf(CooldownManager.getCooldowns().get(player))));
-        } else {
-            this.victim = victim;
-            victim.setPredator(this);
+    /**
+     * @return successful steals performed as predator
+     */
+    public int getPredatorSuccesses() {
+        return configuration.getInt(KEY_STATS_PREDATOR_SUCCESSES);
+    }
 
-            int speedLevel = this.skills.getSkillLevel(Skills.SPEED);
-            float delaySeconds = new SpeedSkill().getDelaySeconds(speedLevel);
-            int delayTicks = (int) (delaySeconds * 20);
+    /**
+     * Increments successful steals performed as predator.
+     */
+    public void incrementPredatorSuccesses() {
+        configuration.set(KEY_STATS_PREDATOR_SUCCESSES, getPredatorSuccesses() + 1);
+    }
 
-            Location startLocation = player.getLocation();
-            Location victimStartLocation = victim.getBukkitPlayer().getLocation();
+    /**
+     * @return times this user has been victim of a successful steal
+     */
+    public int getVictimCount() {
+        return configuration.getInt(KEY_STATS_VICTIM_COUNT);
+    }
 
-            if (delayTicks <= 0) {
-                openRummageInventory = new RummageInventory(victim);
-                openRummageInventory.show(this);
-                rummaging = true;
-                this.skills.addExperience(Skills.SPEED, 10);
-                return;
-            }
+    /**
+     * Increments times this user has been victim of a successful steal.
+     */
+    public void incrementVictimCount() {
+        configuration.set(KEY_STATS_VICTIM_COUNT, getVictimCount() + 1);
+    }
 
-            player.sendMessage(MessageConfiguration.getPickpocketAttemptMessage());
+    /**
+     * @return total number of items successfully stolen
+     */
+    public int getTotalItemsStolen() {
+        return configuration.getInt(KEY_STATS_TOTAL_ITEMS_STOLEN);
+    }
 
-            new BukkitRunnable() {
-                private int ticksPassed = 0;
-
-                @Override
-                public void run() {
-                    Player targetPlayer = victim.getBukkitPlayer();
-                    if (player == null || !player.isOnline() || targetPlayer == null || !targetPlayer.isOnline()) {
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (player.getLocation().distanceSquared(startLocation) > 0.5) {
-                        player.sendMessage(MessageConfiguration.getPickpocketCancelledMovedMessage());
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (targetPlayer.getLocation().distanceSquared(victimStartLocation) > 0.5) {
-                        player.sendMessage(MessageConfiguration.getPickpocketCancelledTargetMovedMessage());
-                        PickpocketUser.this.victim = null;
-                        cancel();
-                        return;
-                    }
-
-                    if (ticksPassed >= delayTicks) {
-                        openRummageInventory = new RummageInventory(victim);
-                        openRummageInventory.show(PickpocketUser.this);
-                        rummaging = true;
-
-                        // Gain experience
-                        PickpocketUser.this.skills.addExperience(Skills.SPEED, 10);
-
-                        cancel();
-                    }
-                    ticksPassed++;
-                }
-            }.runTaskTimer(PickpocketPlugin.getInstance(), 0L, 1L);
+    /**
+     * Adds to total items stolen.
+     *
+     * @param amount amount to add
+     */
+    public void addTotalItemsStolen(int amount) {
+        if (amount <= 0) {
+            return;
         }
+        configuration.set(KEY_STATS_TOTAL_ITEMS_STOLEN, getTotalItemsStolen() + amount);
     }
 
-    private boolean isCoolingDown() {
-        return CooldownManager.hasCooldown(getBukkitPlayer());
+    /**
+     * @return accumulated rummage time in milliseconds
+     */
+    public long getTotalRummageMillis() {
+        return configuration.getLong(KEY_STATS_TOTAL_RUMMAGE_MILLIS);
     }
 
+    /**
+     * Adds elapsed rummage time.
+     *
+     * @param millis elapsed milliseconds
+     */
+    public void addRummageMillis(long millis) {
+        if (millis <= 0) {
+            return;
+        }
+        configuration.set(KEY_STATS_TOTAL_RUMMAGE_MILLIS, getTotalRummageMillis() + millis);
+    }
+
+    /**
+     * @return cloned trap inventory contents with fixed size of 54
+     */
+    public ItemStack[] getTrapContentsSnapshot() {
+        ItemStack[] snapshot = new ItemStack[TRAP_INVENTORY_SIZE];
+        List<?> rawList = configuration.getList(KEY_TRAP_CONTENTS, new ArrayList<>());
+        for (int index = 0; index < snapshot.length && index < rawList.size(); index++) {
+            Object value = rawList.get(index);
+            if (value instanceof ItemStack itemStack) {
+                snapshot[index] = itemStack.clone();
+            }
+        }
+        return snapshot;
+    }
+
+    /**
+     * Saves trap inventory contents to player configuration using serializable ItemStacks.
+     *
+     * @param contents trap inventory items
+     */
+    public void setTrapContents(ItemStack[] contents) {
+        List<ItemStack> serializable = new ArrayList<>(TRAP_INVENTORY_SIZE);
+        for (int slot = 0; slot < TRAP_INVENTORY_SIZE; slot++) {
+            ItemStack stack = slot < contents.length ? contents[slot] : null;
+            serializable.add(stack == null ? null : stack.clone());
+        }
+        configuration.set(KEY_TRAP_CONTENTS, serializable);
+    }
+
+    /**
+     * @return max occupied trap slots from permission grants, default 0
+     */
+    public int resolveMaxTrapSlots() {
+        return resolveHighestNumericPermission("pickpocket.trap.slots.", 0, 0, TRAP_INVENTORY_SIZE);
+    }
+
+    /**
+     * @return max trap stack size from permission grants, default 1
+     */
+    public int resolveMaxTrapStackSize() {
+        return resolveHighestNumericPermission("pickpocket.trap.stacksize.", 1, 1, 64);
+    }
+
+    /**
+     * @return per-session steals cap from permission grants, default effectively unbounded
+     */
+    public int resolveMaxStealsPerSession() {
+        return resolveHighestNumericPermission("pickpocket.steals.max.", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * UUID of the victim this player pickpocketed in the most ended sessions (see {@code history/} logs).
+     * Session frequency differs from per-item steal counts.
+     *
+     * @return UUID if any session exists as thief, otherwise empty
+     */
+    public Optional<UUID> getMostStealsFromUuid() {
+        return PickpocketHistoryLog.mostStealsFrom(uuid);
+    }
+
+    /**
+     * UUID of the thief who pickpocketed this player in the most ended sessions.
+     *
+     * @return UUID if any session exists as victim, otherwise empty
+     */
+    public Optional<UUID> getMostStealsByUuid() {
+        return PickpocketHistoryLog.mostStealsBy(uuid);
+    }
+
+    /**
+     * @return resolved name (or UUID string fallback) for {@link #getMostStealsFromUuid()}
+     */
+    public String getMostStealsFromName() {
+        return resolveName(getMostStealsFromUuid());
+    }
+
+    /**
+     * @return resolved name (or UUID string fallback) for {@link #getMostStealsByUuid()}
+     */
+    public String getMostStealsByName() {
+        return resolveName(getMostStealsByUuid());
+    }
+
+    private String resolveName(Optional<UUID> uuidValue) {
+        if (uuidValue.isEmpty()) {
+            return "None";
+        }
+        UUID id = uuidValue.get();
+        OfflinePlayer player = Bukkit.getOfflinePlayer(id);
+        String name = player != null ? player.getName() : null;
+        return name != null ? name : id.toString();
+    }
+
+    /**
+     * Starts a pickpocket attempt against a victim user.
+     *
+     * @param victim target user
+     */
+    public void doPickpocket(PickpocketUser victim) {
+        PickpocketSessionManager.startPickpocket(this, victim);
+    }
+
+    /**
+     * Sends a formatted and colorized message to this player when online.
+     *
+     * @param message message format
+     * @param args string format arguments
+     */
     public void sendMessage(String message, Object... args) {
         Player player = getBukkitPlayer();
         if (player != null) {
@@ -261,6 +410,9 @@ public class PickpocketUser implements BasicConfiguration {
         }
     }
 
+    /**
+     * Plays the default rummage progress sound.
+     */
     public void playRummageSound() {
         Player player = getBukkitPlayer();
         if (player != null) {
@@ -268,8 +420,107 @@ public class PickpocketUser implements BasicConfiguration {
         }
     }
 
+    /**
+     * Plays attempt feedback where pitch scales with the expected rummage-open delay.
+     *
+     * @param delaySeconds pending delay before rummage opens
+     */
+    public void playPickpocketAttemptSound(float delaySeconds) {
+        Player player = getBukkitPlayer();
+        if (player == null) {
+            return;
+        }
+        player.playSound(
+                player.getLocation(),
+                ATTEMPT_SOUND_KEY,
+                1.0f,
+                resolveAttemptSoundPitch(delaySeconds));
+    }
+
+    private float resolveAttemptSoundPitch(float delaySeconds) {
+        float configuredMinDelay = Config.getMinSpeedSkillDelay();
+        float fastestDelay = Math.min(configuredMinDelay, SpeedSkill.BASE_DELAY_SECONDS);
+        float slowestDelay = Math.max(configuredMinDelay, SpeedSkill.BASE_DELAY_SECONDS);
+        if (slowestDelay <= fastestDelay) {
+            return ATTEMPT_SOUND_DEFAULT_PITCH;
+        }
+
+        float clampedDelay = Math.max(fastestDelay, Math.min(slowestDelay, delaySeconds));
+        float normalizedDelay = (clampedDelay - fastestDelay) / (slowestDelay - fastestDelay);
+        float inverse = 1.0f - normalizedDelay;
+        return ATTEMPT_SOUND_MIN_PITCH
+                + (inverse * (ATTEMPT_SOUND_MAX_PITCH - ATTEMPT_SOUND_MIN_PITCH));
+    }
+
+    /**
+     * Plays the rummage expansion sound.
+     *
+     * @param volume playback volume
+     */
+    public void playRummageExpandSound(float volume) {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.BLOCK_WOOL_BREAK, volume, 0.85f);
+        }
+    }
+
+    /**
+     * Plays feedback sound when rummage expansion is blocked.
+     */
+    public void playRummageBlockedSound() {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.75f);
+        }
+    }
+
+    /**
+     * Plays feedback when the thief successfully takes an item from the victim.
+     */
+    public void playStealSuccessSound() {
+        Player player = getBukkitPlayer();
+        if (player != null) {
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+        }
+    }
+
+    /**
+     * Resolves or creates a cached user object for a player.
+     *
+     * @param player Bukkit player
+     * @return cached pickpocket user
+     */
     public static PickpocketUser get(Player player) {
         return UserManager.getUsers().computeIfAbsent(
                 player.getUniqueId(), PickpocketUser::new);
+    }
+
+    private int resolveHighestNumericPermission(String prefix, int fallback, int minValue, int maxValue) {
+        Player player = getBukkitPlayer();
+        if (player == null) {
+            return fallback;
+        }
+        int resolved = Integer.MIN_VALUE;
+        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
+            if (!permissionInfo.getValue()) {
+                continue;
+            }
+            String permission = permissionInfo.getPermission();
+            if (!permission.startsWith(prefix)) {
+                continue;
+            }
+            String suffix = permission.substring(prefix.length());
+            int value;
+            try {
+                value = Integer.parseInt(suffix);
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            if (value < minValue || value > maxValue) {
+                continue;
+            }
+            resolved = Math.max(resolved, value);
+        }
+        return resolved == Integer.MIN_VALUE ? fallback : resolved;
     }
 }

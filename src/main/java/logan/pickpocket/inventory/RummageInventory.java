@@ -1,0 +1,334 @@
+package logan.pickpocket.inventory;
+
+import logan.api.gui.MenuItem;
+import logan.api.gui.PlayerInventoryMenu;
+import logan.pickpocket.config.MessageConfig;
+import logan.pickpocket.main.PickpocketPlugin;
+import logan.pickpocket.managers.PickpocketSession;
+import logan.pickpocket.managers.PickpocketSessionManager;
+import logan.pickpocket.managers.RummageSessionState;
+import logan.pickpocket.managers.SessionEndReason;
+import logan.pickpocket.user.PickpocketUser;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Map;
+
+/**
+ * Handles rendering and interaction for the rummage inventory UI.
+ */
+public final class RummageInventory {
+
+    private static final String MENU_TITLE = "Rummage";
+    private static final int BOARD_ROWS = 6;
+    private static final int BASE_STEAL_CHANCES = 3;
+    private static final float CHANCE_LOSS_BASE_VOLUME = 0.7f;
+    private static final float CHANCE_LOSS_STEP_VOLUME = 0.25f;
+    private static final float CHANCE_LOSS_MAX_VOLUME = 1.5f;
+
+    private final PickpocketSession session;
+    private final PickpocketUser thief;
+    private final PickpocketUser victim;
+    private final RummageSessionState state;
+    private final int effectiveStealCap;
+
+    private PlayerInventoryMenu menu;
+    private BukkitTask pendingTransferTask;
+    private int successfulStealsThisSession;
+
+    /**
+     * Creates a rummage inventory view bound to a pickpocket session.
+     *
+     * @param session active pickpocket session
+     */
+    public RummageInventory(PickpocketSession session) {
+        this.session = session;
+        this.thief = session.getThief();
+        this.victim = session.getVictim();
+        this.state = session.getRummageState();
+        int permissionCap = thief.resolveMaxStealsPerSession();
+        int safePermissionCap = permissionCap <= 0 ? 0 : permissionCap;
+        this.effectiveStealCap = Math.min(BASE_STEAL_CHANCES, safePermissionCap);
+    }
+
+    /**
+     * Opens the rummage menu for the thief.
+     */
+    public void show() {
+        rebuildAndShowMenu();
+    }
+
+    /**
+     * Handles clicks on revealed stealable items.
+     *
+     * @param menuSlot clicked menu slot
+     */
+    private void onRevealedItemClick(int menuSlot) {
+        if (effectiveStealCap <= 0) {
+            thief.sendMessage(MessageConfig.getStealCapReachedMessage());
+            return;
+        }
+        if (successfulStealsThisSession >= effectiveStealCap) {
+            thief.sendMessage(MessageConfig.getStealCapReachedMessage());
+            return;
+        }
+
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer == null || victimPlayer == null || !victimPlayer.isOnline()) {
+            thief.sendMessage(MessageConfig.getTargetUnavailableMessage());
+            state.clearStealableMapping(menuSlot);
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+        if (pendingTransferTask != null) {
+            thief.playRummageBlockedSound();
+            return;
+        }
+
+        Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
+        if (victimSlot == null) {
+            return;
+        }
+
+        ItemStack victimItem = victimPlayer.getInventory().getItem(victimSlot);
+        if (victimItem == null || victimItem.getType() == Material.AIR) {
+            state.clearStealableMapping(menuSlot);
+            refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
+            return;
+        }
+
+        long delayTicks = Math.max(1L, Math.round(thief.getQuicknessSkill().getTransferDelaySeconds() * 20.0f));
+        pendingTransferTask = PickpocketPlugin.getInstance().getServer().getScheduler().runTaskLater(
+                PickpocketPlugin.getInstance(),
+                () -> completeDelayedTransfer(menuSlot, victimSlot),
+                delayTicks);
+    }
+
+    private void completeDelayedTransfer(int menuSlot, int expectedVictimSlot) {
+        pendingTransferTask = null;
+        if (!isSessionStillRummaging()) {
+            return;
+        }
+
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer == null || victimPlayer == null || !victimPlayer.isOnline()) {
+            if (thiefPlayer != null) {
+                thief.sendMessage(MessageConfig.getTargetUnavailableMessage());
+            }
+            state.clearStealableMapping(menuSlot);
+            refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
+            return;
+        }
+
+        Integer mappedVictimSlot = state.getVictimSlotForBoardSlot(menuSlot);
+        if (mappedVictimSlot == null || mappedVictimSlot != expectedVictimSlot) {
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+
+        ItemStack victimItem = victimPlayer.getInventory().getItem(expectedVictimSlot);
+        if (victimItem == null || victimItem.getType() == Material.AIR) {
+            state.clearStealableMapping(menuSlot);
+            refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
+            return;
+        }
+
+        ItemStack stolenItem = victimItem.clone();
+        victimPlayer.getInventory().setItem(expectedVictimSlot, new ItemStack(Material.AIR));
+        Map<Integer, ItemStack> overflow = thiefPlayer.getInventory().addItem(stolenItem);
+        if (!overflow.isEmpty()) {
+            overflow.values().forEach(item -> thiefPlayer.getWorld().dropItemNaturally(thiefPlayer.getLocation(), item));
+        }
+
+        state.markClaimed(menuSlot);
+        thief.setSteals(thief.getSteals() + 1);
+        thief.incrementPredatorSuccesses();
+        thief.addTotalItemsStolen(1);
+        victim.incrementVictimCount();
+        thief.save();
+        victim.save();
+        thief.playStealSuccessSound();
+        successfulStealsThisSession++;
+        playChanceLossSound(successfulStealsThisSession);
+        refreshSingleSlot(menuSlot);
+
+        if (successfulStealsThisSession >= effectiveStealCap) {
+            closeForChanceDepletion();
+            return;
+        }
+        checkNoClickableSlotsRemaining();
+    }
+
+    private boolean isSessionStillRummaging() {
+        PickpocketSession activeSession = PickpocketSessionManager.getSession(thief);
+        return activeSession != null
+                && activeSession == session
+                && activeSession.isRummaging();
+    }
+
+    /**
+     * Rebuilds menu contents and shows the inventory to the thief.
+     */
+    private void rebuildAndShowMenu() {
+        Player thiefPlayer = thief.getBukkitPlayer();
+        if (thiefPlayer == null) {
+            return;
+        }
+
+        menu = new PlayerInventoryMenu(MENU_TITLE, BOARD_ROWS);
+        renderMenuContents();
+        session.setRummageInventory(this);
+        menu.show(thiefPlayer);
+    }
+
+    /**
+     * Renders all board slots based on cell state.
+     */
+    private void renderMenuContents() {
+        for (int slot = 0; slot < RummageSessionState.BOARD_SIZE; slot++) {
+            menu.addItem(slot, createMenuItemForSlot(slot));
+        }
+        menu.update();
+    }
+
+    /**
+     * Handles hidden-slot reveal flow.
+     */
+    private void onHiddenSlotClick(int menuSlot) {
+        RummageSessionState.RevealResult result = state.revealHiddenSlot(menuSlot);
+        if (result == RummageSessionState.RevealResult.NONE) {
+            return;
+        }
+        if (result == RummageSessionState.RevealResult.TRAP) {
+            onTrapClicked(menuSlot);
+            return;
+        }
+        refreshSingleSlot(menuSlot);
+        checkNoClickableSlotsRemaining();
+    }
+
+    private void onTrapClicked(int menuSlot) {
+        refreshSingleSlot(menuSlot);
+        playTrapSoundToBoth();
+        victim.sendMessage(MessageConfig.getTrapTriggeredVictimMessage());
+        thief.sendMessage(MessageConfig.getTrapTriggeredThiefMessage());
+        closeInventoryAndEnd(SessionEndReason.TRAP_TRIGGERED);
+    }
+
+    private void playTrapSoundToBoth() {
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
+        }
+        if (victimPlayer != null) {
+            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
+        }
+    }
+
+    private void playChanceLossSound(int usedChances) {
+        float volume = Math.min(CHANCE_LOSS_MAX_VOLUME,
+                CHANCE_LOSS_BASE_VOLUME + (Math.max(0, usedChances - 1) * CHANCE_LOSS_STEP_VOLUME));
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+        }
+        if (victimPlayer != null) {
+            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+        }
+    }
+
+    private void closeForChanceDepletion() {
+        victim.sendMessage(MessageConfig.getPickpocketVictimWarningMessage());
+        closeInventoryAndEnd(SessionEndReason.CHANCES_DEPLETED);
+    }
+
+    private void checkNoClickableSlotsRemaining() {
+        if (!state.hasClickableSlotsRemaining()) {
+            thief.sendMessage(MessageConfig.getNothingElseHereMessage());
+            closeInventoryAndEnd(SessionEndReason.NO_CLICKABLE_SLOTS_REMAINING);
+        }
+    }
+
+    private void closeInventoryAndEnd(SessionEndReason endReason) {
+        PickpocketSessionManager.unlinkSession(thief, endReason);
+        Player thiefPlayer = thief.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.closeInventory();
+        }
+    }
+
+    /**
+     * Renders a single slot and updates the menu.
+     *
+     * @param slot menu slot index
+     */
+    private void refreshSingleSlot(int slot) {
+        if (menu == null) {
+            return;
+        }
+        menu.addItem(slot, createMenuItemForSlot(slot));
+        menu.update();
+    }
+
+    private MenuItem createMenuItemForSlot(int menuSlot) {
+        RummageSessionState.BoardCellState boardCellState = state.getCellState(menuSlot);
+        if (boardCellState == RummageSessionState.BoardCellState.HIDDEN) {
+            return clickable(
+                    new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE)),
+                    () -> onHiddenSlotClick(menuSlot));
+        }
+        if (boardCellState == RummageSessionState.BoardCellState.CLUE_REVEALED) {
+            return createClueItem(menuSlot);
+        }
+        if (boardCellState == RummageSessionState.BoardCellState.STEALABLE_REVEALED) {
+            Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
+            Player victimPlayer = victim.getBukkitPlayer();
+            if (victimSlot == null || victimPlayer == null) {
+                state.clearStealableMapping(menuSlot);
+                return createClueItem(menuSlot);
+            }
+            ItemStack stack = victimPlayer.getInventory().getItem(victimSlot);
+            if (stack == null || stack.getType() == Material.AIR) {
+                state.clearStealableMapping(menuSlot);
+                return createClueItem(menuSlot);
+            }
+            return clickable(new MenuItem(stack), () -> onRevealedItemClick(menuSlot));
+        }
+        if (boardCellState == RummageSessionState.BoardCellState.TRAP_REVEALED) {
+            ItemStack trapPreview = state.getTrapItem(menuSlot);
+            if (trapPreview == null) {
+                trapPreview = new ItemStack(Material.TNT);
+            }
+            return new MenuItem(trapPreview);
+        }
+        return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    private MenuItem createClueItem(int menuSlot) {
+        int adjacentCount = state.getAdjacentStealableCount(menuSlot);
+        ItemStack clueHead = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = clueHead.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.WHITE + String.valueOf(adjacentCount));
+            clueHead.setItemMeta(meta);
+        }
+        return new MenuItem(clueHead);
+    }
+
+    private MenuItem clickable(MenuItem item, Runnable action) {
+        item.addListener(event -> action.run());
+        return item;
+    }
+}

@@ -1,10 +1,17 @@
-# v2.8
-* **Added a configuration option to enable fishing rod pickpocketing.**
-  This allows a player to initiate pickpocketing by using a fishing rod instead of sneak right-clicking.
-* **Added profile configurations for thieves.**
-  Before this there was one general configuration where you could adjust cooldowns, the number of items when rummaging, and so forth.. Now you can create several of these configurations and assign these profiles to players via permissions or by using `/pickpocket profile assign thief <profile> <player>`.
-* **Added comments to the configuration file.**
-  There were comments a few updates ago, but now they're back and more helpful than before.
-* **Can use `*` and `-` for the disabled items list.**
-  Specify an asterisk to add all items to the disabled items list, and prefix a disabled item with a hyphen to enable it instead.
-  This can be used to change the disabled item list into an enabled items list instead.
+# Unreleased (v3.0)
+
+**Pickpocketing**
+- Removed pickpocketing minigame and replaced it with a staged rummaging process.
+  - The thief clicks an inventory menu button to expand the number of rows available to
+  steal from. This is like searching difference pockets of the victim.
+
+**Skills**
+- Added skills systems
+  - `Quickness`: the time it takes for an item to transfer from the victims inventory to the thieves.
+  - `Reveal`: the number of items revealed in a single rummage inventory row.
+  - `Memory`: affects the chance of an item remaining in the previous row after rummaging again.
+  - `Speed`: the time it takes for the rummage inventory to open.
+
+**Commands**
+- `/pickpocket skills`: opens skills inventory menu
+- `/pickpocket setskill <skill name> <level>`: sets the level of a skill

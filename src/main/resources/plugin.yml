@@ -15,6 +15,11 @@ permissions:
     default: true
   pickpocket.admin.toggle:
     description: Toggle server-wide pickpocketing.
+  pickpocket.skill.set:
+    description: Set one of your pickpocket skill levels.
+  pickpocket.skill.view:
+    description: View your pickpocket skill levels.
+    default: true
   pickpocket.debug:
     description: Access to debug commands.
     children:

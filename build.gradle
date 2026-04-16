@@ -45,3 +45,90 @@ tasks.named('processResources') {
         expand version: project.version
     }
 }
+
+def getLocalGradleProperties() {
+    def localFile = rootProject.file('gradle-local.properties')
+    if (!localFile.exists()) {
+        return null
+    }
+    def p = new Properties()
+    localFile.withInputStream { p.load(it) }
+    return p
+}
+
+def parseTruthy(String s) {
+    if (s == null) {
+        return false
+    }
+    def t = s.trim()
+    return t.equalsIgnoreCase('true') || t == '1' || t.equalsIgnoreCase('yes')
+}
+
+def resolveSpigotPluginsDir() {
+    def gp = getLocalGradleProperties()
+    if (gp != null) {
+        def v = gp.getProperty('spigotPluginsDir')
+        if (v != null && !v.isBlank()) {
+            return rootProject.file(v)
+        }
+    }
+    def fromProp = findProperty('spigotPluginsDir')
+    if (fromProp != null && !fromProp.toString().isBlank()) {
+        return rootProject.file(fromProp.toString())
+    }
+    return null
+}
+
+def resolveOutputJarToSpigot() {
+    def fp = findProperty('outputJarToSpigot')
+    if (fp != null) {
+        return parseTruthy(fp.toString())
+    }
+    def gp = getLocalGradleProperties()
+    if (gp != null) {
+        return parseTruthy(gp.getProperty('outputJarToSpigot'))
+    }
+    return false
+}
+
+tasks.named('jar', Jar) {
+    def pluginsDir = resolveSpigotPluginsDir()
+    if (pluginsDir != null && resolveOutputJarToSpigot()) {
+        destinationDirectory.fileValue(pluginsDir)
+    }
+}
+
+tasks.register('copyJarToSpigot', Copy) {
+    group = 'distribution'
+    description = 'Copies the JAR into spigotPluginsDir when outputJarToSpigot is false.'
+    dependsOn jar
+    from jar.archiveFile
+    into {
+        def dir = resolveSpigotPluginsDir()
+        if (dir == null) {
+            throw new GradleException(
+                'copyJarToSpigot: set spigotPluginsDir in gradle-local.properties ' +
+                '(see gradle-local.properties.example) or pass -PspigotPluginsDir=C:/path/to/plugins'
+            )
+        }
+        dir
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    onlyIf {
+        resolveSpigotPluginsDir() != null && !resolveOutputJarToSpigot()
+    }
+}
+
+tasks.register('deploy') {
+    group = 'distribution'
+    description = 'Full build, then JAR to spigotPluginsDir (direct write if outputJarToSpigot=true, else copy from build/libs).'
+    dependsOn build, copyJarToSpigot
+    doLast {
+        if (resolveSpigotPluginsDir() == null) {
+            throw new GradleException(
+                'deploy: set spigotPluginsDir in gradle-local.properties ' +
+                '(see gradle-local.properties.example) or pass -PspigotPluginsDir=C:/path/to/plugins'
+            )
+        }
+    }
+}
