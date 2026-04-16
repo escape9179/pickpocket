@@ -119,7 +119,7 @@ public final class PickpocketSessionManager {
         if (session == null || !session.getVictim().getUuid().equals(victim.getUuid())) {
             return;
         }
-        session.getRummageState().initializeCandidateSlots(victim);
+        session.getRummageState().initializeBoard(victim);
         RummageInventory inventory = new RummageInventory(session);
         session.setRummageInventory(inventory);
         inventory.show();

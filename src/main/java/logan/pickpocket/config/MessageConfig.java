@@ -132,6 +132,10 @@ public final class MessageConfig {
         return getMessage("pickpocketCancelledTargetMoved");
     }
 
+    public static String getPickpocketVictimWarningMessage() {
+        return getMessage("pickpocketVictimWarning");
+    }
+
     public static String getNoMoneyReceivedMessage() {
         return getMessage("noMoneyReceived");
     }
@@ -153,5 +157,25 @@ public final class MessageConfig {
 
     public static String getAlreadyInSessionMessage() {
         return getMessage("alreadyInSession");
+    }
+
+    public static String getTargetUnavailableMessage() {
+        return getMessage("targetUnavailable");
+    }
+
+    public static String getNothingElseHereMessage() {
+        return getMessage("nothingElseHere");
+    }
+
+    public static String getTrapTriggeredVictimMessage() {
+        return getMessage("trapTriggeredVictim");
+    }
+
+    public static String getTrapTriggeredThiefMessage() {
+        return getMessage("trapTriggeredThief");
+    }
+
+    public static String getStealCapReachedMessage() {
+        return getMessage("stealCapReached");
     }
 }

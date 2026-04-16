@@ -2,21 +2,22 @@ package logan.pickpocket.inventory;
 
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
+import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSession;
 import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.RummageSessionState;
+import logan.pickpocket.managers.SessionEndReason;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Handles rendering and interaction for the rummage inventory UI.
@@ -24,20 +25,21 @@ import java.util.Random;
 public final class RummageInventory {
 
     private static final String MENU_TITLE = "Rummage";
-    private static final String RUMMAGE_BUTTON_TEXT = "Expand Rummage";
-    private static final int MAX_ROWS = 6;
-    private static final float EXPAND_SOUND_BASE_VOLUME = 0.6f;
-    private static final float EXPAND_SOUND_STEP_INCREMENT = 0.18f;
-    private static final float EXPAND_SOUND_MAX_VOLUME = 1.5f;
+    private static final int BOARD_ROWS = 6;
+    private static final int BASE_STEAL_CHANCES = 3;
+    private static final float CHANCE_LOSS_BASE_VOLUME = 0.7f;
+    private static final float CHANCE_LOSS_STEP_VOLUME = 0.25f;
+    private static final float CHANCE_LOSS_MAX_VOLUME = 1.5f;
 
     private final PickpocketSession session;
     private final PickpocketUser thief;
     private final PickpocketUser victim;
     private final RummageSessionState state;
-    private final Random random = new Random();
+    private final int effectiveStealCap;
 
     private PlayerInventoryMenu menu;
     private BukkitTask pendingTransferTask;
+    private int successfulStealsThisSession;
 
     /**
      * Creates a rummage inventory view bound to a pickpocket session.
@@ -49,46 +51,38 @@ public final class RummageInventory {
         this.thief = session.getThief();
         this.victim = session.getVictim();
         this.state = session.getRummageState();
+        int permissionCap = thief.resolveMaxStealsPerSession();
+        int safePermissionCap = permissionCap <= 0 ? 0 : permissionCap;
+        this.effectiveStealCap = Math.min(BASE_STEAL_CHANCES, safePermissionCap);
     }
 
     /**
-     * Reveals items for the initial row and opens the rummage menu for the thief.
+     * Opens the rummage menu for the thief.
      */
     public void show() {
-        revealForActiveRow();
-        rebuildAndShowMenu(false);
+        rebuildAndShowMenu();
     }
 
     /**
-     * Expands the rummage menu by one row, applies memory decay, and reveals items for the new row.
-     */
-    private void onRummageButtonClick() {
-        if (state.getCurrentRows() >= MAX_ROWS) {
-            thief.playRummageBlockedSound();
-            return;
-        }
-        int previousRows = state.getCurrentRows();
-        state.setCurrentRows(previousRows + 1);
-        state.recordRummageExpand(previousRows);
-        applyMemoryDecay(previousRows);
-        revealForActiveRow();
-        rebuildAndShowMenu(true);
-        float expandSoundVolume = getExpandSoundVolume(previousRows);
-        thief.playRummageExpandSound(expandSoundVolume);
-        victim.playRummageExpandSound(expandSoundVolume);
-    }
-
-    /**
-     * Transfers a clicked revealed item from victim inventory to thief inventory.
+     * Handles clicks on revealed stealable items.
      *
      * @param menuSlot clicked menu slot
      */
     private void onRevealedItemClick(int menuSlot) {
+        if (effectiveStealCap <= 0) {
+            thief.sendMessage(MessageConfig.getStealCapReachedMessage());
+            return;
+        }
+        if (successfulStealsThisSession >= effectiveStealCap) {
+            thief.sendMessage(MessageConfig.getStealCapReachedMessage());
+            return;
+        }
+
         Player thiefPlayer = thief.getBukkitPlayer();
         Player victimPlayer = victim.getBukkitPlayer();
         if (thiefPlayer == null || victimPlayer == null || !victimPlayer.isOnline()) {
-            thief.sendMessage(ChatColor.RED + "Player is no longer available.");
-            state.markMenuSlotForgotten(menuSlot);
+            thief.sendMessage(MessageConfig.getTargetUnavailableMessage());
+            state.clearStealableMapping(menuSlot);
             refreshSingleSlot(menuSlot);
             return;
         }
@@ -97,15 +91,16 @@ public final class RummageInventory {
             return;
         }
 
-        Integer victimSlot = state.getVictimSlotForMenuSlot(menuSlot);
+        Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
         if (victimSlot == null) {
             return;
         }
 
         ItemStack victimItem = victimPlayer.getInventory().getItem(victimSlot);
         if (victimItem == null || victimItem.getType() == Material.AIR) {
-            state.removeRevealedMapping(menuSlot);
+            state.clearStealableMapping(menuSlot);
             refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
             return;
         }
 
@@ -126,14 +121,15 @@ public final class RummageInventory {
         Player victimPlayer = victim.getBukkitPlayer();
         if (thiefPlayer == null || victimPlayer == null || !victimPlayer.isOnline()) {
             if (thiefPlayer != null) {
-                thief.sendMessage(ChatColor.RED + "Player is no longer available.");
+                thief.sendMessage(MessageConfig.getTargetUnavailableMessage());
             }
-            state.markMenuSlotForgotten(menuSlot);
+            state.clearStealableMapping(menuSlot);
             refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
             return;
         }
 
-        Integer mappedVictimSlot = state.getVictimSlotForMenuSlot(menuSlot);
+        Integer mappedVictimSlot = state.getVictimSlotForBoardSlot(menuSlot);
         if (mappedVictimSlot == null || mappedVictimSlot != expectedVictimSlot) {
             refreshSingleSlot(menuSlot);
             return;
@@ -141,8 +137,9 @@ public final class RummageInventory {
 
         ItemStack victimItem = victimPlayer.getInventory().getItem(expectedVictimSlot);
         if (victimItem == null || victimItem.getType() == Material.AIR) {
-            state.removeRevealedMapping(menuSlot);
+            state.clearStealableMapping(menuSlot);
             refreshSingleSlot(menuSlot);
+            checkNoClickableSlotsRemaining();
             return;
         }
 
@@ -153,7 +150,7 @@ public final class RummageInventory {
             overflow.values().forEach(item -> thiefPlayer.getWorld().dropItemNaturally(thiefPlayer.getLocation(), item));
         }
 
-        state.markMenuSlotForgotten(menuSlot);
+        state.markClaimed(menuSlot);
         thief.setSteals(thief.getSteals() + 1);
         thief.incrementPredatorSuccesses();
         thief.addTotalItemsStolen(1);
@@ -161,7 +158,15 @@ public final class RummageInventory {
         thief.save();
         victim.save();
         thief.playStealSuccessSound();
+        successfulStealsThisSession++;
+        playChanceLossSound(successfulStealsThisSession);
         refreshSingleSlot(menuSlot);
+
+        if (successfulStealsThisSession >= effectiveStealCap) {
+            closeForChanceDepletion();
+            return;
+        }
+        checkNoClickableSlotsRemaining();
     }
 
     private boolean isSessionStillRummaging() {
@@ -173,174 +178,99 @@ public final class RummageInventory {
 
     /**
      * Rebuilds menu contents and shows the inventory to the thief.
-     *
-     * @param replacingOpenMenu whether an open menu is being replaced
      */
-    private void rebuildAndShowMenu(boolean replacingOpenMenu) {
+    private void rebuildAndShowMenu() {
         Player thiefPlayer = thief.getBukkitPlayer();
         if (thiefPlayer == null) {
             return;
         }
 
-        if (menu != null && replacingOpenMenu && menu.getViewer() != null) {
-            state.setSuppressNextInventoryClose(true);
-            menu.close();
-        }
-
-        menu = new PlayerInventoryMenu(MENU_TITLE, state.getCurrentRows());
+        menu = new PlayerInventoryMenu(MENU_TITLE, BOARD_ROWS);
         renderMenuContents();
         session.setRummageInventory(this);
         menu.show(thiefPlayer);
     }
 
     /**
-     * Renders filler panes, revealed items, and expansion button.
+     * Renders all board slots based on cell state.
      */
     private void renderMenuContents() {
-        int size = menu.getSize();
-        int buttonSlot = size - 1;
-
-        for (int slot = 0; slot < size; slot++) {
-            if (slot == buttonSlot) {
-                continue;
-            }
-            menu.addItem(slot, createFillerMenuItem(slot));
+        for (int slot = 0; slot < RummageSessionState.BOARD_SIZE; slot++) {
+            menu.addItem(slot, createMenuItemForSlot(slot));
         }
-
-        for (Map.Entry<Integer, Integer> mapping : new ArrayList<>(state.getRevealedMappings().entrySet())) {
-            int menuSlot = mapping.getKey();
-            if (menuSlot >= size) {
-                continue;
-            }
-            Player victimPlayer = victim.getBukkitPlayer();
-            if (victimPlayer == null) {
-                continue;
-            }
-            ItemStack currentVictimItem = victimPlayer.getInventory().getItem(mapping.getValue());
-            if (currentVictimItem == null || currentVictimItem.getType() == Material.AIR) {
-                state.removeRevealedMapping(menuSlot);
-                continue;
-            }
-            MenuItem menuItem = new MenuItem(currentVictimItem);
-            menuItem.addListener(event -> onRevealedItemClick(menuSlot));
-            menu.addItem(menuSlot, menuItem);
-        }
-
-        MenuItem rummageButton = new MenuItem(RUMMAGE_BUTTON_TEXT, new ItemStack(Material.CHEST));
-        rummageButton.addListener(event -> onRummageButtonClick());
-        menu.addItem(buttonSlot, rummageButton);
         menu.update();
     }
 
     /**
-     * Reveals victim items for the currently active row only.
+     * Handles hidden-slot reveal flow.
      */
-    private void revealForActiveRow() {
-        int revealsPerRow = thief.getRevealSkill().getRevealedSlotsPerMenuRow();
-        int revealedForRow = 0;
-        while (revealedForRow < revealsPerRow) {
-            Integer menuSlot = getRandomOpenMenuSlot();
-            if (menuSlot == null) {
-                return;
-            }
-
-            Integer victimSlot = state.getNextUnusedCandidateVictimSlot();
-            if (victimSlot == null) {
-                return;
-            }
-
-            Player victimPlayer = victim.getBukkitPlayer();
-            if (victimPlayer == null) {
-                return;
-            }
-            ItemStack stack = victimPlayer.getInventory().getItem(victimSlot);
-            if (stack == null || stack.getType() == Material.AIR) {
-                continue;
-            }
-
-            state.addRevealedMapping(menuSlot, victimSlot);
-            revealedForRow++;
-        }
-    }
-
-    /**
-     * Computes expansion sound volume based on previous menu size.
-     *
-     * @param previousRows row count before expansion
-     * @return clamped volume for expansion sounds
-     */
-    private float getExpandSoundVolume(int previousRows) {
-        int expansionIndex = Math.max(0, previousRows - 1);
-        float scaledVolume = EXPAND_SOUND_BASE_VOLUME + (EXPAND_SOUND_STEP_INCREMENT * expansionIndex);
-        return Math.min(EXPAND_SOUND_MAX_VOLUME, scaledVolume);
-    }
-
-    /**
-     * Applies memory skill decay to previously revealed slots.
-     *
-     * @param previousRows row count before expansion
-     */
-    private void applyMemoryDecay(int previousRows) {
-        int memoryLevel = thief.getMemorySkill().getLevel();
-        int previousSize = previousRows * 9;
-        List<Integer> eligibleSlots = new ArrayList<>();
-        for (Integer menuSlot : state.getRevealedMappings().keySet()) {
-            if (menuSlot < previousSize) {
-                eligibleSlots.add(menuSlot);
-            }
-        }
-        if (eligibleSlots.isEmpty()) {
+    private void onHiddenSlotClick(int menuSlot) {
+        RummageSessionState.RevealResult result = state.revealHiddenSlot(menuSlot);
+        if (result == RummageSessionState.RevealResult.NONE) {
             return;
         }
-
-        if (memoryLevel == 0) {
-            for (Integer menuSlot : eligibleSlots) {
-                state.markMenuSlotForgotten(menuSlot);
-            }
+        if (result == RummageSessionState.RevealResult.TRAP) {
+            onTrapClicked(menuSlot);
             return;
         }
+        refreshSingleSlot(menuSlot);
+        checkNoClickableSlotsRemaining();
+    }
 
-        double forgetChance = thief.getMemorySkill().getForgetChance();
-        for (Integer menuSlot : eligibleSlots) {
-            if (random.nextDouble() < forgetChance) {
-                state.markMenuSlotForgotten(menuSlot);
-            }
+    private void onTrapClicked(int menuSlot) {
+        refreshSingleSlot(menuSlot);
+        playTrapSoundToBoth();
+        victim.sendMessage(MessageConfig.getTrapTriggeredVictimMessage());
+        thief.sendMessage(MessageConfig.getTrapTriggeredThiefMessage());
+        closeInventoryAndEnd(SessionEndReason.TRAP_TRIGGERED);
+    }
+
+    private void playTrapSoundToBoth() {
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
+        }
+        if (victimPlayer != null) {
+            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
+        }
+    }
+
+    private void playChanceLossSound(int usedChances) {
+        float volume = Math.min(CHANCE_LOSS_MAX_VOLUME,
+                CHANCE_LOSS_BASE_VOLUME + (Math.max(0, usedChances - 1) * CHANCE_LOSS_STEP_VOLUME));
+        Player thiefPlayer = thief.getBukkitPlayer();
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+        }
+        if (victimPlayer != null) {
+            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+        }
+    }
+
+    private void closeForChanceDepletion() {
+        victim.sendMessage(MessageConfig.getPickpocketVictimWarningMessage());
+        closeInventoryAndEnd(SessionEndReason.CHANCES_DEPLETED);
+    }
+
+    private void checkNoClickableSlotsRemaining() {
+        if (!state.hasClickableSlotsRemaining()) {
+            thief.sendMessage(MessageConfig.getNothingElseHereMessage());
+            closeInventoryAndEnd(SessionEndReason.NO_CLICKABLE_SLOTS_REMAINING);
+        }
+    }
+
+    private void closeInventoryAndEnd(SessionEndReason endReason) {
+        PickpocketSessionManager.unlinkSession(thief, endReason);
+        Player thiefPlayer = thief.getBukkitPlayer();
+        if (thiefPlayer != null) {
+            thiefPlayer.closeInventory();
         }
     }
 
     /**
-     * @return random eligible menu slot for a new reveal, or null when unavailable
-     */
-    private Integer getRandomOpenMenuSlot() {
-        int size = state.getCurrentRows() * 9;
-        int buttonSlot = size - 1;
-        List<Integer> freeSlots = new ArrayList<>();
-        for (int slot = 0; slot < size; slot++) {
-            if (slot == buttonSlot) {
-                continue;
-            }
-            if (slot < state.getFirstMenuSlotOpenForNewReveals()) {
-                continue;
-            }
-            if (state.isDeadExpandMenuSlot(slot)) {
-                continue;
-            }
-            if (state.getVictimSlotForMenuSlot(slot) != null) {
-                continue;
-            }
-            if (state.isMenuSlotForgotten(slot)) {
-                continue;
-            }
-            freeSlots.add(slot);
-        }
-        if (freeSlots.isEmpty()) {
-            return null;
-        }
-        return freeSlots.get(random.nextInt(freeSlots.size()));
-    }
-
-    /**
-     * Renders a single slot as filler glass and updates the menu.
+     * Renders a single slot and updates the menu.
      *
      * @param slot menu slot index
      */
@@ -348,20 +278,57 @@ public final class RummageInventory {
         if (menu == null) {
             return;
         }
-        menu.addItem(slot, createFillerMenuItem(slot));
+        menu.addItem(slot, createMenuItemForSlot(slot));
         menu.update();
     }
 
-    /**
-     * @return filler pane for a menu slot (dead expand, forgotten, or default white)
-     */
-    private MenuItem createFillerMenuItem(int menuSlot) {
-        if (state.isDeadExpandMenuSlot(menuSlot)) {
-            return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+    private MenuItem createMenuItemForSlot(int menuSlot) {
+        RummageSessionState.BoardCellState boardCellState = state.getCellState(menuSlot);
+        if (boardCellState == RummageSessionState.BoardCellState.HIDDEN) {
+            return clickable(
+                    new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE)),
+                    () -> onHiddenSlotClick(menuSlot));
         }
-        if (state.isMenuSlotForgotten(menuSlot)) {
-            return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+        if (boardCellState == RummageSessionState.BoardCellState.CLUE_REVEALED) {
+            return createClueItem(menuSlot);
         }
-        return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE));
+        if (boardCellState == RummageSessionState.BoardCellState.STEALABLE_REVEALED) {
+            Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
+            Player victimPlayer = victim.getBukkitPlayer();
+            if (victimSlot == null || victimPlayer == null) {
+                state.clearStealableMapping(menuSlot);
+                return createClueItem(menuSlot);
+            }
+            ItemStack stack = victimPlayer.getInventory().getItem(victimSlot);
+            if (stack == null || stack.getType() == Material.AIR) {
+                state.clearStealableMapping(menuSlot);
+                return createClueItem(menuSlot);
+            }
+            return clickable(new MenuItem(stack), () -> onRevealedItemClick(menuSlot));
+        }
+        if (boardCellState == RummageSessionState.BoardCellState.TRAP_REVEALED) {
+            ItemStack trapPreview = state.getTrapItem(menuSlot);
+            if (trapPreview == null) {
+                trapPreview = new ItemStack(Material.TNT);
+            }
+            return new MenuItem(trapPreview);
+        }
+        return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    private MenuItem createClueItem(int menuSlot) {
+        int adjacentCount = state.getAdjacentStealableCount(menuSlot);
+        ItemStack clueHead = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = clueHead.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.WHITE + String.valueOf(adjacentCount));
+            clueHead.setItemMeta(meta);
+        }
+        return new MenuItem(clueHead);
+    }
+
+    private MenuItem clickable(MenuItem item, Runnable action) {
+        item.addListener(event -> action.run());
+        return item;
     }
 }

@@ -8,45 +8,59 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
 /**
- * Mutable per-session rummage state (rows, revealed slots, victim slot candidates,
- * expansion freeze for new reveals, dead former expand-chest cells, and forgotten slots).
+ * Mutable per-session board state for rummage.
  */
 public final class RummageSessionState {
 
-    private static final int START_ROWS = 1;
+    public static final int BOARD_SIZE = 54;
     private static final int MIN_MAIN_INVENTORY_SLOT = 9;
     private static final int MAX_MAIN_INVENTORY_SLOT = 35;
+    private static final double TRAP_CHANCE_PER_ITEM = 0.0064d;
 
-    private final List<Integer> candidateVictimSlots = new ArrayList<>();
-    private final Map<Integer, Integer> revealedMenuSlotToVictimSlot = new HashMap<>();
-    private final Set<Integer> consumedVictimSlots = new HashSet<>();
-    private final Set<Integer> forgottenMenuSlots = new HashSet<>();
-    private final Set<Integer> deadExpandMenuSlots = new HashSet<>();
+    private final BoardCell[] cells = new BoardCell[BOARD_SIZE];
+    private final Random random = new Random();
 
-    private int candidateCursor = 0;
-    private int currentRows = START_ROWS;
-    private int firstMenuSlotOpenForNewReveals = 0;
     private boolean suppressNextInventoryClose;
 
     /**
-     * Rebuilds and shuffles candidate victim inventory slots for a session.
+     * State of a board cell.
+     */
+    public enum BoardCellState {
+        HIDDEN,
+        CLUE_REVEALED,
+        STEALABLE_REVEALED,
+        TRAP_REVEALED,
+        CLAIMED
+    }
+
+    /**
+     * Reveal outcome for hidden-cell clicks.
+     */
+    public enum RevealResult {
+        NONE,
+        CLUE,
+        STEALABLE,
+        TRAP
+    }
+
+    /**
+     * Rebuilds and randomizes the rummage board for a session.
      *
      * @param victim victim user whose inventory is being rummaged
      */
-    public void initializeCandidateSlots(PickpocketUser victim) {
+    public void initializeBoard(PickpocketUser victim) {
         reset();
 
         Player victimPlayer = victim.getBukkitPlayer();
         if (victimPlayer == null) {
             return;
         }
+
+        List<Integer> stealableVictimSlots = new ArrayList<>();
         for (int slot = MIN_MAIN_INVENTORY_SLOT; slot <= MAX_MAIN_INVENTORY_SLOT; slot++) {
             ItemStack stack = victimPlayer.getInventory().getItem(slot);
             if (stack == null || stack.getType() == Material.AIR) {
@@ -55,149 +69,166 @@ public final class RummageSessionState {
             if (PickpocketUtils.isItemTypeDisabled(stack.getType())) {
                 continue;
             }
-            candidateVictimSlots.add(slot);
+            stealableVictimSlots.add(slot);
         }
-        Collections.shuffle(candidateVictimSlots);
+
+        ItemStack[] trapContents = victim.getTrapContentsSnapshot();
+        for (int slot = 0; slot < BOARD_SIZE; slot++) {
+            ItemStack trapStack = slot < trapContents.length ? trapContents[slot] : null;
+            if (trapStack == null || trapStack.getType() == Material.AIR || trapStack.getAmount() <= 0) {
+                continue;
+            }
+            double chance = Math.min(1.0d, trapStack.getAmount() * TRAP_CHANCE_PER_ITEM);
+            if (random.nextDouble() >= chance) {
+                continue;
+            }
+            ItemStack trapPreview = trapStack.clone();
+            trapPreview.setAmount(1);
+            cells[slot].trapItem = trapPreview;
+        }
+
+        Collections.shuffle(stealableVictimSlots);
+        List<Integer> availableBoardSlots = new ArrayList<>();
+        for (int slot = 0; slot < BOARD_SIZE; slot++) {
+            if (cells[slot].trapItem == null) {
+                availableBoardSlots.add(slot);
+            }
+        }
+        Collections.shuffle(availableBoardSlots);
+
+        int maxAssignments = Math.min(stealableVictimSlots.size(), availableBoardSlots.size());
+        for (int index = 0; index < maxAssignments; index++) {
+            int boardSlot = availableBoardSlots.get(index);
+            int victimSlot = stealableVictimSlots.get(index);
+            cells[boardSlot].victimInventorySlot = victimSlot;
+        }
+
+        recomputeAdjacencyClues();
     }
 
     /**
      * Clears all mutable rummage state to defaults.
      */
     public void reset() {
-        candidateVictimSlots.clear();
-        revealedMenuSlotToVictimSlot.clear();
-        consumedVictimSlots.clear();
-        forgottenMenuSlots.clear();
-        deadExpandMenuSlots.clear();
-        candidateCursor = 0;
-        currentRows = START_ROWS;
-        firstMenuSlotOpenForNewReveals = 0;
+        for (int slot = 0; slot < BOARD_SIZE; slot++) {
+            cells[slot] = new BoardCell();
+        }
         suppressNextInventoryClose = false;
     }
 
     /**
-     * @return current menu row count
-     */
-    public int getCurrentRows() {
-        return currentRows;
-    }
-
-    /**
-     * Sets current menu row count.
+     * Reveals a hidden board slot.
      *
-     * @param currentRows new row count
+     * @param boardSlot board index
+     * @return reveal outcome
      */
-    public void setCurrentRows(int currentRows) {
-        this.currentRows = currentRows;
+    public RevealResult revealHiddenSlot(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
+            return RevealResult.NONE;
+        }
+        BoardCell cell = cells[boardSlot];
+        if (cell.state != BoardCellState.HIDDEN) {
+            return RevealResult.NONE;
+        }
+        if (cell.trapItem != null) {
+            cell.state = BoardCellState.TRAP_REVEALED;
+            return RevealResult.TRAP;
+        }
+        if (cell.victimInventorySlot != null) {
+            cell.state = BoardCellState.STEALABLE_REVEALED;
+            return RevealResult.STEALABLE;
+        }
+        cell.state = BoardCellState.CLUE_REVEALED;
+        return RevealResult.CLUE;
     }
 
     /**
-     * @return number of currently revealed menu slots
-     */
-    public int getRevealedCount() {
-        return revealedMenuSlotToVictimSlot.size();
-    }
-
-    /**
-     * Registers a revealed menu slot mapping to a victim inventory slot.
+     * Marks a revealed stealable cell as claimed.
      *
-     * @param menuSlot menu slot index
-     * @param victimSlot victim inventory slot index
+     * @param boardSlot board index
      */
-    public void addRevealedMapping(int menuSlot, int victimSlot) {
-        if (forgottenMenuSlots.contains(menuSlot)) {
+    public void markClaimed(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
             return;
         }
-        if (menuSlot < firstMenuSlotOpenForNewReveals) {
+        BoardCell cell = cells[boardSlot];
+        cell.state = BoardCellState.CLAIMED;
+        cell.victimInventorySlot = null;
+    }
+
+    /**
+     * Clears stale stealable mapping from a board slot.
+     *
+     * @param boardSlot board index
+     */
+    public void clearStealableMapping(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
             return;
         }
-        if (deadExpandMenuSlots.contains(menuSlot)) {
-            return;
+        BoardCell cell = cells[boardSlot];
+        cell.victimInventorySlot = null;
+        if (cell.state == BoardCellState.STEALABLE_REVEALED) {
+            cell.state = BoardCellState.CLUE_REVEALED;
         }
-        revealedMenuSlotToVictimSlot.put(menuSlot, victimSlot);
-        consumedVictimSlots.add(victimSlot);
     }
 
     /**
-     * @param menuSlot menu slot index
-     * @return mapped victim inventory slot or null
-     */
-    public Integer getVictimSlotForMenuSlot(int menuSlot) {
-        return revealedMenuSlotToVictimSlot.get(menuSlot);
-    }
-
-    /**
-     * Removes a revealed mapping.
+     * @param boardSlot board index
+     * @return board cell state for the slot
      *
-     * @param menuSlot menu slot index
-     * @return removed victim slot mapping or null
+     * @throws IllegalArgumentException when slot is out of range
      */
-    public Integer removeRevealedMapping(int menuSlot) {
-        return revealedMenuSlotToVictimSlot.remove(menuSlot);
+    public BoardCellState getCellState(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
+            throw new IllegalArgumentException("Invalid board slot: " + boardSlot);
+        }
+        return cells[boardSlot].state;
     }
 
     /**
-     * @return unmodifiable revealed menu-to-victim mapping
+     * @param boardSlot board index
+     * @return mapped victim inventory slot for a stealable cell, or null
      */
-    public Map<Integer, Integer> getRevealedMappings() {
-        return Collections.unmodifiableMap(revealedMenuSlotToVictimSlot);
+    public Integer getVictimSlotForBoardSlot(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
+            return null;
+        }
+        return cells[boardSlot].victimInventorySlot;
     }
 
     /**
-     * Marks a menu slot as forgotten and no longer revealed.
-     *
-     * @param menuSlot menu slot index
+     * @param boardSlot board index
+     * @return trap preview item for this slot, or null
      */
-    public void markMenuSlotForgotten(int menuSlot) {
-        revealedMenuSlotToVictimSlot.remove(menuSlot);
-        forgottenMenuSlots.add(menuSlot);
+    public ItemStack getTrapItem(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
+            return null;
+        }
+        ItemStack trapItem = cells[boardSlot].trapItem;
+        return trapItem == null ? null : trapItem.clone();
     }
 
     /**
-     * @param menuSlot menu slot index
-     * @return true if slot has been forgotten
+     * @param boardSlot board index
+     * @return adjacent stealable count for clue rendering
      */
-    public boolean isMenuSlotForgotten(int menuSlot) {
-        return forgottenMenuSlots.contains(menuSlot);
+    public int getAdjacentStealableCount(int boardSlot) {
+        if (!isValidSlot(boardSlot)) {
+            return 0;
+        }
+        return cells[boardSlot].adjacentStealableCount;
     }
 
     /**
-     * Records a successful rummage expansion: freezes the prior menu footprint for new reveals
-     * and retires the former expand-chest slot as a dead cell.
-     *
-     * @param previousRows row count before this expansion
+     * @return true when at least one cell can still be interacted with
      */
-    public void recordRummageExpand(int previousRows) {
-        firstMenuSlotOpenForNewReveals = Math.max(firstMenuSlotOpenForNewReveals, previousRows * 9);
-        deadExpandMenuSlots.add(previousRows * 9 - 1);
-    }
-
-    /**
-     * @return smallest menu slot index that may receive a new victim mapping
-     */
-    public int getFirstMenuSlotOpenForNewReveals() {
-        return firstMenuSlotOpenForNewReveals;
-    }
-
-    /**
-     * @param menuSlot menu slot index
-     * @return true if this index was a former expand-chest cell (dead slot)
-     */
-    public boolean isDeadExpandMenuSlot(int menuSlot) {
-        return deadExpandMenuSlots.contains(menuSlot);
-    }
-
-    /**
-     * @return next unused candidate victim slot, or null when exhausted
-     */
-    public Integer getNextUnusedCandidateVictimSlot() {
-        while (candidateCursor < candidateVictimSlots.size()) {
-            int victimSlot = candidateVictimSlots.get(candidateCursor++);
-            if (!consumedVictimSlots.contains(victimSlot)) {
-                return victimSlot;
+    public boolean hasClickableSlotsRemaining() {
+        for (BoardCell cell : cells) {
+            if (cell.state == BoardCellState.HIDDEN || cell.state == BoardCellState.STEALABLE_REVEALED) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     /**
@@ -220,5 +251,45 @@ public final class RummageSessionState {
         }
         suppressNextInventoryClose = false;
         return true;
+    }
+
+    private void recomputeAdjacencyClues() {
+        for (int slot = 0; slot < BOARD_SIZE; slot++) {
+            cells[slot].adjacentStealableCount = countAdjacentStealableCells(slot);
+        }
+    }
+
+    private int countAdjacentStealableCells(int slot) {
+        int row = slot / 9;
+        int col = slot % 9;
+        int count = 0;
+        for (int rowOffset = -1; rowOffset <= 1; rowOffset++) {
+            for (int colOffset = -1; colOffset <= 1; colOffset++) {
+                if (rowOffset == 0 && colOffset == 0) {
+                    continue;
+                }
+                int nextRow = row + rowOffset;
+                int nextCol = col + colOffset;
+                if (nextRow < 0 || nextRow >= 6 || nextCol < 0 || nextCol >= 9) {
+                    continue;
+                }
+                int neighborSlot = (nextRow * 9) + nextCol;
+                if (cells[neighborSlot].victimInventorySlot != null) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private boolean isValidSlot(int slot) {
+        return slot >= 0 && slot < BOARD_SIZE;
+    }
+
+    private static final class BoardCell {
+        private BoardCellState state = BoardCellState.HIDDEN;
+        private Integer victimInventorySlot;
+        private ItemStack trapItem;
+        private int adjacentStealableCount;
     }
 }

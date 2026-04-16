@@ -1,5 +1,11 @@
 # Unreleased (v3.0)
 
+- Added a 54-slot rummage board state model with trap and clue support.
+- Replaced row-expand rummage UI with a fixed 6x9 board interaction model.
+- Added trap inventory command `/pickpocket trap` and menu listener rules.
+- Added trap item persistence in player YAML via serializable ItemStacks.
+- Added permission-based limits for trap slots, trap stack size, and steals.
+- Added trap/no-more/cap message keys and session end reasons.
 - Removed CooldownTask and startup scheduling.
 - **Added Quickness-based delayed rummage transfers.**
 Successful revealed-item steals now transfer after a Quickness-scaled delay (level 0 => 3s, level 10 => 1s), with only one pending transfer allowed at a time. Added the new Quickness skill (max level 10) to persistence, `/pickpocket setskill`, and the skills menu.

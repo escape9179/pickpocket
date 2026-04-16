@@ -2,6 +2,8 @@ package logan.pickpocket.user;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +13,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import logan.api.config.YamlConfigurationUtil;
 import logan.pickpocket.config.Config;
@@ -36,11 +40,13 @@ public class PickpocketUser {
     private static final String KEY_STATS_VICTIM_COUNT = "stats.victim.count";
     private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
     private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
+    private static final String KEY_TRAP_CONTENTS = "traps.contents";
     private static final String KEY_SKILLS = "skills";
     private static final String ATTEMPT_SOUND_KEY = "minecraft:item.bone_meal.use";
     private static final float ATTEMPT_SOUND_MIN_PITCH = 0.5f;
     private static final float ATTEMPT_SOUND_MAX_PITCH = 2.0f;
     private static final float ATTEMPT_SOUND_DEFAULT_PITCH = 1.0f;
+    private static final int TRAP_INVENTORY_SIZE = 54;
 
     private final UUID uuid;
     private File file;
@@ -75,6 +81,7 @@ public class PickpocketUser {
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_TRAP_CONTENTS, new ArrayList<>());
         for (Skill skill : Skill.values()) {
             String skillKey = skillPath(skill);
             YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
@@ -289,6 +296,56 @@ public class PickpocketUser {
     }
 
     /**
+     * @return cloned trap inventory contents with fixed size of 54
+     */
+    public ItemStack[] getTrapContentsSnapshot() {
+        ItemStack[] snapshot = new ItemStack[TRAP_INVENTORY_SIZE];
+        List<?> rawList = configuration.getList(KEY_TRAP_CONTENTS, new ArrayList<>());
+        for (int index = 0; index < snapshot.length && index < rawList.size(); index++) {
+            Object value = rawList.get(index);
+            if (value instanceof ItemStack itemStack) {
+                snapshot[index] = itemStack.clone();
+            }
+        }
+        return snapshot;
+    }
+
+    /**
+     * Saves trap inventory contents to player configuration using serializable ItemStacks.
+     *
+     * @param contents trap inventory items
+     */
+    public void setTrapContents(ItemStack[] contents) {
+        List<ItemStack> serializable = new ArrayList<>(TRAP_INVENTORY_SIZE);
+        for (int slot = 0; slot < TRAP_INVENTORY_SIZE; slot++) {
+            ItemStack stack = slot < contents.length ? contents[slot] : null;
+            serializable.add(stack == null ? null : stack.clone());
+        }
+        configuration.set(KEY_TRAP_CONTENTS, serializable);
+    }
+
+    /**
+     * @return max occupied trap slots from permission grants, default 0
+     */
+    public int resolveMaxTrapSlots() {
+        return resolveHighestNumericPermission("pickpocket.trap.slots.", 0, 0, TRAP_INVENTORY_SIZE);
+    }
+
+    /**
+     * @return max trap stack size from permission grants, default 1
+     */
+    public int resolveMaxTrapStackSize() {
+        return resolveHighestNumericPermission("pickpocket.trap.stacksize.", 1, 1, 64);
+    }
+
+    /**
+     * @return per-session steals cap from permission grants, default effectively unbounded
+     */
+    public int resolveMaxStealsPerSession() {
+        return resolveHighestNumericPermission("pickpocket.steals.max.", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+    }
+
+    /**
      * UUID of the victim this player pickpocketed in the most ended sessions (see {@code history/} logs).
      * Session frequency differs from per-item steal counts.
      *
@@ -436,5 +493,34 @@ public class PickpocketUser {
     public static PickpocketUser get(Player player) {
         return UserManager.getUsers().computeIfAbsent(
                 player.getUniqueId(), PickpocketUser::new);
+    }
+
+    private int resolveHighestNumericPermission(String prefix, int fallback, int minValue, int maxValue) {
+        Player player = getBukkitPlayer();
+        if (player == null) {
+            return fallback;
+        }
+        int resolved = Integer.MIN_VALUE;
+        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
+            if (!permissionInfo.getValue()) {
+                continue;
+            }
+            String permission = permissionInfo.getPermission();
+            if (!permission.startsWith(prefix)) {
+                continue;
+            }
+            String suffix = permission.substring(prefix.length());
+            int value;
+            try {
+                value = Integer.parseInt(suffix);
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            if (value < minValue || value > maxValue) {
+                continue;
+            }
+            resolved = Math.max(resolved, value);
+        }
+        return resolved == Integer.MIN_VALUE ? fallback : resolved;
     }
 }
