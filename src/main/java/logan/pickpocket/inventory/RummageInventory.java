@@ -4,7 +4,6 @@ import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
 import logan.api.util.HeadUtils;
 import logan.pickpocket.config.MessageConfig;
-import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSession;
 import logan.pickpocket.managers.PickpocketSessionManager;
 import logan.pickpocket.managers.RummageSessionState;
@@ -16,7 +15,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 
@@ -39,7 +37,6 @@ public final class RummageInventory {
     private final int effectiveStealCap;
 
     private PlayerInventoryMenu menu;
-    private BukkitTask pendingTransferTask;
     private int successfulStealsThisSession;
 
     /**
@@ -87,10 +84,6 @@ public final class RummageInventory {
             refreshSingleSlot(menuSlot);
             return;
         }
-        if (pendingTransferTask != null) {
-            thief.playRummageBlockedSound();
-            return;
-        }
 
         Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
         if (victimSlot == null) {
@@ -105,15 +98,10 @@ public final class RummageInventory {
             return;
         }
 
-        long delayTicks = Math.max(1L, Math.round(thief.getQuicknessSkill().getTransferDelaySeconds() * 20.0f));
-        pendingTransferTask = PickpocketPlugin.getInstance().getServer().getScheduler().runTaskLater(
-                PickpocketPlugin.getInstance(),
-                () -> completeDelayedTransfer(menuSlot, victimSlot),
-                delayTicks);
+        completeTransfer(menuSlot, victimSlot);
     }
 
-    private void completeDelayedTransfer(int menuSlot, int expectedVictimSlot) {
-        pendingTransferTask = null;
+    private void completeTransfer(int menuSlot, int expectedVictimSlot) {
         if (!isSessionStillRummaging()) {
             return;
         }
