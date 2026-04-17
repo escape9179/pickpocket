@@ -1,5 +1,7 @@
 # Unreleased (v3.0)
 
+- Added HeadUtils for building custom-textured player heads.
+- Rummage clue tiles now use numbered oak-log heads (freshcoal).
 - Added a 54-slot rummage board state model with trap and clue support.
 - Replaced row-expand rummage UI with a fixed 6x9 board interaction model.
 - Added trap inventory command `/pickpocket trap` and menu listener rules.

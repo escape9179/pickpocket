@@ -2,6 +2,7 @@ package logan.pickpocket.inventory;
 
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
+import logan.api.util.HeadUtils;
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketSession;
@@ -318,7 +319,8 @@ public final class RummageInventory {
 
     private MenuItem createClueItem(int menuSlot) {
         int adjacentCount = state.getAdjacentStealableCount(menuSlot);
-        ItemStack clueHead = new ItemStack(Material.PLAYER_HEAD);
+        int digit = Math.max(0, Math.min(9, adjacentCount));
+        ItemStack clueHead = HeadUtils.numberHead(digit);
         ItemMeta meta = clueHead.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ChatColor.WHITE + String.valueOf(adjacentCount));
