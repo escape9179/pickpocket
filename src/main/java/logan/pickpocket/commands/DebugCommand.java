@@ -12,12 +12,12 @@ public class DebugCommand extends BasicCommand<Player> {
         super("debug", "pickpocket.debug", 1, 1,
                 new String[] {}, SenderTarget.PLAYER, "pickpocket",
                 Collections.emptyList(),
-                "/pickpocket debug giverandom");
+                "Usage:\n/pickpocket debug giverandom <amount>\n/pickpocket debug reveal <true|false>");
     }
 
     @Override
     public boolean run(Player sender, String[] args, Object data) {
-        sender.sendMessage("Usage:\n/pickpocket debug giverandom <amount>");
+        sender.sendMessage("Usage:\n/pickpocket debug giverandom <amount>\n/pickpocket debug reveal <true|false>");
         return true;
     }
 }

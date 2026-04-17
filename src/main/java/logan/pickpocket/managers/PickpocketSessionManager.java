@@ -31,6 +31,7 @@ public final class PickpocketSessionManager {
     private static final Set<PickpocketUser> usersInSession = ConcurrentHashMap.newKeySet();
     private static final List<PickpocketSessionHistoryEntry> sessionHistory = Collections
             .synchronizedList(new ArrayList<>());
+    private static volatile boolean debugRevealEnabled;
 
     private PickpocketSessionManager() {
     }
@@ -299,5 +300,21 @@ public final class PickpocketSessionManager {
      */
     public static Set<PickpocketUser> getUsersInSession() {
         return Collections.unmodifiableSet(new HashSet<>(usersInSession));
+    }
+
+    /**
+     * Controls whether rummage boards are fully visible for debugging.
+     *
+     * @param enabled true to reveal board contents in rummage inventory renders
+     */
+    public static void setDebugRevealEnabled(boolean enabled) {
+        debugRevealEnabled = enabled;
+    }
+
+    /**
+     * @return true when debug reveal rendering is enabled
+     */
+    public static boolean isDebugRevealEnabled() {
+        return debugRevealEnabled;
     }
 }

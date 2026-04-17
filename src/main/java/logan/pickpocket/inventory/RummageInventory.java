@@ -274,6 +274,9 @@ public final class RummageInventory {
     private MenuItem createMenuItemForSlot(int menuSlot) {
         RummageSessionState.BoardCellState boardCellState = state.getCellState(menuSlot);
         if (boardCellState == RummageSessionState.BoardCellState.HIDDEN) {
+            if (PickpocketSessionManager.isDebugRevealEnabled()) {
+                return createDebugPreviewForHiddenSlot(menuSlot);
+            }
             return clickable(
                     new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.WHITE_STAINED_GLASS_PANE)),
                     () -> onHiddenSlotClick(menuSlot));
@@ -303,6 +306,22 @@ public final class RummageInventory {
             return new MenuItem(trapPreview);
         }
         return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+    }
+
+    private MenuItem createDebugPreviewForHiddenSlot(int menuSlot) {
+        ItemStack trapPreview = state.getTrapItem(menuSlot);
+        if (trapPreview != null) {
+            return clickable(new MenuItem(trapPreview), () -> onHiddenSlotClick(menuSlot));
+        }
+        Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
+        Player victimPlayer = victim.getBukkitPlayer();
+        if (victimSlot != null && victimPlayer != null) {
+            ItemStack stack = victimPlayer.getInventory().getItem(victimSlot);
+            if (stack != null && stack.getType() != Material.AIR) {
+                return clickable(new MenuItem(stack), () -> onHiddenSlotClick(menuSlot));
+            }
+        }
+        return clickable(createClueItem(menuSlot), () -> onHiddenSlotClick(menuSlot));
     }
 
     private MenuItem createClueItem(int menuSlot) {

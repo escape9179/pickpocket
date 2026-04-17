@@ -15,6 +15,7 @@ import logan.api.gui.GUIAPI;
 import logan.api.util.UpdateChecker;
 import logan.pickpocket.commands.DebugCommand;
 import logan.pickpocket.commands.DebugGiveRandom;
+import logan.pickpocket.commands.DebugRevealCommand;
 import logan.pickpocket.commands.MainCommand;
 import logan.pickpocket.commands.ReloadCommand;
 import logan.pickpocket.commands.SetSkillCommand;
@@ -112,6 +113,7 @@ public class PickpocketPlugin extends JavaPlugin {
         CommandDispatcher.registerCommand(new MainCommand());
         CommandDispatcher.registerCommand(new DebugCommand());
         CommandDispatcher.registerCommand(new DebugGiveRandom());
+        CommandDispatcher.registerCommand(new DebugRevealCommand());
         CommandDispatcher.registerCommand(new ReloadCommand());
         CommandDispatcher.registerCommand(new SetSkillCommand());
         CommandDispatcher.registerCommand(new SkillsCommand());

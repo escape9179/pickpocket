@@ -40,4 +40,5 @@ Pickpocketing can no longer be initiated by fishing hook hits and now only start
 Runtime internals were reorganized around the session manager, skill module, and `MessageConfig` to simplify ongoing development.
 - **Maintenance and documentation updates.**  
 Added Javadocs across runtime classes and applied small repository housekeeping updates.
+- Added debug reveal toggle: `/pickpocket debug reveal <true|false>`.
 

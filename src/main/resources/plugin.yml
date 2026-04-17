@@ -24,3 +24,6 @@ permissions:
     description: Access to debug commands.
     children:
       pickpocket.debug.giverandom: true
+      pickpocket.debug.reveal: true
+  pickpocket.debug.reveal:
+    description: Toggle fully revealed rummage board rendering.
