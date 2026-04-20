@@ -110,3 +110,6 @@ trapTriggeredThief: "&f** You clicked on a trap! **"
 
 # Sent to the thief when per-session steal cap is reached.
 stealCapReached: "&cYou cannot steal any more items this session."
+
+# Sent when /pickpocket inventory layout fails validation (%s = reason).
+inventoryLayoutInvalid: "&cInvalid pickpocket inventory: %s"

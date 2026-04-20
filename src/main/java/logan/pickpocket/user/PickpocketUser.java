@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -28,6 +29,7 @@ import logan.pickpocket.skills.QuicknessSkill;
 import logan.pickpocket.skills.RevealSkill;
 import logan.pickpocket.skills.Skill;
 import logan.pickpocket.skills.SkillModule;
+import logan.pickpocket.inventory.PickpocketInventoryBlueprint;
 import logan.pickpocket.skills.SpeedSkill;
 
 /**
@@ -41,12 +43,14 @@ public class PickpocketUser {
     private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
     private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
     private static final String KEY_TRAP_CONTENTS = "traps.contents";
+    private static final String KEY_PICKPOCKET_INVENTORY = "pickpocketInventory.contents";
     private static final String KEY_SKILLS = "skills";
+    private static final String PERM_INVENTORY_STEALABLE_SLOTS = "pickpocket.inventory.stealableslots.";
     private static final String ATTEMPT_SOUND_KEY = "minecraft:item.bone_meal.use";
     private static final float ATTEMPT_SOUND_MIN_PITCH = 0.5f;
     private static final float ATTEMPT_SOUND_MAX_PITCH = 2.0f;
     private static final float ATTEMPT_SOUND_DEFAULT_PITCH = 1.0f;
-    private static final int TRAP_INVENTORY_SIZE = 54;
+    private static final int PICKPOCKET_INVENTORY_SIZE = PickpocketInventoryBlueprint.SIZE;
 
     private final UUID uuid;
     private File file;
@@ -81,7 +85,8 @@ public class PickpocketUser {
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_TRAP_CONTENTS, new ArrayList<>());
+        migrateLegacyTrapContentsIfNeeded();
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_PICKPOCKET_INVENTORY, new ArrayList<>());
         for (Skill skill : Skill.values()) {
             String skillKey = skillPath(skill);
             YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
@@ -91,6 +96,34 @@ public class PickpocketUser {
 
     private void stripLegacyCounterpartStats() {
         configuration.set("stats.counterparts", null);
+    }
+
+    /**
+     * Copies legacy {@code traps.contents} into {@link #KEY_PICKPOCKET_INVENTORY} once.
+     */
+    private void migrateLegacyTrapContentsIfNeeded() {
+        List<?> current = configuration.getList(KEY_PICKPOCKET_INVENTORY);
+        if (current != null && !current.isEmpty()) {
+            return;
+        }
+        List<?> legacy = configuration.getList(KEY_TRAP_CONTENTS);
+        if (legacy == null || legacy.isEmpty()) {
+            return;
+        }
+        List<ItemStack> migrated = new ArrayList<>(PICKPOCKET_INVENTORY_SIZE);
+        for (int i = 0; i < PICKPOCKET_INVENTORY_SIZE; i++) {
+            ItemStack stack = null;
+            if (i < legacy.size() && legacy.get(i) instanceof ItemStack ist) {
+                stack = ist.clone();
+            }
+            if (stack == null || stack.getType() == Material.AIR) {
+                migrated.add(new ItemStack(Material.RED_STAINED_GLASS_PANE));
+            } else {
+                migrated.add(stack);
+            }
+        }
+        configuration.set(KEY_PICKPOCKET_INVENTORY, migrated);
+        configuration.set(KEY_TRAP_CONTENTS, null);
     }
 
     /**
@@ -296,39 +329,40 @@ public class PickpocketUser {
     }
 
     /**
-     * @return cloned trap inventory contents with fixed size of 54
+     * @return cloned pickpocket inventory blueprint (54 slots); air and gaps become red glass
      */
-    public ItemStack[] getTrapContentsSnapshot() {
-        ItemStack[] snapshot = new ItemStack[TRAP_INVENTORY_SIZE];
-        List<?> rawList = configuration.getList(KEY_TRAP_CONTENTS, new ArrayList<>());
-        for (int index = 0; index < snapshot.length && index < rawList.size(); index++) {
-            Object value = rawList.get(index);
-            if (value instanceof ItemStack itemStack) {
-                snapshot[index] = itemStack.clone();
+    public ItemStack[] getPickpocketInventorySnapshot() {
+        ItemStack[] snapshot = new ItemStack[PICKPOCKET_INVENTORY_SIZE];
+        List<?> rawList = configuration.getList(KEY_PICKPOCKET_INVENTORY, new ArrayList<>());
+        for (int index = 0; index < snapshot.length; index++) {
+            ItemStack stack = null;
+            if (index < rawList.size() && rawList.get(index) instanceof ItemStack itemStack) {
+                stack = itemStack.clone();
             }
+            snapshot[index] = PickpocketInventoryBlueprint.normalizeSlot(stack);
         }
         return snapshot;
     }
 
     /**
-     * Saves trap inventory contents to player configuration using serializable ItemStacks.
+     * Saves pickpocket inventory blueprint using serializable ItemStacks.
      *
-     * @param contents trap inventory items
+     * @param contents blueprint items (length 54)
      */
-    public void setTrapContents(ItemStack[] contents) {
-        List<ItemStack> serializable = new ArrayList<>(TRAP_INVENTORY_SIZE);
-        for (int slot = 0; slot < TRAP_INVENTORY_SIZE; slot++) {
+    public void setPickpocketInventoryContents(ItemStack[] contents) {
+        List<ItemStack> serializable = new ArrayList<>(PICKPOCKET_INVENTORY_SIZE);
+        for (int slot = 0; slot < PICKPOCKET_INVENTORY_SIZE; slot++) {
             ItemStack stack = slot < contents.length ? contents[slot] : null;
-            serializable.add(stack == null ? null : stack.clone());
+            serializable.add(PickpocketInventoryBlueprint.normalizeSlot(stack));
         }
-        configuration.set(KEY_TRAP_CONTENTS, serializable);
+        configuration.set(KEY_PICKPOCKET_INVENTORY, serializable);
     }
 
     /**
-     * @return max occupied trap slots from permission grants, default 0
+     * @return max trap-item slots from permission grants, default 0
      */
     public int resolveMaxTrapSlots() {
-        return resolveHighestNumericPermission("pickpocket.trap.slots.", 0, 0, TRAP_INVENTORY_SIZE);
+        return resolveHighestNumericPermission("pickpocket.trap.slots.", 0, 0, PICKPOCKET_INVENTORY_SIZE);
     }
 
     /**
@@ -343,6 +377,15 @@ public class PickpocketUser {
      */
     public int resolveMaxStealsPerSession() {
         return resolveHighestNumericPermission("pickpocket.steals.max.", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Minimum count of pure green panes required from {@code pickpocket.inventory.stealableslots.&lt;n&gt;}.
+     *
+     * @return max {@code n} among granted permissions, or 0 if none
+     */
+    public int resolveRequiredStealableSlots() {
+        return resolveHighestNumericPermission(PERM_INVENTORY_STEALABLE_SLOTS, 0, 0, PICKPOCKET_INVENTORY_SIZE);
     }
 
     /**

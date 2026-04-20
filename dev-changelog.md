@@ -1,5 +1,7 @@
 # Unreleased (v3.0)
 
+- Pickpocket inventory blueprint: `/pickpocket inventory`, YAML layout, flood, traps.
+- Added `pickpocket.defaults` and `pickpocket.inventory.stealableslots.*` permissions.
 - Slim default config.yml: drop unused keys and skill speed override block.
 - Removed revealed-item transfer delay in rummage inventory clicks.
 - Added HeadUtils for building custom-textured player heads.

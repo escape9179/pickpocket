@@ -13,6 +13,9 @@ permissions:
   pickpocket.use:
     description: Basic access to plugin features.
     default: true
+  pickpocket.defaults:
+    description: Access to /pickpocket inventory (blueprint editor).
+    default: true
   pickpocket.admin.toggle:
     description: Toggle server-wide pickpocketing.
   pickpocket.skill.set:

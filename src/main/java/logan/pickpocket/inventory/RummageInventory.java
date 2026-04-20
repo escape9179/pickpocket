@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -194,15 +195,20 @@ public final class RummageInventory {
      * Handles hidden-slot reveal flow.
      */
     private void onHiddenSlotClick(int menuSlot) {
-        RummageSessionState.RevealResult result = state.revealHiddenSlot(menuSlot);
-        if (result == RummageSessionState.RevealResult.NONE) {
+        RummageSessionState.HiddenRevealBatch batch = state.revealHiddenCells(menuSlot);
+        List<Integer> updated = batch.getUpdatedSlots();
+        if (updated.isEmpty()) {
             return;
         }
-        if (result == RummageSessionState.RevealResult.TRAP) {
-            onTrapClicked(menuSlot);
-            return;
+        if (batch.isTrapTriggered()) {
+            for (int slot : updated) {
+                if (state.getCellState(slot) == RummageSessionState.BoardCellState.TRAP_REVEALED) {
+                    onTrapClicked(slot);
+                    return;
+                }
+            }
         }
-        refreshSingleSlot(menuSlot);
+        refreshSlots(updated);
         checkNoClickableSlotsRemaining();
     }
 
@@ -271,8 +277,24 @@ public final class RummageInventory {
         menu.update();
     }
 
+    private void refreshSlots(Iterable<Integer> slots) {
+        if (menu == null) {
+            return;
+        }
+        for (int slot : slots) {
+            menu.addItem(slot, createMenuItemForSlot(slot));
+        }
+        menu.update();
+    }
+
     private MenuItem createMenuItemForSlot(int menuSlot) {
         RummageSessionState.BoardCellState boardCellState = state.getCellState(menuSlot);
+        if (boardCellState == RummageSessionState.BoardCellState.CLEARED) {
+            return new MenuItem(new ItemStack(Material.AIR));
+        }
+        if (boardCellState == RummageSessionState.BoardCellState.CLAIMED) {
+            return new MenuItem(new ItemStack(Material.AIR));
+        }
         if (boardCellState == RummageSessionState.BoardCellState.HIDDEN) {
             if (PickpocketSessionManager.isDebugRevealEnabled()) {
                 return createDebugPreviewForHiddenSlot(menuSlot);
@@ -305,7 +327,7 @@ public final class RummageInventory {
             }
             return new MenuItem(trapPreview);
         }
-        return new MenuItem(ChatColor.WHITE + " ", new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        return new MenuItem(new ItemStack(Material.AIR));
     }
 
     private MenuItem createDebugPreviewForHiddenSlot(int menuSlot) {
