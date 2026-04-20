@@ -1,5 +1,6 @@
 # Unreleased (v3.0)
 
+- Slim default config.yml: drop unused keys and skill speed override block.
 - Removed revealed-item transfer delay in rummage inventory clicks.
 - Added HeadUtils for building custom-textured player heads.
 - Rummage clue tiles now use numbered oak-log heads (freshcoal).

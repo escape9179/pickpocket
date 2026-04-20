@@ -7,14 +7,6 @@
 
 pickpocketingEnabled: true
 
-# Shows players current pickpocket toggle setting
-# when attempting pickpocket another player.
-statusOnInteract: true
-
-# Shows players current pickpocket toggle setting
-# when logging into the server.
-showStatusOnLogin: true
-
 # Items that cannot be pickpocketed.
 #
 # Use '*' to disabled every item.
@@ -22,10 +14,6 @@ showStatusOnLogin: true
 disabledItems:
   - "shulkur_box"
   - "bundle"
-
-# The number of times the player must click an item in another players
-# inventory before the pickpocket is deemed successful.
-requiredClicksToPickpocket: 8
 
 money:
   # Whether players have a change of stealing money
@@ -44,9 +32,3 @@ towny:
 
   # Whether players can steal from players in their town.
   sameTownTheft: true
-
-skills:
-  speed:
-    # Overrides calculation with a linear progression from base delay (3s) to this value (at max level 100).
-    # Leaving it at 0.0 means at max level, the inventory opens instantly.
-    minDelaySeconds: 0.0
