@@ -167,33 +167,7 @@ public final class MessageConfig {
         return getMessage("nothingElseHere");
     }
 
-    public static String getTrapTriggeredVictimMessage() {
-        return getMessage("trapTriggeredVictim");
-    }
-
-    public static String getTrapTriggeredThiefMessage() {
-        return getMessage("trapTriggeredThief");
-    }
-
     public static String getStealCapReachedMessage() {
         return getMessage("stealCapReached");
-    }
-
-    /**
-     * @param detail validation failure reason (plain text)
-     * @return colorized message
-     */
-    public static String getInventoryLayoutInvalidMessage(String detail) {
-        if (!config.contains("inventoryLayoutInvalid")) {
-            config.set("inventoryLayoutInvalid",
-                    defaultConfig.getString("inventoryLayoutInvalid", "&cInvalid pickpocket inventory: %s"));
-            try {
-                config.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        String raw = config.getString("inventoryLayoutInvalid", "&cInvalid pickpocket inventory: %s");
-        return ColorUtils.colorize(String.format(raw, detail == null ? "" : detail));
     }
 }

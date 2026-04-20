@@ -2,31 +2,21 @@ package logan.pickpocket.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import logan.pickpocket.main.PickpocketPlugin;
-import logan.pickpocket.inventory.PickpocketInventoryBlueprint;
 
 /**
  * Accessor for values in the plugin {@code config.yml}.
  */
 public final class Config {
 
-    private static final String KEY_DEFAULT_PICKPOCKET_LAYOUT = "pickpocketInventory.defaultLayout";
-    private static final int PICKPOCKET_LAYOUT_ROWS = PickpocketInventoryBlueprint.ROWS;
-    private static final int PICKPOCKET_LAYOUT_COLS = PickpocketInventoryBlueprint.COLS;
-
     private static File file;
     private static YamlConfiguration config;
-    private static YamlConfiguration defaultConfig;
     
     private Config() {
     }
@@ -37,19 +27,8 @@ public final class Config {
      * @param plugin active plugin instance
      */
     public static void init(PickpocketPlugin plugin) {
-        // Load the embedded config.yml file
-        defaultConfig = new YamlConfiguration();
-        try (InputStream in = plugin.getResource("config.yml")) {
-            if (in == null) {
-                throw new IllegalStateException("config.yml missing from jar");
-            }
-            defaultConfig.load(new InputStreamReader(in, StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load embedded config.yml", e);
-        }
-        file = new File(PickpocketPlugin.getInstance().getDataFolder(), "config.yml");
+        file = new File(plugin.getDataFolder(), "config.yml");
         config = YamlConfiguration.loadConfiguration(file);
-        initializeDefaultPickpocketLayout();
     }
 
     /**
@@ -139,7 +118,6 @@ public final class Config {
      */
     public static void reload() {
         config = YamlConfiguration.loadConfiguration(file);
-        initializeDefaultPickpocketLayout();
     }
 
     /**
@@ -161,119 +139,4 @@ public final class Config {
         }
     }
 
-    /**
-     * Returns the global default pickpocket blueprint, auto-healed when malformed.
-     */
-    public static ItemStack[] getDefaultPickpocketInventoryLayoutSnapshot() {
-        return getDefaultPickpocketInventoryLayoutSnapshot(PickpocketInventoryBlueprint.MIN_USABLE_STEALABLE_SLOTS);
-    }
-
-    /**
-     * Returns the global default pickpocket blueprint for the requested minimum green count.
-     */
-    public static ItemStack[] getDefaultPickpocketInventoryLayoutSnapshot(int requiredStealableSlots) {
-        int minimumStealableSlots = PickpocketInventoryBlueprint.normalizeRequiredStealableSlots(requiredStealableSlots);
-        ItemStack[] configured = parseDefaultLayoutRows(config.getStringList(KEY_DEFAULT_PICKPOCKET_LAYOUT));
-        if (configured == null) {
-            configured = parseDefaultLayoutRows(defaultConfig.getStringList(KEY_DEFAULT_PICKPOCKET_LAYOUT));
-        }
-        if (configured == null) {
-            configured = PickpocketInventoryBlueprint.createDeterministicValidLayout(minimumStealableSlots);
-            setDefaultPickpocketInventoryLayout(configured);
-            save();
-            return configured;
-        }
-        String invalid = PickpocketInventoryBlueprint.validate(configured, minimumStealableSlots);
-        if (invalid == null) {
-            return cloneContents(configured);
-        }
-        ItemStack[] fallback = PickpocketInventoryBlueprint.createDeterministicValidLayout(minimumStealableSlots);
-        setDefaultPickpocketInventoryLayout(fallback);
-        save();
-        return fallback;
-    }
-
-    /**
-     * Stores the global default pickpocket blueprint as editable row strings.
-     */
-    public static void setDefaultPickpocketInventoryLayout(ItemStack[] contents) {
-        config.set(KEY_DEFAULT_PICKPOCKET_LAYOUT, serializeDefaultLayoutRows(contents));
-    }
-
-    private static void initializeDefaultPickpocketLayout() {
-        if (parseDefaultLayoutRows(config.getStringList(KEY_DEFAULT_PICKPOCKET_LAYOUT)) != null) {
-            return;
-        }
-        ItemStack[] defaults = parseDefaultLayoutRows(defaultConfig.getStringList(KEY_DEFAULT_PICKPOCKET_LAYOUT));
-        if (defaults == null) {
-            defaults = PickpocketInventoryBlueprint.createDeterministicValidLayout(
-                    PickpocketInventoryBlueprint.MIN_USABLE_STEALABLE_SLOTS);
-        }
-        setDefaultPickpocketInventoryLayout(defaults);
-        save();
-    }
-
-    private static ItemStack[] parseDefaultLayoutRows(List<String> rows) {
-        if (rows == null || rows.size() != PICKPOCKET_LAYOUT_ROWS) {
-            return null;
-        }
-        ItemStack[] parsed = new ItemStack[PickpocketInventoryBlueprint.SIZE];
-        for (int row = 0; row < PICKPOCKET_LAYOUT_ROWS; row++) {
-            String rowValue = rows.get(row);
-            if (rowValue == null || rowValue.length() != PICKPOCKET_LAYOUT_COLS) {
-                return null;
-            }
-            for (int col = 0; col < PICKPOCKET_LAYOUT_COLS; col++) {
-                Material material = decodeLayoutChar(rowValue.charAt(col));
-                if (material == null) {
-                    return null;
-                }
-                parsed[(row * PICKPOCKET_LAYOUT_COLS) + col] = new ItemStack(material);
-            }
-        }
-        return parsed;
-    }
-
-    private static List<String> serializeDefaultLayoutRows(ItemStack[] contents) {
-        ItemStack[] normalized = new ItemStack[PickpocketInventoryBlueprint.SIZE];
-        for (int i = 0; i < normalized.length; i++) {
-            ItemStack stack = contents != null && i < contents.length ? contents[i] : null;
-            normalized[i] = PickpocketInventoryBlueprint.normalizeSlot(stack);
-        }
-        List<String> rows = new ArrayList<>(PICKPOCKET_LAYOUT_ROWS);
-        for (int row = 0; row < PICKPOCKET_LAYOUT_ROWS; row++) {
-            StringBuilder rowValue = new StringBuilder(PICKPOCKET_LAYOUT_COLS);
-            for (int col = 0; col < PICKPOCKET_LAYOUT_COLS; col++) {
-                int slot = (row * PICKPOCKET_LAYOUT_COLS) + col;
-                rowValue.append(encodeLayoutChar(normalized[slot]));
-            }
-            rows.add(rowValue.toString());
-        }
-        return rows;
-    }
-
-    private static char encodeLayoutChar(ItemStack stack) {
-        return switch (PickpocketInventoryBlueprint.kindFromItem(stack)) {
-            case STEALABLE -> 'G';
-            case HINT -> 'B';
-            default -> 'R';
-        };
-    }
-
-    private static Material decodeLayoutChar(char value) {
-        return switch (Character.toUpperCase(value)) {
-            case 'R' -> Material.RED_STAINED_GLASS_PANE;
-            case 'G' -> Material.GREEN_STAINED_GLASS_PANE;
-            case 'B' -> Material.BLUE_STAINED_GLASS_PANE;
-            default -> null;
-        };
-    }
-
-    private static ItemStack[] cloneContents(ItemStack[] contents) {
-        ItemStack[] clone = new ItemStack[contents.length];
-        for (int i = 0; i < contents.length; i++) {
-            clone[i] = contents[i] == null ? null : contents[i].clone();
-        }
-        return clone;
-    }
 }

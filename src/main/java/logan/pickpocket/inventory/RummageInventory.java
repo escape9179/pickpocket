@@ -200,35 +200,8 @@ public final class RummageInventory {
         if (updated.isEmpty()) {
             return;
         }
-        if (batch.isTrapTriggered()) {
-            for (int slot : updated) {
-                if (state.getCellState(slot) == RummageSessionState.BoardCellState.TRAP_REVEALED) {
-                    onTrapClicked(slot);
-                    return;
-                }
-            }
-        }
         refreshSlots(updated);
         checkNoClickableSlotsRemaining();
-    }
-
-    private void onTrapClicked(int menuSlot) {
-        refreshSingleSlot(menuSlot);
-        playTrapSoundToBoth();
-        victim.sendMessage(MessageConfig.getTrapTriggeredVictimMessage());
-        thief.sendMessage(MessageConfig.getTrapTriggeredThiefMessage());
-        closeInventoryAndEnd(SessionEndReason.TRAP_TRIGGERED);
-    }
-
-    private void playTrapSoundToBoth() {
-        Player thiefPlayer = thief.getBukkitPlayer();
-        Player victimPlayer = victim.getBukkitPlayer();
-        if (thiefPlayer != null) {
-            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
-        }
-        if (victimPlayer != null) {
-            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.4f, 0.5f);
-        }
     }
 
     private void playChanceLossSound(int usedChances) {
@@ -320,21 +293,10 @@ public final class RummageInventory {
             }
             return clickable(new MenuItem(stack), () -> onRevealedItemClick(menuSlot));
         }
-        if (boardCellState == RummageSessionState.BoardCellState.TRAP_REVEALED) {
-            ItemStack trapPreview = state.getTrapItem(menuSlot);
-            if (trapPreview == null) {
-                trapPreview = new ItemStack(Material.TNT);
-            }
-            return new MenuItem(trapPreview);
-        }
         return new MenuItem(new ItemStack(Material.AIR));
     }
 
     private MenuItem createDebugPreviewForHiddenSlot(int menuSlot) {
-        ItemStack trapPreview = state.getTrapItem(menuSlot);
-        if (trapPreview != null) {
-            return clickable(new MenuItem(trapPreview), () -> onHiddenSlotClick(menuSlot));
-        }
         Integer victimSlot = state.getVictimSlotForBoardSlot(menuSlot);
         Player victimPlayer = victim.getBukkitPlayer();
         if (victimSlot != null && victimPlayer != null) {
@@ -347,7 +309,7 @@ public final class RummageInventory {
     }
 
     private MenuItem createClueItem(int menuSlot) {
-        int adjacentCount = state.getAdjacentStealableCount(menuSlot);
+        int adjacentCount = state.getAdjacentBombCount(menuSlot);
         int digit = Math.max(0, Math.min(9, adjacentCount));
         ItemStack clueHead = HeadUtils.numberHead(digit);
         ItemMeta meta = clueHead.getItemMeta();

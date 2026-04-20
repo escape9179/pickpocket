@@ -7,17 +7,6 @@
 
 pickpocketingEnabled: true
 
-pickpocketInventory:
-  # Default blueprint used when a player has an invalid pickpocket layout.
-  # Layout format: 6 rows x 9 columns using R (red), G (green), B (blue).
-  defaultLayout:
-    - "BGBGBGBGB"
-    - "GBGBGBGBG"
-    - "BGBGBGBGB"
-    - "GBGBGBGBG"
-    - "BGBGBGBGB"
-    - "GBGBGBGBG"
-
 # Items that cannot be pickpocketed.
 #
 # Use '*' to disabled every item.

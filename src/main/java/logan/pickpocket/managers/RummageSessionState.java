@@ -1,6 +1,5 @@
 package logan.pickpocket.managers;
 
-import logan.pickpocket.inventory.PickpocketInventoryBlueprint;
 import logan.pickpocket.main.PickpocketUtils;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Material;
@@ -11,7 +10,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Mutable per-session board state for rummage.
@@ -21,10 +19,7 @@ public final class RummageSessionState {
     public static final int BOARD_SIZE = 54;
     private static final int MIN_MAIN_INVENTORY_SLOT = 9;
     private static final int MAX_MAIN_INVENTORY_SLOT = 35;
-    private static final double TRAP_CHANCE_PER_ITEM = 0.0064d;
-
     private final BoardCell[] cells = new BoardCell[BOARD_SIZE];
-    private final Random random = new Random();
 
     private boolean suppressNextInventoryClose;
 
@@ -35,7 +30,6 @@ public final class RummageSessionState {
         HIDDEN,
         CLUE_REVEALED,
         STEALABLE_REVEALED,
-        TRAP_REVEALED,
         CLAIMED,
         CLEARED
     }
@@ -45,19 +39,13 @@ public final class RummageSessionState {
      */
     public static final class HiddenRevealBatch {
         private final List<Integer> updatedSlots;
-        private final boolean trapTriggered;
 
-        public HiddenRevealBatch(List<Integer> updatedSlots, boolean trapTriggered) {
+        public HiddenRevealBatch(List<Integer> updatedSlots) {
             this.updatedSlots = updatedSlots;
-            this.trapTriggered = trapTriggered;
         }
 
         public List<Integer> getUpdatedSlots() {
             return updatedSlots;
-        }
-
-        public boolean isTrapTriggered() {
-            return trapTriggered;
         }
     }
 
@@ -74,29 +62,6 @@ public final class RummageSessionState {
             return;
         }
 
-        ItemStack[] blueprint = victim.getPickpocketInventorySnapshot();
-
-        List<Integer> pureGreenBoardSlots = new ArrayList<>();
-        for (int slot = 0; slot < BOARD_SIZE; slot++) {
-            ItemStack marker = blueprint[slot];
-            PickpocketInventoryBlueprint.SlotKind kind = PickpocketInventoryBlueprint.kindFromItem(marker);
-            switch (kind) {
-                case EMPTY -> cells[slot].floodEmptyAfterInit = true;
-                case HINT -> { }
-                case STEALABLE -> pureGreenBoardSlots.add(slot);
-                case TRAP_ITEM -> {
-                    double chance = Math.min(1.0d, marker.getAmount() * TRAP_CHANCE_PER_ITEM);
-                    if (random.nextDouble() < chance) {
-                        ItemStack trapPreview = marker.clone();
-                        trapPreview.setAmount(1);
-                        cells[slot].trapItem = trapPreview;
-                    } else {
-                        cells[slot].floodEmptyAfterInit = true;
-                    }
-                }
-            }
-        }
-
         List<Integer> stealableVictimSlots = new ArrayList<>();
         for (int slot = MIN_MAIN_INVENTORY_SLOT; slot <= MAX_MAIN_INVENTORY_SLOT; slot++) {
             ItemStack stack = victimPlayer.getInventory().getItem(slot);
@@ -109,12 +74,17 @@ public final class RummageSessionState {
             stealableVictimSlots.add(slot);
         }
 
-        Collections.shuffle(stealableVictimSlots);
-        Collections.shuffle(pureGreenBoardSlots);
+        List<Integer> boardSlots = new ArrayList<>(BOARD_SIZE);
+        for (int slot = 0; slot < BOARD_SIZE; slot++) {
+            boardSlots.add(slot);
+        }
 
-        int maxAssignments = Math.min(stealableVictimSlots.size(), pureGreenBoardSlots.size());
+        Collections.shuffle(stealableVictimSlots);
+        Collections.shuffle(boardSlots);
+
+        int maxAssignments = Math.min(stealableVictimSlots.size(), boardSlots.size());
         for (int index = 0; index < maxAssignments; index++) {
-            int boardSlot = pureGreenBoardSlots.get(index);
+            int boardSlot = boardSlots.get(index);
             int victimSlot = stealableVictimSlots.get(index);
             cells[boardSlot].victimInventorySlot = victimSlot;
         }
@@ -133,94 +103,64 @@ public final class RummageSessionState {
     }
 
     /**
-     * Reveals hidden cells from a click (Minesweeper flood for {@link BoardCell#floodEmptyAfterInit}).
+     * Reveals hidden cells from a click using minesweeper semantics.
      *
      * @param boardSlot clicked board index
-     * @return updated slots and whether a trap was revealed
+     * @return updated slots
      */
     public HiddenRevealBatch revealHiddenCells(int boardSlot) {
         if (!isValidSlot(boardSlot)) {
-            return new HiddenRevealBatch(List.of(), false);
+            return new HiddenRevealBatch(List.of());
         }
         BoardCell start = cells[boardSlot];
         if (start.state != BoardCellState.HIDDEN) {
-            return new HiddenRevealBatch(List.of(), false);
+            return new HiddenRevealBatch(List.of());
         }
 
         List<Integer> updated = new ArrayList<>();
-        boolean trapTriggered = false;
 
-        if (start.trapItem != null) {
-            start.state = BoardCellState.TRAP_REVEALED;
-            updated.add(boardSlot);
-            return new HiddenRevealBatch(updated, true);
-        }
-        if (start.victimInventorySlot != null) {
+        if (isBombCell(start)) {
             start.state = BoardCellState.STEALABLE_REVEALED;
             updated.add(boardSlot);
-            return new HiddenRevealBatch(updated, false);
+            return new HiddenRevealBatch(updated);
         }
-        if (start.floodEmptyAfterInit) {
-            ArrayDeque<Integer> queue = new ArrayDeque<>();
-            queue.add(boardSlot);
-            while (!queue.isEmpty()) {
-                int s = queue.remove();
-                BoardCell cell = cells[s];
-                if (cell.state != BoardCellState.HIDDEN) {
-                    continue;
-                }
-                if (cell.trapItem != null || cell.victimInventorySlot != null) {
-                    trapTriggered |= revealBoundaryCell(s, updated);
-                    continue;
-                }
-                if (!cell.floodEmptyAfterInit) {
-                    trapTriggered |= revealBoundaryCell(s, updated);
-                    continue;
-                }
-                cell.state = BoardCellState.CLEARED;
-                updated.add(s);
-                for (int n : neighbors8(s)) {
-                    BoardCell neighbor = cells[n];
-                    if (neighbor.state != BoardCellState.HIDDEN) {
-                        continue;
-                    }
-                    if (neighbor.floodEmptyAfterInit
-                            && neighbor.trapItem == null
-                            && neighbor.victimInventorySlot == null) {
-                        queue.add(n);
-                    } else {
-                        trapTriggered |= revealBoundaryCell(n, updated);
-                    }
-                }
+
+        if (start.adjacentBombCount > 0) {
+            start.state = BoardCellState.CLUE_REVEALED;
+            updated.add(boardSlot);
+            return new HiddenRevealBatch(updated);
+        }
+
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        queue.add(boardSlot);
+        while (!queue.isEmpty()) {
+            int slot = queue.remove();
+            BoardCell cell = cells[slot];
+            if (cell.state != BoardCellState.HIDDEN || isBombCell(cell)) {
+                continue;
             }
-            return new HiddenRevealBatch(updated, trapTriggered);
-        }
+            if (cell.adjacentBombCount > 0) {
+                cell.state = BoardCellState.CLUE_REVEALED;
+                updated.add(slot);
+                continue;
+            }
 
-        trapTriggered = revealBoundaryCell(boardSlot, updated);
-        return new HiddenRevealBatch(updated, trapTriggered);
-    }
-
-    private boolean revealBoundaryCell(int boardSlot, List<Integer> updated) {
-        if (!isValidSlot(boardSlot)) {
-            return false;
+            cell.state = BoardCellState.CLEARED;
+            updated.add(slot);
+            for (int neighborSlot : neighbors8(slot)) {
+                BoardCell neighbor = cells[neighborSlot];
+                if (neighbor.state != BoardCellState.HIDDEN || isBombCell(neighbor)) {
+                    continue;
+                }
+                if (neighbor.adjacentBombCount > 0) {
+                    neighbor.state = BoardCellState.CLUE_REVEALED;
+                    updated.add(neighborSlot);
+                    continue;
+                }
+                queue.add(neighborSlot);
+            }
         }
-        BoardCell cell = cells[boardSlot];
-        if (cell.state != BoardCellState.HIDDEN) {
-            return false;
-        }
-        if (cell.trapItem != null) {
-            cell.state = BoardCellState.TRAP_REVEALED;
-            updated.add(boardSlot);
-            return true;
-        }
-        if (cell.victimInventorySlot != null) {
-            cell.state = BoardCellState.STEALABLE_REVEALED;
-            updated.add(boardSlot);
-            return false;
-        }
-        cell.state = BoardCellState.CLUE_REVEALED;
-        updated.add(boardSlot);
-        return false;
+        return new HiddenRevealBatch(updated);
     }
 
     private static int[] neighbors8(int slot) {
@@ -270,7 +210,9 @@ public final class RummageSessionState {
         BoardCell cell = cells[boardSlot];
         cell.victimInventorySlot = null;
         if (cell.state == BoardCellState.STEALABLE_REVEALED) {
-            cell.state = BoardCellState.CLUE_REVEALED;
+            cell.state = cell.adjacentBombCount > 0
+                    ? BoardCellState.CLUE_REVEALED
+                    : BoardCellState.CLEARED;
         }
     }
 
@@ -300,25 +242,13 @@ public final class RummageSessionState {
 
     /**
      * @param boardSlot board index
-     * @return trap preview item for this slot, or null
+     * @return adjacent stealable (bomb) count for clue rendering
      */
-    public ItemStack getTrapItem(int boardSlot) {
-        if (!isValidSlot(boardSlot)) {
-            return null;
-        }
-        ItemStack trapItem = cells[boardSlot].trapItem;
-        return trapItem == null ? null : trapItem.clone();
-    }
-
-    /**
-     * @param boardSlot board index
-     * @return adjacent stealable count for clue rendering
-     */
-    public int getAdjacentStealableCount(int boardSlot) {
+    public int getAdjacentBombCount(int boardSlot) {
         if (!isValidSlot(boardSlot)) {
             return 0;
         }
-        return cells[boardSlot].adjacentStealableCount;
+        return cells[boardSlot].adjacentBombCount;
     }
 
     /**
@@ -357,11 +287,11 @@ public final class RummageSessionState {
 
     private void recomputeAdjacencyClues() {
         for (int slot = 0; slot < BOARD_SIZE; slot++) {
-            cells[slot].adjacentStealableCount = countAdjacentStealableCells(slot);
+            cells[slot].adjacentBombCount = countAdjacentBombCells(slot);
         }
     }
 
-    private int countAdjacentStealableCells(int slot) {
+    private int countAdjacentBombCells(int slot) {
         int row = slot / 9;
         int col = slot % 9;
         int count = 0;
@@ -376,7 +306,7 @@ public final class RummageSessionState {
                     continue;
                 }
                 int neighborSlot = (nextRow * 9) + nextCol;
-                if (cells[neighborSlot].victimInventorySlot != null) {
+                if (isBombCell(cells[neighborSlot])) {
                     count++;
                 }
             }
@@ -388,11 +318,13 @@ public final class RummageSessionState {
         return slot >= 0 && slot < BOARD_SIZE;
     }
 
+    private static boolean isBombCell(BoardCell cell) {
+        return cell.victimInventorySlot != null;
+    }
+
     private static final class BoardCell {
         private BoardCellState state = BoardCellState.HIDDEN;
         private Integer victimInventorySlot;
-        private ItemStack trapItem;
-        private boolean floodEmptyAfterInit;
-        private int adjacentStealableCount;
+        private int adjacentBombCount;
     }
 }

@@ -56,4 +56,12 @@ Added Javadocs across runtime classes and applied small repository housekeeping 
 - Blueprint panes now cycle red/green/blue on click in both layout editors.
 - Added live tooltip deficit line for invalid pickpocket blueprints.
 - Invalid blueprint close now reopens editor with reason shown in item tooltips.
+- Replaced rummage board setup with randomized minesweeper bomb placement.
+- Bomb clicks now reveal stealable items and allow steal-then-continue flow.
+- Empty zero-clue cells now flood reveal connected spaces and clue borders.
+- Clue tiles now show adjacent bomb counts via numbered player heads.
+- Removed blueprint/default layout commands, listeners, managers, and help.
+- Removed blueprint/default layout persistence and config schema keys.
+- Deleted legacy blueprint class and inventory editor permission entry.
+- Removed dead trap-trigger and blueprint-invalid message/config paths.
 

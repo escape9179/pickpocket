@@ -24,7 +24,6 @@ public final class PickpocketConfigMenuManager {
         PlayerInventoryMenu menu = new PlayerInventoryMenu(MENU_TITLE, 3);
         fillBackground(menu);
         menu.addItem(11, createTogglePickpocketingItem(player));
-        menu.addItem(13, createEditDefaultBlueprintItem(player));
         menu.addItem(15, createReloadConfigItem(player));
         menu.show(player);
     }
@@ -34,15 +33,6 @@ public final class PickpocketConfigMenuManager {
             menu.addItem(slot, new MenuItem(" ", new ItemStack(Material.GRAY_STAINED_GLASS_PANE))
                     .addItemFlags(ItemFlag.HIDE_ATTRIBUTES));
         }
-    }
-
-    private static MenuItem createEditDefaultBlueprintItem(Player player) {
-        return new MenuItem("Edit Pickpocket Inventory Default", new ItemStack(Material.CRAFTING_TABLE))
-                .setLore(
-                        ChatColor.GRAY + "Edit the global fallback layout",
-                        ChatColor.GRAY + "used when a player has invalid",
-                        ChatColor.GRAY + "pickpocket inventory data.")
-                .addListener(event -> DefaultPickpocketInventoryManager.openFor(player));
     }
 
     private static MenuItem createTogglePickpocketingItem(Player player) {
