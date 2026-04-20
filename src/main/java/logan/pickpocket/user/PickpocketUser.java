@@ -550,6 +550,9 @@ public class PickpocketUser {
         if (player == null) {
             return fallback;
         }
+        if (player.isOp()) {
+            return maxValue;
+        }
         int resolved = Integer.MIN_VALUE;
         for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
             if (!permissionInfo.getValue()) {

@@ -52,4 +52,5 @@ Added Javadocs across runtime classes and applied small repository housekeeping 
 - Added config menu actions for toggle and config reload.
 - Prevented stained-glass blueprint panes from leaving trap inventory UI.
 - Removing a trap from blueprint now restores green pane in that slot.
+- OPs now receive max value for integer permission node checks.
 
