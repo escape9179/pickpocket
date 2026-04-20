@@ -44,4 +44,12 @@ Runtime internals were reorganized around the session manager, skill module, and
 - **Maintenance and documentation updates.**  
 Added Javadocs across runtime classes and applied small repository housekeeping updates.
 - Added debug reveal toggle: `/pickpocket debug reveal <true|false>`.
+- Added admin `/pickpocket config` command and permission wiring.
+- Added config menu item: Edit Pickpocket Inventory Default.
+- Added global default blueprint editor and save-on-close validation.
+- Added config-backed default layout rows (R/G/B) in `config.yml`.
+- Invalid player layouts now auto-heal from global default blueprint.
+- Added config menu actions for toggle and config reload.
+- Prevented stained-glass blueprint panes from leaving trap inventory UI.
+- Removing a trap from blueprint now restores green pane in that slot.
 

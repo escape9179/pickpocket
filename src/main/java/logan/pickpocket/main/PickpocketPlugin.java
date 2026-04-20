@@ -16,6 +16,7 @@ import logan.api.util.UpdateChecker;
 import logan.pickpocket.commands.DebugCommand;
 import logan.pickpocket.commands.DebugGiveRandom;
 import logan.pickpocket.commands.DebugRevealCommand;
+import logan.pickpocket.commands.ConfigCommand;
 import logan.pickpocket.commands.MainCommand;
 import logan.pickpocket.commands.ReloadCommand;
 import logan.pickpocket.commands.SetSkillCommand;
@@ -35,6 +36,7 @@ import logan.pickpocket.listeners.InventoryClickListener;
 import logan.pickpocket.listeners.InventoryCloseListener;
 import logan.pickpocket.listeners.InventoryOpenListener;
 import logan.pickpocket.listeners.PlayerInteractListener;
+import logan.pickpocket.listeners.DefaultPickpocketInventoryListener;
 import logan.pickpocket.listeners.PickpocketInventoryListener;
 import logan.pickpocket.tasks.MoveCheckTask;
 
@@ -121,6 +123,7 @@ public class PickpocketPlugin extends JavaPlugin {
         CommandDispatcher.registerCommand(new StatusCommand());
         CommandDispatcher.registerCommand(new TestCommand());
         CommandDispatcher.registerCommand(new InventoryCommand());
+        CommandDispatcher.registerCommand(new ConfigCommand());
     }
 
     private void registerListeners() {
@@ -130,6 +133,7 @@ public class PickpocketPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryOpenListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
         getServer().getPluginManager().registerEvents(new PickpocketInventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new DefaultPickpocketInventoryListener(), this);
     }
 
     private void setupDependencies() {

@@ -68,13 +68,40 @@ public final class PickpocketInventoryListener implements Listener {
 
         ItemStack cursor = event.getCursor();
         ItemStack current = event.getCurrentItem();
+        PickpocketInventoryBlueprint.SlotKind currentKind = PickpocketInventoryBlueprint.kindFromItem(current);
+        PickpocketInventoryBlueprint.SlotKind cursorKind = PickpocketInventoryBlueprint.kindFromItem(cursor);
+
+        if (isMarkerExtractionAction(event.getAction())
+                && isBlueprintMarker(currentKind)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (currentKind == PickpocketInventoryBlueprint.SlotKind.STEALABLE
+                && cursorKind == PickpocketInventoryBlueprint.SlotKind.TRAP_ITEM
+                && isPlacementAction(event.getAction())) {
+            handleTrapPlacementOnStealableSlot(
+                    event, player, topInventory, rawSlot, cursor, maxTrapSlots, maxStackSize);
+            return;
+        }
+
+        if (currentKind == PickpocketInventoryBlueprint.SlotKind.TRAP_ITEM
+                && isTrapPickupAction(event.getAction())) {
+            handleTrapRemovalToCursor(event, player, topInventory, rawSlot, current, cursor);
+            return;
+        }
 
         if (cursor != null && cursor.getType() != Material.AIR) {
+            if (isBlueprintMarker(currentKind)
+                    && cursorKind != PickpocketInventoryBlueprint.SlotKind.TRAP_ITEM) {
+                event.setCancelled(true);
+                return;
+            }
             if (!isAllowedCursorOnSlot(cursor, current, rawSlot)) {
                 event.setCancelled(true);
                 return;
             }
-            if (PickpocketInventoryBlueprint.kindFromItem(cursor) == PickpocketInventoryBlueprint.SlotKind.TRAP_ITEM) {
+            if (cursorKind == PickpocketInventoryBlueprint.SlotKind.TRAP_ITEM) {
                 if (maxTrapSlots <= 0) {
                     event.setCancelled(true);
                     return;
@@ -184,7 +211,7 @@ public final class PickpocketInventoryListener implements Listener {
             ItemStack s = i < raw.length ? raw[i] : null;
             normalized[i] = PickpocketInventoryBlueprint.normalizeSlot(s);
         }
-        String invalid = PickpocketInventoryBlueprint.validate(normalized, owner.resolveRequiredStealableSlots());
+        String invalid = PickpocketInventoryBlueprint.validate(normalized, owner.resolveRequiredStealableSlotsForValidation());
         if (invalid != null) {
             Player online = owner.getBukkitPlayer();
             if (online != null) {
@@ -218,6 +245,88 @@ public final class PickpocketInventoryListener implements Listener {
             }
         }
         return n;
+    }
+
+    private static boolean isBlueprintMarker(PickpocketInventoryBlueprint.SlotKind kind) {
+        return kind == PickpocketInventoryBlueprint.SlotKind.EMPTY
+                || kind == PickpocketInventoryBlueprint.SlotKind.STEALABLE
+                || kind == PickpocketInventoryBlueprint.SlotKind.HINT;
+    }
+
+    private static boolean isMarkerExtractionAction(InventoryAction action) {
+        return action == InventoryAction.PICKUP_ALL
+                || action == InventoryAction.PICKUP_HALF
+                || action == InventoryAction.PICKUP_ONE
+                || action == InventoryAction.PICKUP_SOME
+                || action == InventoryAction.DROP_ALL_SLOT
+                || action == InventoryAction.DROP_ONE_SLOT
+                || action == InventoryAction.CLONE_STACK;
+    }
+
+    private static boolean isTrapPickupAction(InventoryAction action) {
+        return action == InventoryAction.PICKUP_ALL
+                || action == InventoryAction.PICKUP_HALF
+                || action == InventoryAction.PICKUP_ONE
+                || action == InventoryAction.PICKUP_SOME;
+    }
+
+    private void handleTrapPlacementOnStealableSlot(
+            InventoryClickEvent event,
+            Player player,
+            Inventory topInventory,
+            int rawSlot,
+            ItemStack cursor,
+            int maxTrapSlots,
+            int maxStackSize) {
+        if (maxTrapSlots <= 0) {
+            event.setCancelled(true);
+            return;
+        }
+        int placedAmount = resolvePlacedAmount(event.getAction(), cursor.getAmount(), 0, maxStackSize);
+        if (placedAmount <= 0 || placedAmount > maxStackSize) {
+            event.setCancelled(true);
+            return;
+        }
+        int traps = countTrapSlots(topInventory);
+        if (traps >= maxTrapSlots) {
+            event.setCancelled(true);
+            return;
+        }
+
+        ItemStack trapStack = cursor.clone();
+        trapStack.setAmount(placedAmount);
+        topInventory.setItem(rawSlot, trapStack);
+
+        int remaining = cursor.getAmount() - placedAmount;
+        if (remaining <= 0) {
+            player.setItemOnCursor(new ItemStack(Material.AIR));
+        } else {
+            ItemStack remainder = cursor.clone();
+            remainder.setAmount(remaining);
+            player.setItemOnCursor(remainder);
+        }
+        event.setCancelled(true);
+    }
+
+    private void handleTrapRemovalToCursor(
+            InventoryClickEvent event,
+            Player player,
+            Inventory topInventory,
+            int rawSlot,
+            ItemStack trapStack,
+            ItemStack cursor) {
+        if (trapStack == null || trapStack.getType() == Material.AIR) {
+            event.setCancelled(true);
+            return;
+        }
+        if (cursor != null && cursor.getType() != Material.AIR) {
+            event.setCancelled(true);
+            return;
+        }
+
+        player.setItemOnCursor(trapStack.clone());
+        topInventory.setItem(rawSlot, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        event.setCancelled(true);
     }
 
     private boolean isPlacementAction(InventoryAction action) {

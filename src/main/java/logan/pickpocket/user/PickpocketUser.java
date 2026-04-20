@@ -341,7 +341,7 @@ public class PickpocketUser {
             }
             snapshot[index] = PickpocketInventoryBlueprint.normalizeSlot(stack);
         }
-        return snapshot;
+        return ensureValidPickpocketInventoryLayout(snapshot);
     }
 
     /**
@@ -386,6 +386,13 @@ public class PickpocketUser {
      */
     public int resolveRequiredStealableSlots() {
         return resolveHighestNumericPermission(PERM_INVENTORY_STEALABLE_SLOTS, 0, 0, PICKPOCKET_INVENTORY_SIZE);
+    }
+
+    /**
+     * Required minimum green panes used for validation and auto-healing.
+     */
+    public int resolveRequiredStealableSlotsForValidation() {
+        return PickpocketInventoryBlueprint.normalizeRequiredStealableSlots(resolveRequiredStealableSlots());
     }
 
     /**
@@ -565,5 +572,21 @@ public class PickpocketUser {
             resolved = Math.max(resolved, value);
         }
         return resolved == Integer.MIN_VALUE ? fallback : resolved;
+    }
+
+    private ItemStack[] ensureValidPickpocketInventoryLayout(ItemStack[] normalizedSnapshot) {
+        int requiredStealables = resolveRequiredStealableSlotsForValidation();
+        String invalid = PickpocketInventoryBlueprint.validate(normalizedSnapshot, requiredStealables);
+        if (invalid == null) {
+            return normalizedSnapshot;
+        }
+        ItemStack[] fallback = Config.getDefaultPickpocketInventoryLayoutSnapshot(requiredStealables);
+        String fallbackInvalid = PickpocketInventoryBlueprint.validate(fallback, requiredStealables);
+        if (fallbackInvalid != null) {
+            fallback = PickpocketInventoryBlueprint.createDeterministicValidLayout(requiredStealables);
+        }
+        setPickpocketInventoryContents(fallback);
+        save();
+        return fallback;
     }
 }

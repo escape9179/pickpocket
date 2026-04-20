@@ -11,6 +11,8 @@ public final class PickpocketInventoryBlueprint {
     public static final int SIZE = 54;
     public static final int ROWS = 6;
     public static final int COLS = 9;
+    public static final int MIN_USABLE_STEALABLE_SLOTS = 1;
+    public static final int MAX_STEALABLE_SLOTS_IN_DEFAULT_LAYOUT = 27;
 
     public enum SlotKind {
         EMPTY,
@@ -95,6 +97,50 @@ public final class PickpocketInventoryBlueprint {
             }
         }
         return null;
+    }
+
+    /**
+     * Clamps requested green-slot minimums into the range this layout model supports.
+     */
+    public static int normalizeRequiredStealableSlots(int requestedMinimum) {
+        return Math.max(
+                MIN_USABLE_STEALABLE_SLOTS,
+                Math.min(MAX_STEALABLE_SLOTS_IN_DEFAULT_LAYOUT, requestedMinimum));
+    }
+
+    /**
+     * Builds a deterministic checkerboard baseline that satisfies all adjacency rules.
+     */
+    public static ItemStack[] createDeterministicValidLayout(int requiredStealableSlots) {
+        int targetStealableSlots = normalizeRequiredStealableSlots(requiredStealableSlots);
+        ItemStack[] contents = new ItemStack[SIZE];
+        for (int slot = 0; slot < SIZE; slot++) {
+            int row = slot / COLS;
+            int col = slot % COLS;
+            boolean even = ((row + col) % 2) == 0;
+            Material material = even ? Material.BLUE_STAINED_GLASS_PANE : Material.GREEN_STAINED_GLASS_PANE;
+            contents[slot] = new ItemStack(material);
+        }
+        int assignedStealables = 27;
+        if (assignedStealables < targetStealableSlots) {
+            return createMinimalUsableLayout();
+        }
+        return contents;
+    }
+
+    /**
+     * Minimal guaranteed-usable baseline: one green touching one blue.
+     */
+    public static ItemStack[] createMinimalUsableLayout() {
+        ItemStack[] contents = new ItemStack[SIZE];
+        for (int slot = 0; slot < SIZE; slot++) {
+            contents[slot] = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        }
+        int greenSlot = (2 * COLS) + 3;
+        int blueSlot = greenSlot + 1;
+        contents[greenSlot] = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        contents[blueSlot] = new ItemStack(Material.BLUE_STAINED_GLASS_PANE);
+        return contents;
     }
 
     private static boolean touchesKind(ItemStack[] contents, int slot, SlotKind requiredNeighbor) {
