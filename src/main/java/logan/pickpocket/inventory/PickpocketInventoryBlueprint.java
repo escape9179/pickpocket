@@ -105,6 +105,33 @@ public final class PickpocketInventoryBlueprint {
     }
 
     /**
+     * @param contents blueprint length {@link #SIZE}
+     * @return number of {@link SlotKind#STEALABLE} slots
+     */
+    public static int countStealableSlots(ItemStack[] contents) {
+        int n = 0;
+        if (contents == null) {
+            return 0;
+        }
+        for (ItemStack stack : contents) {
+            if (kindFromItem(stack) == SlotKind.STEALABLE) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /**
+     * @param contents       blueprint length {@link #SIZE}
+     * @param minPureGreens  required {@link SlotKind#STEALABLE} count
+     * @return remaining green panes needed to satisfy minimum count
+     */
+    public static int countMissingStealableSlots(ItemStack[] contents, int minPureGreens) {
+        int currentStealableSlots = countStealableSlots(contents);
+        return Math.max(0, minPureGreens - currentStealableSlots);
+    }
+
+    /**
      * Validates adjacency and minimum pure green count.
      *
      * @param contents    54 slots
@@ -115,12 +142,7 @@ public final class PickpocketInventoryBlueprint {
         if (contents == null || contents.length != SIZE) {
             return "layout must be 54 slots.";
         }
-        int pureGreens = 0;
-        for (ItemStack stack : contents) {
-            if (kindFromItem(stack) == SlotKind.STEALABLE) {
-                pureGreens++;
-            }
-        }
+        int pureGreens = countStealableSlots(contents);
         if (pureGreens < minPureGreens) {
             return "need at least " + minPureGreens + " green panes (have " + pureGreens + ").";
         }

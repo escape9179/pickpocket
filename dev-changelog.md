@@ -54,4 +54,6 @@ Added Javadocs across runtime classes and applied small repository housekeeping 
 - Removing a trap from blueprint now restores green pane in that slot.
 - OPs now receive max value for integer permission node checks.
 - Blueprint panes now cycle red/green/blue on click in both layout editors.
+- Added live tooltip deficit line for invalid pickpocket blueprints.
+- Invalid blueprint close now reopens editor with reason shown in item tooltips.
 

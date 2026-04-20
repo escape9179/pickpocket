@@ -1,11 +1,11 @@
 package logan.pickpocket.listeners;
 
-import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.inventory.PickpocketInventoryBlueprint;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.managers.PickpocketInventoryManager;
 import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,16 +16,47 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Enforces pickpocket inventory editor rules and persistence.
  */
 public final class PickpocketInventoryListener implements Listener {
+
+    private static final Pattern GREEN_DEFICIT_TOOLTIP_PATTERN =
+            Pattern.compile("^Need \\d+ more green stained-glass panes\\.$");
+    private static final Pattern INVALID_REASON_TOOLTIP_PATTERN =
+            Pattern.compile("^Layout invalid: .+$");
+    private static final String GREEN_DEFICIT_TOOLTIP_TEMPLATE =
+            ChatColor.RED + "Need %d more green stained-glass panes.";
+    private static final String INVALID_REASON_TOOLTIP_TEMPLATE =
+            ChatColor.RED + "Layout invalid: %s";
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        Inventory topInventory = event.getView().getTopInventory();
+        if (!PickpocketInventoryManager.isPickpocketInventory(topInventory)) {
+            return;
+        }
+        if (!(event.getPlayer() instanceof Player player)) {
+            return;
+        }
+        UUID ownerUuid = PickpocketInventoryManager.getOwnerUuid(topInventory);
+        if (ownerUuid == null || !ownerUuid.equals(player.getUniqueId())) {
+            return;
+        }
+        PickpocketUser owner = PickpocketUser.get(player);
+        scheduleInvalidLayoutTooltipRefresh(topInventory, owner.resolveRequiredStealableSlotsForValidation());
+    }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -201,6 +232,40 @@ public final class PickpocketInventoryListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryClickMonitor(InventoryClickEvent event) {
+        Inventory topInventory = event.getView().getTopInventory();
+        if (!PickpocketInventoryManager.isPickpocketInventory(topInventory)) {
+            return;
+        }
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+        UUID ownerUuid = PickpocketInventoryManager.getOwnerUuid(topInventory);
+        if (ownerUuid == null || !ownerUuid.equals(player.getUniqueId())) {
+            return;
+        }
+        PickpocketUser owner = PickpocketUser.get(player);
+        scheduleInvalidLayoutTooltipRefresh(topInventory, owner.resolveRequiredStealableSlotsForValidation());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryDragMonitor(InventoryDragEvent event) {
+        Inventory topInventory = event.getView().getTopInventory();
+        if (!PickpocketInventoryManager.isPickpocketInventory(topInventory)) {
+            return;
+        }
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+        UUID ownerUuid = PickpocketInventoryManager.getOwnerUuid(topInventory);
+        if (ownerUuid == null || !ownerUuid.equals(player.getUniqueId())) {
+            return;
+        }
+        PickpocketUser owner = PickpocketUser.get(player);
+        scheduleInvalidLayoutTooltipRefresh(topInventory, owner.resolveRequiredStealableSlotsForValidation());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory topInventory = event.getView().getTopInventory();
         if (!PickpocketInventoryManager.isPickpocketInventory(topInventory)) {
@@ -222,10 +287,6 @@ public final class PickpocketInventoryListener implements Listener {
         }
         String invalid = PickpocketInventoryBlueprint.validate(normalized, owner.resolveRequiredStealableSlotsForValidation());
         if (invalid != null) {
-            Player online = owner.getBukkitPlayer();
-            if (online != null) {
-                online.sendMessage(MessageConfig.getInventoryLayoutInvalidMessage(invalid));
-            }
             Bukkit.getScheduler().runTask(PickpocketPlugin.getInstance(),
                     () -> PickpocketInventoryManager.openFor(owner));
             return;
@@ -374,5 +435,75 @@ public final class PickpocketInventoryListener implements Listener {
             return cursorAmount;
         }
         return 0;
+    }
+
+    private void scheduleInvalidLayoutTooltipRefresh(Inventory inventory, int requiredStealableSlots) {
+        Bukkit.getScheduler().runTask(PickpocketPlugin.getInstance(),
+                () -> applyInvalidLayoutTooltipLines(inventory, requiredStealableSlots));
+    }
+
+    private void applyInvalidLayoutTooltipLines(Inventory inventory, int requiredStealableSlots) {
+        String invalidReason = PickpocketInventoryBlueprint.validate(inventory.getContents(), requiredStealableSlots);
+        int missingStealableSlots = PickpocketInventoryBlueprint.countMissingStealableSlots(
+                inventory.getContents(), requiredStealableSlots);
+        String tooltipLine = String.format(GREEN_DEFICIT_TOOLTIP_TEMPLATE, missingStealableSlots);
+        String reasonTooltipLine = invalidReason == null
+                ? null
+                : String.format(INVALID_REASON_TOOLTIP_TEMPLATE, invalidReason);
+        ItemStack[] contents = inventory.getContents();
+        int maxSlot = Math.min(PickpocketInventoryManager.PICKPOCKET_INVENTORY_SIZE, contents.length);
+        for (int slot = 0; slot < maxSlot; slot++) {
+            ItemStack stack = contents[slot];
+            if (stack == null || stack.getType() == Material.AIR) {
+                continue;
+            }
+            ItemMeta itemMeta = stack.getItemMeta();
+            if (itemMeta == null) {
+                continue;
+            }
+            List<String> lore = itemMeta.hasLore()
+                    ? new ArrayList<>(itemMeta.getLore())
+                    : new ArrayList<>();
+            boolean changed = removeGreenDeficitTooltipLine(lore);
+            changed = removeInvalidReasonTooltipLine(lore) || changed;
+            if (reasonTooltipLine != null && !lore.contains(reasonTooltipLine)) {
+                lore.add(reasonTooltipLine);
+                changed = true;
+            }
+            if (missingStealableSlots > 0 && !lore.contains(tooltipLine)) {
+                lore.add(tooltipLine);
+                changed = true;
+            }
+            if (!changed) {
+                continue;
+            }
+            itemMeta.setLore(lore.isEmpty() ? null : lore);
+            stack.setItemMeta(itemMeta);
+            inventory.setItem(slot, stack);
+        }
+    }
+
+    private boolean removeGreenDeficitTooltipLine(List<String> lore) {
+        boolean removed = false;
+        for (int i = lore.size() - 1; i >= 0; i--) {
+            String stripped = ChatColor.stripColor(lore.get(i));
+            if (stripped != null && GREEN_DEFICIT_TOOLTIP_PATTERN.matcher(stripped).matches()) {
+                lore.remove(i);
+                removed = true;
+            }
+        }
+        return removed;
+    }
+
+    private boolean removeInvalidReasonTooltipLine(List<String> lore) {
+        boolean removed = false;
+        for (int i = lore.size() - 1; i >= 0; i--) {
+            String stripped = ChatColor.stripColor(lore.get(i));
+            if (stripped != null && INVALID_REASON_TOOLTIP_PATTERN.matcher(stripped).matches()) {
+                lore.remove(i);
+                removed = true;
+            }
+        }
+        return removed;
     }
 }
