@@ -71,6 +71,15 @@ public final class PickpocketInventoryListener implements Listener {
         PickpocketInventoryBlueprint.SlotKind currentKind = PickpocketInventoryBlueprint.kindFromItem(current);
         PickpocketInventoryBlueprint.SlotKind cursorKind = PickpocketInventoryBlueprint.kindFromItem(cursor);
 
+        if (shouldCycleMarkerOnClick(event, cursor, current)) {
+            Material nextMarker = PickpocketInventoryBlueprint.nextMarkerMaterial(current.getType());
+            if (nextMarker != null) {
+                topInventory.setItem(rawSlot, new ItemStack(nextMarker));
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (isMarkerExtractionAction(event.getAction())
                 && isBlueprintMarker(currentKind)) {
             event.setCancelled(true);
@@ -248,9 +257,24 @@ public final class PickpocketInventoryListener implements Listener {
     }
 
     private static boolean isBlueprintMarker(PickpocketInventoryBlueprint.SlotKind kind) {
-        return kind == PickpocketInventoryBlueprint.SlotKind.EMPTY
-                || kind == PickpocketInventoryBlueprint.SlotKind.STEALABLE
-                || kind == PickpocketInventoryBlueprint.SlotKind.HINT;
+        return PickpocketInventoryBlueprint.isMarkerKind(kind);
+    }
+
+    private static boolean shouldCycleMarkerOnClick(
+            InventoryClickEvent event,
+            ItemStack cursor,
+            ItemStack current) {
+        if (cursor != null && cursor.getType() != Material.AIR) {
+            return false;
+        }
+        if (current == null || !PickpocketInventoryBlueprint.isMarkerMaterial(current.getType())) {
+            return false;
+        }
+        InventoryAction action = event.getAction();
+        return action == InventoryAction.PICKUP_ALL
+                || action == InventoryAction.PICKUP_HALF
+                || action == InventoryAction.PICKUP_ONE
+                || action == InventoryAction.PICKUP_SOME;
     }
 
     private static boolean isMarkerExtractionAction(InventoryAction action) {

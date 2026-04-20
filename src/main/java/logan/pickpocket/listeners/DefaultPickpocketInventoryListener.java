@@ -59,6 +59,14 @@ public final class DefaultPickpocketInventoryListener implements Listener {
         if (rawSlot < 0 || rawSlot >= PickpocketInventoryBlueprint.SIZE) {
             return;
         }
+        if (shouldCycleMarkerOnClick(event, event.getCursor(), event.getCurrentItem())) {
+            Material nextMarker = PickpocketInventoryBlueprint.nextMarkerMaterial(event.getCurrentItem().getType());
+            if (nextMarker != null) {
+                topInventory.setItem(rawSlot, new ItemStack(nextMarker));
+                event.setCancelled(true);
+                return;
+            }
+        }
         if (!isValidMarker(event.getCursor())) {
             event.setCancelled(true);
         }
@@ -130,9 +138,23 @@ public final class DefaultPickpocketInventoryListener implements Listener {
         if (stack == null || stack.getType() == Material.AIR) {
             return true;
         }
-        return switch (stack.getType()) {
-            case RED_STAINED_GLASS_PANE, GREEN_STAINED_GLASS_PANE, BLUE_STAINED_GLASS_PANE -> true;
-            default -> false;
-        };
+        return PickpocketInventoryBlueprint.isMarkerMaterial(stack.getType());
+    }
+
+    private static boolean shouldCycleMarkerOnClick(
+            InventoryClickEvent event,
+            ItemStack cursor,
+            ItemStack current) {
+        if (cursor != null && cursor.getType() != Material.AIR) {
+            return false;
+        }
+        if (current == null || !PickpocketInventoryBlueprint.isMarkerMaterial(current.getType())) {
+            return false;
+        }
+        InventoryAction action = event.getAction();
+        return action == InventoryAction.PICKUP_ALL
+                || action == InventoryAction.PICKUP_HALF
+                || action == InventoryAction.PICKUP_ONE
+                || action == InventoryAction.PICKUP_SOME;
     }
 }

@@ -41,6 +41,46 @@ public final class PickpocketInventoryBlueprint {
     }
 
     /**
+     * @return true when this material is one of the blueprint marker panes.
+     */
+    public static boolean isMarkerMaterial(Material material) {
+        if (material == null) {
+            return false;
+        }
+        return switch (material) {
+            case RED_STAINED_GLASS_PANE, GREEN_STAINED_GLASS_PANE, BLUE_STAINED_GLASS_PANE -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * @return true when this semantic kind represents a blueprint marker slot.
+     */
+    public static boolean isMarkerKind(SlotKind kind) {
+        return kind == SlotKind.EMPTY
+                || kind == SlotKind.STEALABLE
+                || kind == SlotKind.HINT;
+    }
+
+    /**
+     * Cycles blueprint marker panes in a deterministic order.
+     *
+     * @param material current marker pane
+     * @return next marker pane, or null for non-marker input
+     */
+    public static Material nextMarkerMaterial(Material material) {
+        if (material == null) {
+            return null;
+        }
+        return switch (material) {
+            case RED_STAINED_GLASS_PANE -> Material.GREEN_STAINED_GLASS_PANE;
+            case GREEN_STAINED_GLASS_PANE -> Material.BLUE_STAINED_GLASS_PANE;
+            case BLUE_STAINED_GLASS_PANE -> Material.RED_STAINED_GLASS_PANE;
+            default -> null;
+        };
+    }
+
+    /**
      * Normalizes editor contents for persistence: air or null becomes red glass.
      */
     public static ItemStack normalizeSlot(ItemStack stack) {
