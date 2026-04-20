@@ -196,6 +196,7 @@ public final class RummageSessionState {
         BoardCell cell = cells[boardSlot];
         cell.state = BoardCellState.CLAIMED;
         cell.victimInventorySlot = null;
+        refreshCluesAfterBombLayoutChange();
     }
 
     /**
@@ -209,6 +210,7 @@ public final class RummageSessionState {
         }
         BoardCell cell = cells[boardSlot];
         cell.victimInventorySlot = null;
+        refreshCluesAfterBombLayoutChange();
         if (cell.state == BoardCellState.STEALABLE_REVEALED) {
             cell.state = cell.adjacentBombCount > 0
                     ? BoardCellState.CLUE_REVEALED
@@ -288,6 +290,15 @@ public final class RummageSessionState {
     private void recomputeAdjacencyClues() {
         for (int slot = 0; slot < BOARD_SIZE; slot++) {
             cells[slot].adjacentBombCount = countAdjacentBombCells(slot);
+        }
+    }
+
+    private void refreshCluesAfterBombLayoutChange() {
+        recomputeAdjacencyClues();
+        for (BoardCell cell : cells) {
+            if (cell.state == BoardCellState.CLUE_REVEALED && cell.adjacentBombCount == 0) {
+                cell.state = BoardCellState.CLEARED;
+            }
         }
     }
 
