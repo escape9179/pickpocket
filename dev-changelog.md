@@ -42,4 +42,7 @@
 - 04/22/2026: Renamed all `Rummage`/`rummage` code symbols to `Pickpocket`/`pickpocket` and migrated persisted totals from `stats.rummage.totalMillis` to `stats.pickpocket.totalMillis` with legacy-key backfill.
 - 04/22/2026: Marked revealed clue/claimed hint tiles dirty when adjacency counts change so post-steal slot-batch refreshes always show correct neighboring-stealable numbers.
 - 04/22/2026: Removed duplicate session-state class file (`RummageSessionState.java`) and kept `PickpocketSessionState.java` as the single source of truth to restore successful compilation.
+- 04/22/2026: Added `item_rarities.yml` with Java 1.21.11 item IDs and reversed rarity weighting where Common maps high (0.66-0.80) and Mythic maps low (0.01-0.15).
+- 04/22/2026: Rebuilt `item_rarities.yml` from Java 1.21.11 item registry IDs for survival-obtainable scope and kept reversed tier bands (Common high, Mythic low).
+- 04/22/2026: Differentiated `item_rarities.yml` values within each reversed tier band using deterministic best-effort 2-decimal ranking so items are spread by relative rarity inside their tier.
 
