@@ -53,4 +53,10 @@
 - 04/22/2026: Restored `Locale` import in `ItemRarityListMenuManager` after list percentage display refactor so item-name title-casing continues compiling correctly.
 - 04/22/2026: Updated `/pickpocket list` rarity item lore to remove tier display and show `Success chance: <rounded>%` for each item.
 - 04/22/2026: Color-coded `/pickpocket list` success chance percentages using each item's resolved rarity tier color.
+- 04/22/2026: Added material-based rarity lookup and shared success-chance lore formatting helpers in `ItemRarityConfig` (with a 100% fallback for items not listed in `item_rarities.yml`).
+- 04/22/2026: Refactored `/pickpocket list` entries to use the shared rarity lore formatter so chance tooltip output stays consistent across menus.
+- 04/22/2026: Updated pickpocket rummage item previews to append the shared rarity `Success chance` tooltip line shown by `/pickpocket list`.
+- 04/22/2026: Added per-item rarity roll handling on steal clicks so failed steals keep the item with the victim, remove it from the rummage board, and notify the thief with `pickpocketUnsuccessful`.
+- 04/22/2026: Updated rarity-attempt feedback sounds so failed steals play note block bass and successful steals only play the item pickup sound.
+- 04/22/2026: Changed failed-roll feedback to play a low-pitch bundle drop-contents sound for both thief and victim.
 

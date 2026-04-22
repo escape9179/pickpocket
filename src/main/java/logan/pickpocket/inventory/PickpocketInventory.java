@@ -3,6 +3,7 @@ package logan.pickpocket.inventory;
 import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
 import logan.api.util.HeadUtils;
+import logan.pickpocket.config.ItemRarityConfig;
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.managers.PickpocketSession;
 import logan.pickpocket.managers.PickpocketSessionManager;
@@ -16,8 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Handles rendering and interaction for the rummage inventory UI.
@@ -26,9 +29,9 @@ public final class PickpocketInventory {
 
     private static final String MENU_TITLE = "Rummage";
     private static final int BOARD_ROWS = 6;
-    private static final float CHANCE_LOSS_BASE_VOLUME = 0.7f;
-    private static final float CHANCE_LOSS_STEP_VOLUME = 0.25f;
-    private static final float CHANCE_LOSS_MAX_VOLUME = 1.5f;
+    private static final String STEAL_FAIL_SOUND_KEY = "minecraft:item.bundle.drop_contents";
+    private static final float STEAL_FAIL_SOUND_VOLUME = 1.0f;
+    private static final float STEAL_FAIL_SOUND_PITCH = 0.6f;
 
     private final PickpocketSession session;
     private final PickpocketUser thief;
@@ -36,7 +39,6 @@ public final class PickpocketInventory {
     private final PickpocketSessionState state;
 
     private PlayerInventoryMenu menu;
-    private int successfulStealsThisSession;
 
     /**
      * Creates a rummage inventory view bound to a pickpocket session.
@@ -84,10 +86,10 @@ public final class PickpocketInventory {
             return;
         }
 
-        completeTransfer(menuSlot, victimSlot);
+        completeTransfer(menuSlot, victimSlot, victimItem.getType());
     }
 
-    private void completeTransfer(int menuSlot, int expectedVictimSlot) {
+    private void completeTransfer(int menuSlot, int expectedVictimSlot, Material expectedMaterial) {
         if (!isSessionStillPickpocketing()) {
             return;
         }
@@ -115,6 +117,18 @@ public final class PickpocketInventory {
             checkNoClickableSlotsRemaining();
             return;
         }
+        if (victimItem.getType() != expectedMaterial) {
+            refreshSingleSlot(menuSlot);
+            return;
+        }
+
+        if (!isStealSuccessful(victimItem.getType())) {
+            thief.sendMessage(MessageConfig.getPickpocketUnsuccessfulMessage());
+            playStealFailureSound();
+            refreshFromBatch(state.clearStealableMapping(menuSlot));
+            checkNoClickableSlotsRemaining();
+            return;
+        }
 
         ItemStack stolenItem = victimItem.clone();
         victimPlayer.getInventory().setItem(expectedVictimSlot, new ItemStack(Material.AIR));
@@ -131,8 +145,6 @@ public final class PickpocketInventory {
         thief.save();
         victim.save();
         thief.playStealSuccessSound();
-        successfulStealsThisSession++;
-        playChanceLossSound(successfulStealsThisSession);
         checkNoClickableSlotsRemaining();
     }
 
@@ -181,16 +193,22 @@ public final class PickpocketInventory {
         checkNoClickableSlotsRemaining();
     }
 
-    private void playChanceLossSound(int usedChances) {
-        float volume = Math.min(CHANCE_LOSS_MAX_VOLUME,
-                CHANCE_LOSS_BASE_VOLUME + (Math.max(0, usedChances - 1) * CHANCE_LOSS_STEP_VOLUME));
+    private void playStealFailureSound() {
         Player thiefPlayer = thief.getBukkitPlayer();
         Player victimPlayer = victim.getBukkitPlayer();
         if (thiefPlayer != null) {
-            thiefPlayer.playSound(thiefPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+            thiefPlayer.playSound(
+                    thiefPlayer.getLocation(),
+                    STEAL_FAIL_SOUND_KEY,
+                    STEAL_FAIL_SOUND_VOLUME,
+                    STEAL_FAIL_SOUND_PITCH);
         }
         if (victimPlayer != null) {
-            victimPlayer.playSound(victimPlayer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, volume, 0.75f);
+            victimPlayer.playSound(
+                    victimPlayer.getLocation(),
+                    STEAL_FAIL_SOUND_KEY,
+                    STEAL_FAIL_SOUND_VOLUME,
+                    STEAL_FAIL_SOUND_PITCH);
         }
     }
 
@@ -287,9 +305,30 @@ public final class PickpocketInventory {
                 state.clearStealableMapping(menuSlot);
                 return createMenuItemForSlot(menuSlot);
             }
-            return clickable(new MenuItem(stack), () -> onRevealedItemClick(menuSlot));
+            return clickable(new MenuItem(createStealablePreview(stack)), () -> onRevealedItemClick(menuSlot));
         }
         return new MenuItem(new ItemStack(Material.AIR));
+    }
+
+    private ItemStack createStealablePreview(ItemStack original) {
+        ItemStack preview = original.clone();
+        ItemMeta meta = preview.getItemMeta();
+        if (meta == null) {
+            return preview;
+        }
+
+        List<String> lore = meta.hasLore() && meta.getLore() != null
+                ? new ArrayList<>(meta.getLore())
+                : new ArrayList<>();
+        lore.add(ItemRarityConfig.formatSuccessChanceLore(preview.getType()));
+        meta.setLore(lore);
+        preview.setItemMeta(meta);
+        return preview;
+    }
+
+    private boolean isStealSuccessful(Material material) {
+        double chance = ItemRarityConfig.getSuccessChance(material);
+        return ThreadLocalRandom.current().nextDouble() < chance;
     }
 
     private MenuItem createDebugPreviewForHiddenSlot(int menuSlot) {

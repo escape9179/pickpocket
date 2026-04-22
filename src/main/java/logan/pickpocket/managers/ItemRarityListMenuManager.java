@@ -15,7 +15,6 @@ import logan.api.gui.MenuItem;
 import logan.api.gui.PlayerInventoryMenu;
 import logan.pickpocket.config.ItemRarityConfig;
 import logan.pickpocket.config.ItemRarityConfig.RarityEntry;
-import logan.pickpocket.config.ItemRarityConfig.RarityTier;
 
 /**
  * Opens a paginated menu that lists all configured item rarities.
@@ -73,11 +72,8 @@ public final class ItemRarityListMenuManager {
     }
 
     private static MenuItem createEntryItem(RarityEntry entry) {
-        RarityTier tier = ItemRarityConfig.resolveTier(entry.getValue());
-        long roundedPercentage = Math.round(entry.getValue() * 100D);
         return new MenuItem(formatItemName(entry.getYamlKey()), new ItemStack(entry.getMaterial()))
-                .setLore(
-                        ChatColor.GRAY + "Success chance: " + tier.getColor() + roundedPercentage + "%");
+                .setLore(ItemRarityConfig.formatSuccessChanceLore(entry.getValue()));
     }
 
     private static List<RarityEntry> getSortedEntries(SortMode sortMode) {
