@@ -4,6 +4,7 @@ import logan.api.command.BasicCommand;
 import logan.api.command.SenderTarget;
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.config.Config;
+import logan.pickpocket.config.ItemRarityConfig;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class ReloadCommand extends BasicCommand<CommandSender> {
     public boolean run(CommandSender sender, String[] args, Object data) {
         Config.reload();
         MessageConfig.reload();
+        ItemRarityConfig.reload();
         sender.sendMessage(MessageConfig.getReloadNotificationMessage());
         return true;
     }

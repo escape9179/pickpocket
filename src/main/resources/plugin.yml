@@ -23,6 +23,9 @@ permissions:
   pickpocket.skill.view:
     description: View your pickpocket skill levels.
     default: true
+  pickpocket.list:
+    description: View all configured item rarity entries.
+    default: true
   pickpocket.debug:
     description: Access to debug commands.
     children:

@@ -3,7 +3,6 @@ package logan.api.gui;
 import logan.api.listener.InventoryClickListener;
 import logan.api.listener.InventoryCloseListener;
 import logan.api.listener.InventoryListeners;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -61,9 +60,7 @@ public class GUIAPI {
         while (menuIterator.hasNext()) {
             PlayerInventoryMenu registeredMenu = registeredMenus.get(menuIterator.next());
             Inventory inventory = event.getInventory();
-            HumanEntity viewer = inventory.getViewers().get(0);
-
-            if (registeredMenu.getViewer().equals(viewer)) {
+            if (registeredMenu.getInventory().equals(inventory)) {
                 registeredMenu.setClosed(true);
                 break;
             }

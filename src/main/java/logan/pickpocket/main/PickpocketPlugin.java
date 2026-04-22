@@ -18,6 +18,7 @@ import logan.pickpocket.commands.DebugGiveRandom;
 import logan.pickpocket.commands.DebugRevealCommand;
 import logan.pickpocket.commands.ConfigCommand;
 import logan.pickpocket.commands.MainCommand;
+import logan.pickpocket.commands.ListCommand;
 import logan.pickpocket.commands.ReloadCommand;
 import logan.pickpocket.commands.SetSkillCommand;
 import logan.pickpocket.commands.SkillsCommand;
@@ -25,6 +26,7 @@ import logan.pickpocket.commands.StatusCommand;
 import logan.pickpocket.commands.TestCommand;
 import logan.pickpocket.commands.ToggleCommand;
 import logan.pickpocket.config.Config;
+import logan.pickpocket.config.ItemRarityConfig;
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.hooks.EssentialsHook;
 import logan.pickpocket.hooks.TownyHook;
@@ -73,9 +75,11 @@ public class PickpocketPlugin extends JavaPlugin {
         ConfigurationSerialization.registerClass(PickpocketSessionHistoryEntry.class);
         saveDefaultConfig();
         saveResource("messages.yml", false);
+        saveResource("item_rarities.yml", false);
 
         Config.init(this);
         MessageConfig.init(this);
+        ItemRarityConfig.init(this);
 
         registerCommands();
         registerListeners();
@@ -110,6 +114,7 @@ public class PickpocketPlugin extends JavaPlugin {
 
     private void registerCommands() {
         CommandDispatcher.registerCommand(new MainCommand());
+        CommandDispatcher.registerCommand(new ListCommand());
         CommandDispatcher.registerCommand(new DebugCommand());
         CommandDispatcher.registerCommand(new DebugGiveRandom());
         CommandDispatcher.registerCommand(new DebugRevealCommand());

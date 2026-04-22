@@ -156,6 +156,9 @@ public class PlayerInventoryMenu implements InventoryMenu {
         if (!(viewer.getUniqueId()).equals(event.getWhoClicked().getUniqueId())) {
             return;
         }
+        if (!inventory.equals(event.getClickedInventory())) {
+            return;
+        }
 
         event.setCancelled(true);
 

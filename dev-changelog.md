@@ -45,4 +45,6 @@
 - 04/22/2026: Added `item_rarities.yml` with Java 1.21.11 item IDs and reversed rarity weighting where Common maps high (0.66-0.80) and Mythic maps low (0.01-0.15).
 - 04/22/2026: Rebuilt `item_rarities.yml` from Java 1.21.11 item registry IDs for survival-obtainable scope and kept reversed tier bands (Common high, Mythic low).
 - 04/22/2026: Differentiated `item_rarities.yml` values within each reversed tier band using deterministic best-effort 2-decimal ranking so items are spread by relative rarity inside their tier.
+- 04/22/2026: Added `/pickpocket list` with a 6x9 paginated rarity browser menu that loads `item_rarities.yml`, shows tier/value tooltips, and supports previous/next page navigation.
+- 04/22/2026: Added in-menu sort switching for `/pickpocket list` with A-Z, Z-A, Rarity (high), and Rarity (low), including deterministic tie-breaking and page navigation preserving the active sort mode.
 
