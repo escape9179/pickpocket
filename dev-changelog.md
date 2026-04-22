@@ -49,4 +49,6 @@
 - 04/22/2026: Added in-menu sort switching for `/pickpocket list` with A-Z, Z-A, Rarity (high), and Rarity (low), including deterministic tie-breaking and page navigation preserving the active sort mode.
 - 04/22/2026: Fixed inventory outside-click handling to ignore invalid negative slots (like `-999`) and use `InventoryClickEvent#getCurrentItem()` safely in the pickpocket inventory click listener.
 - 04/22/2026: Added a defensive global guard in `GUIAPI#callInventoryClickListeners` to ignore outside/invalid inventory clicks before dispatching to menu and plugin click listeners.
+- 04/22/2026: Updated `/pickpocket list` rarity item lore to display rounded whole-number percentages (for example, 72.50% now appears as 73%) instead of raw decimal values.
+- 04/22/2026: Restored `Locale` import in `ItemRarityListMenuManager` after list percentage display refactor so item-name title-casing continues compiling correctly.
 

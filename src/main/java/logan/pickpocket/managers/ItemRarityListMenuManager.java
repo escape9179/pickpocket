@@ -74,11 +74,11 @@ public final class ItemRarityListMenuManager {
 
     private static MenuItem createEntryItem(RarityEntry entry) {
         RarityTier tier = ItemRarityConfig.resolveTier(entry.getValue());
+        long roundedPercentage = Math.round(entry.getValue() * 100D);
         return new MenuItem(formatItemName(entry.getYamlKey()), new ItemStack(entry.getMaterial()))
                 .setLore(
                         ChatColor.GRAY + "Tier: " + tier.getColor() + tier.getDisplayName(),
-                        ChatColor.GRAY + "Value: " + ChatColor.WHITE
-                                + String.format(Locale.US, "%.2f", entry.getValue()));
+                        ChatColor.GRAY + "Value: " + ChatColor.WHITE + roundedPercentage + "%");
     }
 
     private static List<RarityEntry> getSortedEntries(SortMode sortMode) {
