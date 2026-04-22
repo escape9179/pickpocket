@@ -68,7 +68,7 @@ public class PickpocketTask extends BukkitRunnable {
         }
 
         if (ticksPassed >= delayTicks) {
-            PickpocketSessionManager.openRummageInventory(predator, victim);
+            PickpocketSessionManager.openPickpocketInventory(predator, victim);
             cancel();
         }
 

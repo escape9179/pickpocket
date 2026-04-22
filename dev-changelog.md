@@ -36,4 +36,10 @@
 - 04/20/2026: Removed rummage steal-cap enforcement so thieves can keep stealing revealed items until no clickable slots remain.
 - 04/20/2026: Recomputed rummage adjacency clues after stealable mapping changes and auto-cleared revealed hint tiles that no longer border a stealable item.
 - 04/20/2026: Refreshed the full rummage board after steals/stale mappings and added a defensive zero-adjacency clue render guard so stale hint items are not shown.
+- 04/22/2026: Claimed rummage slots now reuse numeric clue hints when adjacent stealable items remain, while still rendering empty when no adjacent stealables exist.
+- 04/22/2026: Refactored rummage flood-reveal internals into reusable seed-based expansion and added board update batches for post-steal/state cleanup cascades.
+- 04/22/2026: Updated rummage steal/stale handlers to consume state update batches so post-steal flood-cleared regions refresh immediately without forcing full-board redraws.
+- 04/22/2026: Renamed all `Rummage`/`rummage` code symbols to `Pickpocket`/`pickpocket` and migrated persisted totals from `stats.rummage.totalMillis` to `stats.pickpocket.totalMillis` with legacy-key backfill.
+- 04/22/2026: Marked revealed clue/claimed hint tiles dirty when adjacency counts change so post-steal slot-batch refreshes always show correct neighboring-stealable numbers.
+- 04/22/2026: Removed duplicate session-state class file (`RummageSessionState.java`) and kept `PickpocketSessionState.java` as the single source of truth to restore successful compilation.
 

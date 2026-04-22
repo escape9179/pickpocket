@@ -36,7 +36,8 @@ public class PickpocketUser {
     private static final String KEY_STATS_PREDATOR_SUCCESSES = "stats.predator.successes";
     private static final String KEY_STATS_VICTIM_COUNT = "stats.victim.count";
     private static final String KEY_STATS_TOTAL_ITEMS_STOLEN = "stats.itemsStolen.total";
-    private static final String KEY_STATS_TOTAL_RUMMAGE_MILLIS = "stats.rummage.totalMillis";
+    private static final String KEY_STATS_TOTAL_PICKPOCKET_MILLIS = "stats.pickpocket.totalMillis";
+    private static final String KEY_STATS_TOTAL_MILLIS_LEGACY = "stats.rummage.totalMillis";
     private static final String KEY_SKILLS = "skills";
     private static final String ATTEMPT_SOUND_KEY = "minecraft:item.bone_meal.use";
     private static final float ATTEMPT_SOUND_MIN_PITCH = 0.5f;
@@ -75,7 +76,8 @@ public class PickpocketUser {
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_PREDATOR_SUCCESSES, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_VICTIM_COUNT, 0);
         YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_ITEMS_STOLEN, 0);
-        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_RUMMAGE_MILLIS, 0L);
+        migrateLegacyTotalMillis();
+        YamlConfigurationUtil.setIfNotSet(configuration, KEY_STATS_TOTAL_PICKPOCKET_MILLIS, 0L);
         for (Skill skill : Skill.values()) {
             String skillKey = skillPath(skill);
             YamlConfigurationUtil.setIfNotSet(configuration, skillKey + ".level", 0);
@@ -85,6 +87,15 @@ public class PickpocketUser {
 
     private void stripLegacyCounterpartStats() {
         configuration.set("stats.counterparts", null);
+    }
+
+    private void migrateLegacyTotalMillis() {
+        if (configuration.contains(KEY_STATS_TOTAL_PICKPOCKET_MILLIS)
+                || !configuration.contains(KEY_STATS_TOTAL_MILLIS_LEGACY)) {
+            return;
+        }
+        long legacyTotalMillis = Math.max(0L, configuration.getLong(KEY_STATS_TOTAL_MILLIS_LEGACY, 0L));
+        configuration.set(KEY_STATS_TOTAL_PICKPOCKET_MILLIS, legacyTotalMillis);
     }
 
     /**
@@ -273,8 +284,12 @@ public class PickpocketUser {
     /**
      * @return accumulated rummage time in milliseconds
      */
-    public long getTotalRummageMillis() {
-        return configuration.getLong(KEY_STATS_TOTAL_RUMMAGE_MILLIS);
+    public long getTotalPickpocketMillis() {
+        if (!configuration.contains(KEY_STATS_TOTAL_PICKPOCKET_MILLIS)
+                && configuration.contains(KEY_STATS_TOTAL_MILLIS_LEGACY)) {
+            migrateLegacyTotalMillis();
+        }
+        return configuration.getLong(KEY_STATS_TOTAL_PICKPOCKET_MILLIS, 0L);
     }
 
     /**
@@ -282,11 +297,11 @@ public class PickpocketUser {
      *
      * @param millis elapsed milliseconds
      */
-    public void addRummageMillis(long millis) {
+    public void addPickpocketMillis(long millis) {
         if (millis <= 0) {
             return;
         }
-        configuration.set(KEY_STATS_TOTAL_RUMMAGE_MILLIS, getTotalRummageMillis() + millis);
+        configuration.set(KEY_STATS_TOTAL_PICKPOCKET_MILLIS, getTotalPickpocketMillis() + millis);
     }
 
     /**
@@ -364,7 +379,7 @@ public class PickpocketUser {
     /**
      * Plays the default rummage progress sound.
      */
-    public void playRummageSound() {
+    public void playPickpocketSound() {
         Player player = getBukkitPlayer();
         if (player != null) {
             player.playSound(player.getLocation(), Sound.BLOCK_SNOW_STEP, 1.0f, 0.5f);
@@ -408,7 +423,7 @@ public class PickpocketUser {
      *
      * @param volume playback volume
      */
-    public void playRummageExpandSound(float volume) {
+    public void playPickpocketExpandSound(float volume) {
         Player player = getBukkitPlayer();
         if (player != null) {
             player.playSound(player.getLocation(), Sound.BLOCK_WOOL_BREAK, volume, 0.85f);
@@ -418,7 +433,7 @@ public class PickpocketUser {
     /**
      * Plays feedback sound when rummage expansion is blocked.
      */
-    public void playRummageBlockedSound() {
+    public void playPickpocketBlockedSound() {
         Player player = getBukkitPlayer();
         if (player != null) {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0f, 0.75f);

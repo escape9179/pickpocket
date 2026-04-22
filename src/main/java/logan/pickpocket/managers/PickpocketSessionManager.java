@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.hooks.WorldGuardHook;
 import logan.pickpocket.history.PickpocketHistoryLog;
-import logan.pickpocket.inventory.RummageInventory;
+import logan.pickpocket.inventory.PickpocketInventory;
 import logan.pickpocket.main.PickpocketPlugin;
 import logan.pickpocket.tasks.PickpocketTask;
 import logan.pickpocket.user.PickpocketUser;
@@ -99,7 +99,7 @@ public final class PickpocketSessionManager {
         Location victimStartLocation = victimPlayer.getLocation();
 
         if (delayTicks <= 0) {
-            openRummageInventory(thief, victim);
+            openPickpocketInventory(thief, victim);
             return;
         }
 
@@ -115,17 +115,17 @@ public final class PickpocketSessionManager {
      * @param thief stealing user
      * @param victim target user
      */
-    public static void openRummageInventory(PickpocketUser thief, PickpocketUser victim) {
+    public static void openPickpocketInventory(PickpocketUser thief, PickpocketUser victim) {
         PickpocketSession session = sessionByThiefId.get(thief.getUuid());
         if (session == null || !session.getVictim().getUuid().equals(victim.getUuid())) {
             return;
         }
-        session.getRummageState().initializeBoard(victim);
-        RummageInventory inventory = new RummageInventory(session);
-        session.setRummageInventory(inventory);
+        session.getPickpocketState().initializeBoard(victim);
+        PickpocketInventory inventory = new PickpocketInventory(session);
+        session.setPickpocketInventory(inventory);
         inventory.show();
-        session.setRummaging(true);
-        session.setRummageStartEpochMilli(System.currentTimeMillis());
+        session.setPickpocketing(true);
+        session.setPickpocketStartEpochMilli(System.currentTimeMillis());
         thief.getSpeedSkill().addExp(10);
         thief.persistSkillStats();
         thief.save();
@@ -155,12 +155,12 @@ public final class PickpocketSessionManager {
         if (session == null) {
             return;
         }
-        if (session.isRummaging() && session.isThief(user)) {
-            if (session.getRummageState().consumeSuppressNextInventoryClose()) {
+        if (session.isPickpocketing() && session.isThief(user)) {
+            if (session.getPickpocketState().consumeSuppressNextInventoryClose()) {
                 return;
             }
-            session.setRummaging(false);
-            endSession(session, SessionEndReason.RUMMAGE_INVENTORY_CLOSED);
+            session.setPickpocketing(false);
+            endSession(session, SessionEndReason.PICKPOCKET_INVENTORY_CLOSED);
         }
     }
 
@@ -171,7 +171,7 @@ public final class PickpocketSessionManager {
      */
     public static void onInventoryOpened(PickpocketUser user) {
         PickpocketSession session = getSession(user);
-        if (session == null || !session.isVictim(user) || !session.isRummaging()) {
+        if (session == null || !session.isVictim(user) || !session.isPickpocketing()) {
             return;
         }
 
@@ -190,7 +190,7 @@ public final class PickpocketSessionManager {
             }
         }
 
-        session.setRummaging(false);
+        session.setPickpocketing(false);
         if (thiefPlayer != null) {
             thiefPlayer.closeInventory();
         }
@@ -208,12 +208,12 @@ public final class PickpocketSessionManager {
         if (session == null || !session.isThief(predator)) {
             return;
         }
-        if (session.isRummaging()) {
+        if (session.isPickpocketing()) {
             Player thiefPlayer = predator.getBukkitPlayer();
             if (thiefPlayer != null) {
                 thiefPlayer.closeInventory();
             }
-            session.setRummaging(false);
+            session.setPickpocketing(false);
         }
         player.sendMessage(MessageConfig.getPickpocketOnMoveWarningMessage());
         endSession(session, SessionEndReason.PREDATOR_MOVED);
@@ -230,12 +230,12 @@ public final class PickpocketSessionManager {
             return;
         }
         PickpocketUser thief = session.getThief();
-        if (session.isRummaging()) {
+        if (session.isPickpocketing()) {
             Player thiefPlayer = thief.getBukkitPlayer();
             if (thiefPlayer != null) {
                 thiefPlayer.closeInventory();
             }
-            session.setRummaging(false);
+            session.setPickpocketing(false);
         }
         endSession(session, SessionEndReason.VICTIM_MOVED);
     }
@@ -252,7 +252,7 @@ public final class PickpocketSessionManager {
         if (session == null) {
             return;
         }
-        persistRummageDuration(session);
+        persistPickpocketDuration(session);
         if (!sessionByThiefId.remove(session.getThief().getUuid(), session)) {
             return;
         }
@@ -263,13 +263,13 @@ public final class PickpocketSessionManager {
         session.clearEphemeralState();
     }
 
-    private static void persistRummageDuration(PickpocketSession session) {
-        long elapsedMillis = session.consumeRummageElapsedMillis(System.currentTimeMillis());
+    private static void persistPickpocketDuration(PickpocketSession session) {
+        long elapsedMillis = session.consumePickpocketElapsedMillis(System.currentTimeMillis());
         if (elapsedMillis <= 0L) {
             return;
         }
         PickpocketUser thief = session.getThief();
-        thief.addRummageMillis(elapsedMillis);
+        thief.addPickpocketMillis(elapsedMillis);
         thief.save();
     }
 

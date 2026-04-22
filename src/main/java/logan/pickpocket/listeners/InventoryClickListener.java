@@ -22,7 +22,7 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
         PickpocketUser user = PickpocketUser.get(player);
         Inventory inventory = event.getInventory();
         var pickSession = PickpocketSessionManager.getSession(user);
-        if (pickSession != null && pickSession.isRummaging()) {
+        if (pickSession != null && pickSession.isPickpocketing()) {
             event.setCancelled(true);
             return;
         }
