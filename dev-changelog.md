@@ -51,4 +51,6 @@
 - 04/22/2026: Added a defensive global guard in `GUIAPI#callInventoryClickListeners` to ignore outside/invalid inventory clicks before dispatching to menu and plugin click listeners.
 - 04/22/2026: Updated `/pickpocket list` rarity item lore to display rounded whole-number percentages (for example, 72.50% now appears as 73%) instead of raw decimal values.
 - 04/22/2026: Restored `Locale` import in `ItemRarityListMenuManager` after list percentage display refactor so item-name title-casing continues compiling correctly.
+- 04/22/2026: Updated `/pickpocket list` rarity item lore to remove tier display and show `Success chance: <rounded>%` for each item.
+- 04/22/2026: Color-coded `/pickpocket list` success chance percentages using each item's resolved rarity tier color.
 

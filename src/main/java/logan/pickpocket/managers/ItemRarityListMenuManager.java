@@ -77,8 +77,7 @@ public final class ItemRarityListMenuManager {
         long roundedPercentage = Math.round(entry.getValue() * 100D);
         return new MenuItem(formatItemName(entry.getYamlKey()), new ItemStack(entry.getMaterial()))
                 .setLore(
-                        ChatColor.GRAY + "Tier: " + tier.getColor() + tier.getDisplayName(),
-                        ChatColor.GRAY + "Value: " + ChatColor.WHITE + roundedPercentage + "%");
+                        ChatColor.GRAY + "Success chance: " + tier.getColor() + roundedPercentage + "%");
     }
 
     private static List<RarityEntry> getSortedEntries(SortMode sortMode) {
