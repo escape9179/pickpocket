@@ -43,6 +43,11 @@ public class GUIAPI {
 
 
     public static void callInventoryClickListeners(InventoryClickEvent event) {
+        // Ignore outside-window/invalid-slot clicks to protect downstream listeners.
+        if (event.getClickedInventory() == null || event.getSlot() < 0) {
+            return;
+        }
+
         // Call all menu related inventory click events before calling listeners by other plugins.
         for (int key : registeredMenus.keySet())
             registeredMenus.get(key).onInventoryClick(event);

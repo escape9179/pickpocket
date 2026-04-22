@@ -47,4 +47,6 @@
 - 04/22/2026: Differentiated `item_rarities.yml` values within each reversed tier band using deterministic best-effort 2-decimal ranking so items are spread by relative rarity inside their tier.
 - 04/22/2026: Added `/pickpocket list` with a 6x9 paginated rarity browser menu that loads `item_rarities.yml`, shows tier/value tooltips, and supports previous/next page navigation.
 - 04/22/2026: Added in-menu sort switching for `/pickpocket list` with A-Z, Z-A, Rarity (high), and Rarity (low), including deterministic tie-breaking and page navigation preserving the active sort mode.
+- 04/22/2026: Fixed inventory outside-click handling to ignore invalid negative slots (like `-999`) and use `InventoryClickEvent#getCurrentItem()` safely in the pickpocket inventory click listener.
+- 04/22/2026: Added a defensive global guard in `GUIAPI#callInventoryClickListeners` to ignore outside/invalid inventory clicks before dispatching to menu and plugin click listeners.
 

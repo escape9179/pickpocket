@@ -5,6 +5,7 @@ import logan.pickpocket.user.PickpocketUser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Cancels inventory interaction while the thief is rummaging.
@@ -21,17 +22,17 @@ public class InventoryClickListener implements logan.api.listener.InventoryClick
         Player player = (Player) event.getWhoClicked();
         PickpocketUser user = PickpocketUser.get(player);
         Inventory inventory = event.getInventory();
+        if (event.getClickedInventory() == null || event.getSlot() < 0) {
+            return;
+        }
         var pickSession = PickpocketSessionManager.getSession(user);
         if (pickSession != null && pickSession.isPickpocketing()) {
             event.setCancelled(true);
             return;
         }
-        try {
-            if (inventory.getItem(event.getSlot()) == null) {
-                return;
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        ItemStack currentItem = event.getCurrentItem();
+        if (currentItem == null) {
+            return;
         }
         if (pickSession == null || !pickSession.isThief(user)) {
             return;
