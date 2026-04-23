@@ -4,8 +4,10 @@ pickpocket.iml
 /target/
 /bin/
 /.agent/
+/.cursor/
 /.vscode/
 
 # Gradle
 .gradle/
 build/
+gradle-local.properties

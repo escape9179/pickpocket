@@ -57,9 +57,6 @@ pickpocketRegionDisallow: "&cPick-pocketing is disabled in this region."
 # Sent to the thief when a pickpocket attempt fails.
 pickpocketUnsuccessful: "&cPickpocket attempt unsuccessful."
 
-# Sent to the thief when a pickpocket attempt succeeds.
-pickpocketSuccessful: "&aPickpocket attempt successful."
-
 # Sent when the thief moves during the pickpocketing process, cancelling the attempt.
 pickpocketOnMoveWarning: "&cYou cannot move whilst pick-pocketing."
 
@@ -90,11 +87,20 @@ playerAfk: "&cThat player is AFK."
 # Sent when a player attempts to pickpocket while they themselves are AFK.
 attemptStealWhileAfk: "&cYou cannot pick-pocket while AFK."
 
-# Sent to the thief when a pickpocket attempt starts.
-pickpocketAttempt: "&eAttempting to pickpocket... Stay close!"
-
 # Sent when the thief moves and the pickpocketing is cancelled.
 pickpocketCancelledMoved: "&cPickpocketing cancelled because you moved!"
 
 # Sent when the target moves away and the pickpocketing is cancelled.
 pickpocketCancelledTargetMoved: "&cPickpocketing cancelled because the target moved away!"
+
+# Sent when a player attempts to pickpocket while they are already in a pickpocket session.
+alreadyInSession: "&cYou are already pickpocketing someone."
+
+# Sent to the thief when the victim is no longer available mid-rummage.
+targetUnavailable: "&cPlayer is no longer available."
+
+# Sent to the thief when there are no more interactive rummage slots.
+nothingElseHere: "&f** There is nothing else here. **"
+
+# Sent to the thief when per-session steal cap is reached.
+stealCapReached: "&cYou cannot steal any more items this session."

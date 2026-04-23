@@ -1,29 +1,46 @@
 package logan.pickpocket.main;
 
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import logan.api.bstats.Metrics;
 import logan.api.command.CommandDispatcher;
 import logan.api.gui.GUIAPI;
 import logan.api.util.UpdateChecker;
-import logan.pickpocket.commands.*;
+import logan.pickpocket.commands.DebugCommand;
+import logan.pickpocket.commands.DebugGiveRandom;
+import logan.pickpocket.commands.DebugRevealCommand;
+import logan.pickpocket.commands.ConfigCommand;
+import logan.pickpocket.commands.MainCommand;
+import logan.pickpocket.commands.ListCommand;
+import logan.pickpocket.commands.ReloadCommand;
+import logan.pickpocket.commands.SetSkillCommand;
+import logan.pickpocket.commands.SkillsCommand;
+import logan.pickpocket.commands.StatusCommand;
+import logan.pickpocket.commands.TestCommand;
+import logan.pickpocket.commands.ToggleCommand;
 import logan.pickpocket.config.Config;
-import logan.pickpocket.config.MessageConfiguration;
+import logan.pickpocket.config.ItemRarityConfig;
+import logan.pickpocket.config.MessageConfig;
 import logan.pickpocket.hooks.EssentialsHook;
 import logan.pickpocket.hooks.TownyHook;
 import logan.pickpocket.hooks.VaultHook;
 import logan.pickpocket.hooks.WorldGuardHook;
-import logan.pickpocket.listeners.*;
-import logan.pickpocket.tasks.CooldownTask;
+import logan.pickpocket.managers.PickpocketSessionHistoryEntry;
+import logan.pickpocket.listeners.InventoryClickListener;
+import logan.pickpocket.listeners.InventoryCloseListener;
+import logan.pickpocket.listeners.InventoryOpenListener;
+import logan.pickpocket.listeners.PlayerInteractListener;
 import logan.pickpocket.tasks.MoveCheckTask;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.List;
 
 /**
- * Created by Tre on 12/14/2015.
+ * Main Bukkit plugin entrypoint for Pickpocket.
  */
 public class PickpocketPlugin extends JavaPlugin {
 
@@ -41,19 +58,28 @@ public class PickpocketPlugin extends JavaPlugin {
     public static final Permission PICKPOCKET_RELOAD = new Permission("pickpocket.reload",
             "Reload the Pickpocket configuration file.");
 
+    /**
+     * Registers optional WorldGuard integration before enable.
+     */
     @Override
     public void onLoad() {
         WorldGuardHook.onLoad(this);
     }
 
+    /**
+     * Initializes configuration, hooks, listeners, commands, and repeating tasks.
+     */
     @Override
     public void onEnable() {
         instance = this;
+        ConfigurationSerialization.registerClass(PickpocketSessionHistoryEntry.class);
         saveDefaultConfig();
         saveResource("messages.yml", false);
+        saveResource("item_rarities.yml", false);
 
-        Config.init();
-        MessageConfiguration.init();
+        Config.init(this);
+        MessageConfig.init(this);
+        ItemRarityConfig.init(this);
 
         registerCommands();
         registerListeners();
@@ -78,6 +104,9 @@ public class PickpocketPlugin extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + getName() + " enabled.");
     }
 
+    /**
+     * Logs plugin shutdown.
+     */
     @Override
     public void onDisable() {
         getServer().getConsoleSender().sendMessage(ChatColor.RED + getName() + " disabled.");
@@ -85,19 +114,25 @@ public class PickpocketPlugin extends JavaPlugin {
 
     private void registerCommands() {
         CommandDispatcher.registerCommand(new MainCommand());
+        CommandDispatcher.registerCommand(new ListCommand());
         CommandDispatcher.registerCommand(new DebugCommand());
         CommandDispatcher.registerCommand(new DebugGiveRandom());
+        CommandDispatcher.registerCommand(new DebugRevealCommand());
         CommandDispatcher.registerCommand(new ReloadCommand());
+        CommandDispatcher.registerCommand(new SetSkillCommand());
+        CommandDispatcher.registerCommand(new SkillsCommand());
         CommandDispatcher.registerCommand(new ToggleCommand());
         CommandDispatcher.registerCommand(new StatusCommand());
+        CommandDispatcher.registerCommand(new TestCommand());
+        CommandDispatcher.registerCommand(new ConfigCommand());
     }
 
     private void registerListeners() {
         GUIAPI.registerListeners(this);
         GUIAPI.registerInventoryClickListener(new InventoryClickListener());
         GUIAPI.registerInventoryCloseListener(new InventoryCloseListener());
+        getServer().getPluginManager().registerEvents(new InventoryOpenListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
-        getServer().getPluginManager().registerEvents(new ProjectileHitListener(), this);
     }
 
     private void setupDependencies() {
@@ -108,7 +143,6 @@ public class PickpocketPlugin extends JavaPlugin {
 
     private void startTasks() {
         new MoveCheckTask(this).start();
-        new CooldownTask(this).start();
     }
 
     @Override
@@ -121,18 +155,27 @@ public class PickpocketPlugin extends JavaPlugin {
         return CommandDispatcher.handleTabComplete(sender, command, alias, args);
     }
 
-    // Static accessors
-
+    /**
+     * @return plugin singleton instance
+     */
     public static PickpocketPlugin getInstance() {
         return instance;
     }
 
+    /**
+     * Logs a message through plugin logger when initialized.
+     *
+     * @param message message to log
+     */
     public static void log(String message) {
         if (instance != null) {
             instance.getLogger().info(message);
         }
     }
 
+    /**
+     * @return currently loaded plugin version
+     */
     public static String getPluginVersion() {
         return instance.getDescription().getVersion();
     }

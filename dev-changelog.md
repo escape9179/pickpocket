@@ -1,0 +1,62 @@
+# Unreleased (v3.0)
+
+- Added `pickpocket.defaults` and `pickpocket.inventory.stealableslots.*` permissions.
+- Slim default config.yml: drop unused keys
+- Removed revealed-item transfer delay in rummage inventory clicks.
+- Added HeadUtils for building custom-textured player heads.
+- Rummage clue tiles now use numbered oak-log heads (freshcoal).
+- Added a 54-slot rummage board state model with trap and clue support.
+- Replaced row-expand rummage UI with a fixed 6x9 board interaction model.
+- Added trap inventory command `/pickpocket trap` and menu listener rules.
+- Added trap item persistence in player YAML via serializable ItemStacks.
+- Added permission-based limits for trap slots, trap stack size, and steals.
+- Added trap/no-more/cap message keys and session end reasons.
+- Removed CooldownTask and startup scheduling.
+- Added debug reveal toggle: `/pickpocket debug reveal <true|false>`.
+- Added admin `/pickpocket config` command and permission wiring.
+- Added config menu item: Edit Pickpocket Inventory Default.
+- Added global default blueprint editor and save-on-close validation.
+- Added config-backed default layout rows (R/G/B) in `config.yml`.
+- Invalid player layouts now auto-heal from global default blueprint.
+- Added config menu actions for toggle and config reload.
+- Prevented stained-glass blueprint panes from leaving trap inventory UI.
+- Removing a trap from blueprint now restores green pane in that slot.
+- OPs now receive max value for integer permission node checks.
+- Blueprint panes now cycle red/green/blue on click in both layout editors.
+- Added live tooltip deficit line for invalid pickpocket blueprints.
+- Invalid blueprint close now reopens editor with reason shown in item tooltips.
+- Replaced rummage board setup with randomized minesweeper bomb placement.
+- Bomb clicks now reveal stealable items and allow steal-then-continue flow.
+- Empty zero-clue cells now flood reveal connected spaces and clue borders.
+- Clue tiles now show adjacent bomb counts via numbered player heads.
+- Removed blueprint/default layout commands, listeners, managers, and help.
+- Removed blueprint/default layout persistence and config schema keys.
+- Deleted legacy blueprint class and inventory editor permission entry.
+- Removed dead trap-trigger and blueprint-invalid message/config paths.
+- 04/20/2026: Removed rummage steal-cap enforcement so thieves can keep stealing revealed items until no clickable slots remain.
+- 04/20/2026: Recomputed rummage adjacency clues after stealable mapping changes and auto-cleared revealed hint tiles that no longer border a stealable item.
+- 04/20/2026: Refreshed the full rummage board after steals/stale mappings and added a defensive zero-adjacency clue render guard so stale hint items are not shown.
+- 04/22/2026: Claimed rummage slots now reuse numeric clue hints when adjacent stealable items remain, while still rendering empty when no adjacent stealables exist.
+- 04/22/2026: Refactored rummage flood-reveal internals into reusable seed-based expansion and added board update batches for post-steal/state cleanup cascades.
+- 04/22/2026: Updated rummage steal/stale handlers to consume state update batches so post-steal flood-cleared regions refresh immediately without forcing full-board redraws.
+- 04/22/2026: Renamed all `Rummage`/`rummage` code symbols to `Pickpocket`/`pickpocket` and migrated persisted totals from `stats.rummage.totalMillis` to `stats.pickpocket.totalMillis` with legacy-key backfill.
+- 04/22/2026: Marked revealed clue/claimed hint tiles dirty when adjacency counts change so post-steal slot-batch refreshes always show correct neighboring-stealable numbers.
+- 04/22/2026: Removed duplicate session-state class file (`RummageSessionState.java`) and kept `PickpocketSessionState.java` as the single source of truth to restore successful compilation.
+- 04/22/2026: Added `item_rarities.yml` with Java 1.21.11 item IDs and reversed rarity weighting where Common maps high (0.66-0.80) and Mythic maps low (0.01-0.15).
+- 04/22/2026: Rebuilt `item_rarities.yml` from Java 1.21.11 item registry IDs for survival-obtainable scope and kept reversed tier bands (Common high, Mythic low).
+- 04/22/2026: Differentiated `item_rarities.yml` values within each reversed tier band using deterministic best-effort 2-decimal ranking so items are spread by relative rarity inside their tier.
+- 04/22/2026: Added `/pickpocket list` with a 6x9 paginated rarity browser menu that loads `item_rarities.yml`, shows tier/value tooltips, and supports previous/next page navigation.
+- 04/22/2026: Added in-menu sort switching for `/pickpocket list` with A-Z, Z-A, Rarity (high), and Rarity (low), including deterministic tie-breaking and page navigation preserving the active sort mode.
+- 04/22/2026: Fixed inventory outside-click handling to ignore invalid negative slots (like `-999`) and use `InventoryClickEvent#getCurrentItem()` safely in the pickpocket inventory click listener.
+- 04/22/2026: Added a defensive global guard in `GUIAPI#callInventoryClickListeners` to ignore outside/invalid inventory clicks before dispatching to menu and plugin click listeners.
+- 04/22/2026: Updated `/pickpocket list` rarity item lore to display rounded whole-number percentages (for example, 72.50% now appears as 73%) instead of raw decimal values.
+- 04/22/2026: Restored `Locale` import in `ItemRarityListMenuManager` after list percentage display refactor so item-name title-casing continues compiling correctly.
+- 04/22/2026: Updated `/pickpocket list` rarity item lore to remove tier display and show `Success chance: <rounded>%` for each item.
+- 04/22/2026: Color-coded `/pickpocket list` success chance percentages using each item's resolved rarity tier color.
+- 04/22/2026: Added material-based rarity lookup and shared success-chance lore formatting helpers in `ItemRarityConfig` (with a 100% fallback for items not listed in `item_rarities.yml`).
+- 04/22/2026: Refactored `/pickpocket list` entries to use the shared rarity lore formatter so chance tooltip output stays consistent across menus.
+- 04/22/2026: Updated pickpocket rummage item previews to append the shared rarity `Success chance` tooltip line shown by `/pickpocket list`.
+- 04/22/2026: Added per-item rarity roll handling on steal clicks so failed steals keep the item with the victim, remove it from the rummage board, and notify the thief with `pickpocketUnsuccessful`.
+- 04/22/2026: Updated rarity-attempt feedback sounds so failed steals play note block bass and successful steals only play the item pickup sound.
+- 04/22/2026: Changed failed-roll feedback to play a low-pitch bundle drop-contents sound for both thief and victim.
+

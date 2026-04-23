@@ -15,7 +15,21 @@ permissions:
     default: true
   pickpocket.admin.toggle:
     description: Toggle server-wide pickpocketing.
+  pickpocket.config:
+    description: Open and edit pickpocket admin configuration menus.
+    default: op
+  pickpocket.skill.set:
+    description: Set one of your pickpocket skill levels.
+  pickpocket.skill.view:
+    description: View your pickpocket skill levels.
+    default: true
+  pickpocket.list:
+    description: View all configured item rarity entries.
+    default: true
   pickpocket.debug:
     description: Access to debug commands.
     children:
       pickpocket.debug.giverandom: true
+      pickpocket.debug.reveal: true
+  pickpocket.debug.reveal:
+    description: Toggle fully revealed rummage board rendering.
